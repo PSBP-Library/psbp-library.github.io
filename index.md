@@ -1390,7 +1390,7 @@ Active `fibonacci` is extremely inefficient.
 
 Reactive `fibonacci` is even worse.
 
-Time for some optimizations!
+Time for *optimization*!
 
 # Accumulator based optimization
 
@@ -1559,7 +1559,7 @@ applying fibonacci to the integer argument 10 yields result 89
 [success] ...
 ```
 
-You can also try it with `1000` instead of `10`!
+You can also try it with `1000` instead of `10`.
 
 With `10000` you will get a stack overflow.
 
@@ -1612,10 +1612,240 @@ Please type an integer
 applying fibonacci to the integer argument 10 yields result 89
 [success] ...
 ```
-You can also try it with `250` instead of `10`!
+You can also try it with `250` instead of `10`.
 
 With `1000` you will get a stack overflow.
 
+# `Transformation`
 
+Until now active and reactive `given` implementations of `Program` have been dealt with.
+
+Using *computation transformations* one `given` implementation can be transformed to another one.
+
+## `~>`
+
+```scala
+package psbp.internalSpecification.naturalTransformation
+
+private[psbp] trait ~>[F[+ _], T[+ _]]:
+
+  // declared
+
+  private[psbp] def apply[Z]: F[Z] => T[Z] 
+```
+
+A *natural transformation* of type `F ~> T` is like a function of type `F[Z] => T[Z]`. 
+
+Instead of transforming at type level it transforms at *type constructor* level.
+
+## `Transformation`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.naturalTransformation.~>
+
+private[psbp] trait Transformation[F[+ _]: Computation, T[+ _]] extends Computation[T]:
+
+  // declared
+
+  private[psbp] val `f~>t`: F ~> T
+  
+  // defined computational capabilities 
+  
+  override private[psbp] def result[Z]: Z => T[Z] = 
+
+    import `f~>t`.{ apply => `fz=>tz` }
+
+    val computationF: Computation[F] = summon[Computation[F]]
+    import computationF.{ result => `z=>fz` }
+    
+    `z=>fz` andThen `fz=>tz`
+```
+
+A *computation transformation* uses a natural transformation to define `result` of the `T[+ _]` computation in terms of `result` of the `F[+ _]` computation.
+
+`Transformation` is defined as a `trait`.
+
+It cannot be defined as a `given` since `bind` is not defined yet.
+
+## `ReactiveTransformed`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
+```
+
+## `reactiveTransformedComputation`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+import psbp.internalSpecification.naturalTransformation.~>
+
+import psbp.internalSpecification.computation.Computation
+
+private[psbp] given reactiveTransformedComputation[
+  C[+ _]: Computation]: Transformation[C, ReactiveTransformed[C]] 
+  with Computation[ReactiveTransformed[C]] with 
+
+    private type F[+Z] = C[Z]
+    private type T[+Z] = ReactiveTransformed[F][Z]
+  
+    private val computationF: Computation[F] = summon[Computation[F]]
+    import computationF.{ result => resultF, bind => bindF }
+    
+    override private[psbp] val `f~>t`: F ~> T = new {
+      def apply[Z]: F[Z] => T[Z] =
+        fz => 
+          `fz=>u` =>
+            `fz=>u`(fz)
+      }
+  
+    override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] =
+      `fy=>u` =>
+        tz { 
+          fz =>
+            bindF(fz, { z =>
+              resultF(`z=>ty`(z)(`fy=>u`))
+            })
+        }
+```
+
+Any computation type `[Z] =>> C[Z]` can be transformed to a reactive one of type `[Z] =>> (C[Z] => Unit) => Unit`.
+
+## `CoResulting`
+
+```scala
+package psbp.internalSpecification.computation
+
+private[psbp] trait CoResulting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def coResult[Z]: C[Z] => Z
+```
+
+Reactive transformed materialization below depends on *co-resulting*, the *dual* of resulting.
+
+## `reactiveTransformedMaterialization`
+
+```scala
+package psbp.internalSpecification.materialization
+
+import psbp.specification.materialization.Materialization
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.computation.CoResulting
+
+import psbp.internalSpecification.computation.transformation.ReactiveTransformed
+
+private[psbp] given reactiveTransformedMaterialization[
+  C[+ _]: Computation: CoResulting:
+  [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y], Z, Y]: 
+  Materialization[[Z, Y] =>> Z => ReactiveTransformed[C][Y], Unit, Unit] with
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = ReactiveTransformed[F][Z] 
+
+  private type `=>F`[-Z, +Y] = Z => F[Y]
+  private type `=>T`[-Z, +Y] = Z => T[Y]
+
+  private val coResultingF: CoResulting[F] = summon[CoResulting[F]]
+  import coResultingF.coResult
+
+  val materialize: (Unit `=>T` Unit) => Unit => Unit =
+    `u>-->u` =>
+      u =>
+        `u>-->u`(u)(coResult)
+```
+
+## `CoResulting[Active]`
+
+```scala
+package psbp.implementation.active
+
+import psbp.internalSpecification.computation.CoResulting
+
+given CoResulting[Active] with
+  override def coResult[Z]: Active[Z] => Z =
+    identity
+```
+
+Co-resullting of `Active` is completely trivial.
+
+## Reactive programming revisited
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.specification.program.Program
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.given
+
+import psbp.internalSpecification.computation.transformation.given // reactiveTransformedComputation
+
+given Computation[Reactive] = reactiveTransformedComputation[Active]
+
+import psbp.internalSpecification.computation.given // programFromComputation
+
+given Program[`=>R`] = programFromComputation[Reactive]
+```
+
+where
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.internalSpecification.computation.transformation.ReactiveTransformed
+
+import psbp.implementation.active.Active
+
+type Reactive[+Y] = ReactiveTransformed[Active][Y] 
+
+type `=>R`[-Z, +Y] = Z => Reactive[Y]
+```
+
+Transformming active programming using `` `=>A` ``, to reactive programming, using `` `=>R` ``, is done using `reactiveTransformedComputation` and `programFromComputation`.
+
+## Reactive materialization revisited
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.specification.materialization.Materialization
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.given 
+
+import psbp.internalSpecification.materialization.given // reactiveTransformedMaterialization
+
+given Materialization[`=>R`, Unit, Unit] = reactiveTransformedMaterialization[Active, Unit, Unit]
+
+```
+
+Transforming active materialization of `` `=>A` ``, to reactive materialization, of `` `=>R` ``, is done using `reactiveTransformedMaterialization`.
+
+All reactive examples above still run fine, but you will get a stack overflow with large numbers.
+
+Time for *tail recursion*!
+
+<!--
+# Tail recursion
+
+## `FreeTransformation`
+
+```scala
+```
+-->
 
 

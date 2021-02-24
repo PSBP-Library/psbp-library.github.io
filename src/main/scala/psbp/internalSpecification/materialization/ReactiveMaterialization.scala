@@ -1,12 +1,12 @@
 package psbp.internalSpecification.materialization
 
+import psbp.specification.materialization.Materialization
+
 import psbp.internalSpecification.computation.Computation
 
 import psbp.internalSpecification.computation.CoResulting
 
 import psbp.internalSpecification.computation.transformation.ReactiveTransformed
-
-import psbp.specification.materialization.Materialization
 
 private[psbp] given reactiveTransformedMaterialization[
   C[+ _]: Computation: CoResulting:

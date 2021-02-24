@@ -4,7 +4,9 @@ import psbp.internalSpecification.naturalTransformation.~>
 
 import psbp.internalSpecification.computation.Computation
 
-private[psbp] given reactiveTransformedComputation[C[+ _]: Computation]: Transformation[C, ReactiveTransformed[C]] with Computation[ReactiveTransformed[C]] with 
+private[psbp] given reactiveTransformedComputation[
+  C[+ _]: Computation]: Transformation[C, ReactiveTransformed[C]] 
+  with Computation[ReactiveTransformed[C]] with 
 
     private type F[+Z] = C[Z]
     private type T[+Z] = ReactiveTransformed[F][Z]
