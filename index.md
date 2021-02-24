@@ -1723,7 +1723,7 @@ private[psbp] given reactiveTransformedComputation[
 
 Any computation of type `[Z] =>> C[Z]` can be transformed to a reactive computation of type `[Z] =>> (C[Z] => Unit) => Unit` using `reactiveTransformedComputation`
 
-The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in computation callback handler of type `Free[C, Y]`. 
+The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in thee computation callback handler of type `(C[Y] => Unit) => Unit`. 
 
 ## `CoResulting`
 
@@ -1772,7 +1772,7 @@ private[psbp] given reactiveTransformedMaterialization[
         `u>-->u`(u)(coResult)
 ```
 
-Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` that makes use of `coResult`
+Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` which makes use of `coResult`
 
 ## `CoResulting[Active]`
 
@@ -1947,7 +1947,7 @@ private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): 
   }
 ```
 
-`foldFree` *folds* the computation of type `C[Y]` that is embedded in the computation ADT of type `FreeTransformed[C][Y]` by `Transform`, back to a computation of type `C[Y]`.
+`foldFree` *folds* the computation ADT of type `Free[C, Y]` in which the computation of type `C[Y]` is embedded by `Transform`, back to a computation of type `C[Y]`.
 
 Although `foldFree` is not fully tail recursive, the `Scala` compiler performs tail recursive optimization for those cases where it is tail recursive.
 
@@ -1988,7 +1988,7 @@ private[psbp] given freeTransformedMaterialization[
       materializeF(`u=>tu` andThen `tu=>fu`)
 ```
 
-Transforming materialization of `[Z, Y] =>> Z => C[Y],`, to free materialization, of `[Z, Y] =>> Z => Free[C, Y]`, is done using `freeTransformedMaterialization` that makes use of `foldFree`.
+Transforming materialization of `[Z, Y] =>> Z => C[Y],`, to free materialization, of `[Z, Y] =>> Z => Free[C, Y]`, is done using `freeTransformedMaterialization` which makes use of `foldFree`.
 
 ## `freeCoResulting`
 
@@ -2012,7 +2012,7 @@ private[psbp] given freeCoResulting[C[+ _]: Computation: CoResulting]: CoResulti
     `tz=>fz` andThen `fz=>z`
 ```
 
-Transforming co-resulting to free co-resulting is done using `freeCoResulting` that also makes use of `foldFree`.
+Transforming co-resulting to free co-resulting is done using `freeCoResulting` which also makes use of `foldFree`.
 
 ## Free active programming
 
@@ -2097,6 +2097,31 @@ applying factorial to the integer argument 10 yields result 3628800
 ```
 
 Again, the only difference with the active and reactive versions is the usage of a different dependency injection by `import`.
+
+## Running tail recursive effectful active optimized fibonacci
+
+```scala
+package examples.implementation.tailRecursiveActive.program.effectful
+
+import psbp.implementation.freeActive.given
+
+import examples.specification.program.effectful.mainOptimizedFibonacci
+
+@main def optimizedFibonacci(args: String*): Unit =
+  mainOptimizedFibonacci materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.tailRecursiveActive.program.effectful.optimizedFibonacci 
+Please type an integer
+10
+applying fibonacci to the integer argument 10 yields result 89
+[success] ...
+```
 
 You can also try it with `10000` instead of `10`.
 
