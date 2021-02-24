@@ -1210,7 +1210,7 @@ given Materialization[`=>A`, Unit, Unit] with
 
 Materialization of `` `=>A` `` is completely trivial.
 
-## running active effectful factorial
+## Running active effectful factorial
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1235,7 +1235,7 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-## running active effectful fibonacci
+## Running active effectful fibonacci
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1259,3 +1259,137 @@ Please type an integer
 applying fibonacci to the integer argument 10 yields result 55
 [success] ...
 ```
+
+# Reactive programming
+
+A less trivial way to implement computations of type `C[Y]` is as *callback handlers* of type `(Y => Unit) => Unit`, referred to as *reactive computations*.
+
+As a consequence, programs of type `Z => C[Y]`, are implemented as functions to callback handlers, referred to as *reactive programs*.
+
+## `` Program[`=>R`] `` 
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.specification.program.Program
+
+import psbp.internalSpecification.computation.Computation
+
+given Computation[Reactive] with
+
+  private[psbp] def result[Z]: Z => Reactive[Z] =
+    z => 
+      `z=>u` =>
+        `z=>u`(z)
+
+  private[psbp] def bind[Z, Y] (cz: Reactive[Z], `z=>cy`: => Z => Reactive[Y]): Reactive[Y] =
+    `y=>u` =>
+      cz { 
+        z =>
+          `z=>cy`(z)(`y=>u`)
+      }
+
+import psbp.internalSpecification.computation.given // programFromComputation
+
+given Program[`=>R`] = programFromComputation[Reactive]
+```
+
+where
+
+```scala
+package psbp.implementation.reactive
+
+type Reactive[+Y] = (Y => Unit) => Unit
+
+type `=>R`[-Z, +Y] = Z => Reactive[Y]
+```
+
+`Reactive` is a  `given` implementation of `Computation`.
+
+As a consequence, `` `=>R` `` is an implementation of `Program`.
+
+## `` Materialization[`=>R`, Unit, Unit] `` 
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.specification.materialization.Materialization
+
+given Materialization[`=>R`, Unit, Unit] with
+
+  val materialize: (Unit `=>R` Unit) => Unit => Unit =
+    `u>-->u` =>
+      u =>
+        `u>-->u`(u)(identity)
+```
+
+Materialization of `` `=>R` `` is less trivial.
+
+## Getting the types right
+
+For reactive programming, there is really only one reasonable way to define `result`, `bind` and `materialize` in a way to get the types right.
+
+This is a recurring theme in pure functional programming and, as a generalization, in program specification based programming.
+
+Often an almost trivial choice for a function component, resp. program component does the trick to get the types right.
+
+## Running reactive effectful `factorial`
+
+```scala
+package examples.implementation.reactive.program.effectful
+
+import psbp.implementation.reactive.given
+
+import examples.specification.program.effectful.mainFactorial
+
+@main def factorial(args: String*): Unit =
+  mainFactorial materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.reactive.program.effectful.factorial 
+Please type an integer
+10
+applying factorial to the integer argument 10 yields result 3628800
+[success] ...
+```
+
+The only difference with the active version is the usage of a different dependency injection by `import`.
+
+## Running reactive effectful `fibonacci`
+
+```scala
+package examples.implementation.reactive.program.effectful
+
+import psbp.implementation.reactive.given
+
+import examples.specification.program.effectful.mainFibonacci
+
+@main def fibonacci(args: String*): Unit =
+  mainFibonacci materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.reactive.program.effectful.fibonacci 
+Please type an integer
+10
+applying fibonacci to the integer argument 10 yields result 55
+[success] ...
+```
+## Some remarks
+
+Active `fibonacci` is extremely slow. 
+
+Reactive `fibonacci` is even worse.
+
+Time for some optimizations!
+
+
