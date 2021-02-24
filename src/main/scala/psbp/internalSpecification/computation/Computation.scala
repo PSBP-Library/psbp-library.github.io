@@ -19,12 +19,14 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
       z =>
         result(`z=>y`(z))
 
-  private[psbp] override def andThen[Z, Y, X](`z>-->y`: Z `=>C` Y, `y>-->x`: => Y `=>C` X): Z `=>C` X =
+  private[psbp] override def andThen[Z, Y, X]
+    (`z>-->y`: Z `=>C` Y, `y>-->x`: => Y `=>C` X): Z `=>C` X =
     z =>
       `z>-->y`(z) >= 
         `y>-->x`
 
-  private[psbp] override def construct[Z, Y, X] (`z>-->y`: Z `=>C` Y, `z>-->x`: => Z `=>C` X): Z `=>C` (Y && X) =
+  private[psbp] override def construct[Z, Y, X]
+    (`z>-->y`: Z `=>C` Y, `z>-->x`: => Z `=>C` X): Z `=>C` (Y && X) =
     z =>
       `z>-->y`(z) >= { y => 
         `z>-->x`(z) >= { x =>
@@ -32,6 +34,7 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
         }
       }
 
-  private[psbp] override def conditionally[Z, Y, X] (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
+  private[psbp] override def conditionally[Z, Y, X]
+    (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
     _.foldSum(`y>-->z`, `x>-->z`) 
 
