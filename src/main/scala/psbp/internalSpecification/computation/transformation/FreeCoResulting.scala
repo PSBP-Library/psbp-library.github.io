@@ -11,8 +11,7 @@ private[psbp] given freeCoResulting[C[+ _]: Computation: CoResulting]: CoResulti
   import coResultingF.{ coResult => `fz=>z` }
 
   private def `tz=>fz`[Z]: T[Z] => F[Z] =
-    tz =>
-      foldFree(tz) 
+    foldFree
 
   override def coResult[Z]: T[Z] => Z =
     `tz=>fz` andThen `fz=>z`

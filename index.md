@@ -1683,6 +1683,8 @@ package psbp.internalSpecification.computation.transformation
 private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
 ```
 
+A reactive transformed computation is a *computation callback handler*, handing *computation callbacks* instead of *value callbacks*.
+
 ## `reactiveTransformedComputation`
 
 ```scala
@@ -1719,7 +1721,9 @@ private[psbp] given reactiveTransformedComputation[
         }
 ```
 
-Any computation type `[Z] =>> C[Z]` can be transformed to a reactive one of type `[Z] =>> (C[Z] => Unit) => Unit`.
+Any computation of type `[Z] =>> C[Z]` can be transformed to a reactive computation of type `[Z] =>> (C[Z] => Unit) => Unit` using `reactiveTransformedComputation`
+
+The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in computation callback handler of type `Free[C, Y]`. 
 
 ## `CoResulting`
 
@@ -1768,6 +1772,8 @@ private[psbp] given reactiveTransformedMaterialization[
         `u>-->u`(u)(coResult)
 ```
 
+Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` that makes use of `coResult`
+
 ## `CoResulting[Active]`
 
 ```scala
@@ -1780,7 +1786,7 @@ given CoResulting[Active] with
     identity
 ```
 
-Co-resullting of `Active` is completely trivial.
+Co-resulting of `Active` is completely trivial.
 
 ## Reactive programming revisited
 
@@ -1818,7 +1824,7 @@ type Reactive[+Y] = ReactiveTransformed[Active][Y]
 type `=>R`[-Z, +Y] = Z => Reactive[Y]
 ```
 
-Transformming active programming using `` `=>A` ``, to reactive programming, using `` `=>R` ``, is done using `reactiveTransformedComputation` and `programFromComputation`.
+Transforming from active programming with `` `=>A` `` to reactive programming with `` `=>R` `` is done by using a combination of `reactiveTransformedComputation` and `programFromComputation`.
 
 ## Reactive materialization revisited
 
@@ -1837,19 +1843,262 @@ given Materialization[`=>R`, Unit, Unit] = reactiveTransformedMaterialization[Ac
 
 ```
 
-Transforming active materialization of `` `=>A` ``, to reactive materialization, of `` `=>R` ``, is done using `reactiveTransformedMaterialization`.
+Transforming from active materialization of `` `=>A` `` to reactive materialization of `` `=>R` `` is done by using `reactiveTransformedMaterialization`.
 
 All reactive examples above still run fine, but you will get a stack overflow with large numbers.
 
 Time for *tail recursion*!
 
-<!--
 # Tail recursion
 
-## `FreeTransformation`
+## `FreeTransformed`
 
 ```scala
-```
--->
+package psbp.internalSpecification.computation.transformation
 
+import psbp.internalSpecification.computation.Computation
+
+import Free._
+
+private[psbp] enum Free[C[+ _], +Z]:
+
+  private[psbp] case Transform[C[+ _], +Z](cz: C[Z]) extends Free[C, Z]
+
+  private[psbp] case Result[C[+ _], +Z](z: Z) extends Free[C, Z]
+  
+  private[psbp] case Bind[C[+ _], -Z, ZZ <: Z, +Y]
+    (fczz: Free[C, ZZ], `z=>fcy`: Z => FreeTransformed[C][Y]) extends Free[C, Y]
+
+private[psbp] type FreeTransformed[C[+ _]] = [Z] =>> Free[C, Z]
+```
+
+A free transformed computation is a *computation algebraic data type*, also known as *computation ADT*, with `case`'s 
+
+- `Transform` for transforming,
+- `Result` for resulting,
+- `Bind` for binding.
+
+## `freeTransformedComputation`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+import psbp.specification.program.Program
+
+import psbp.internalSpecification.naturalTransformation.~>
+
+import psbp.internalSpecification.computation.Computation
+
+import Free._
+
+private[psbp] given freeTransformedComputation[C[+ _]: Computation]: Transformation[C, FreeTransformed[C]] with
+
+    private type F[+Z] = C[Z]
+    private type T[+Z] = FreeTransformed[F][Z] 
+    
+    override private[psbp] val `f~>t`: F ~> T = new {
+      def apply[Z]: F[Z] => T[Z] =
+        fz => 
+          Transform(fz)
+    }    
+
+    override private[psbp] def result[Z]: Z => T[Z] =
+      z =>
+        Result(z)
+
+    override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] = 
+      Bind(tz, `z=>ty`)
+```
+
+Any computation of type `[Z] =>> C[Z]` can be transformed to a free computation of type `[Z] =>> Free[C, Z]` using `freeTransformedComputation`.
+
+The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in the computation ADT of type `Free[C, Y]`. 
+
+The `result` and `bind` members of the transformed computation further *unfold* the embedded computation of type `C[Y]` in the computation ADT of type `Free[C, Y]`. 
+
+## `foldFree`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+// ...
+
+private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): C[Z] =
+
+  type F[+Z] = C[Z]
+  type T[+Z] = FreeTransformed[F][Z]
+ 
+  val computationF: Computation[F] = summon[Computation[F]]
+  import computationF.{ result => resultF, bind => bindF } 
+
+  fcz match {
+    case Transform(fz) => 
+      fz
+    case Result(z) =>
+      resultF(z)
+    case Bind(Transform(fy), y2tz) =>
+      bindF(resultF(fy), y2tz andThen foldFree)
+    case Bind(Result(y), y2tz) =>
+      foldFree(y2tz(y))
+    case Bind(Bind(tx, x2ty), y2tz) =>
+      foldFree(Bind(tx, { x => Bind(x2ty(x), y2tz) }))
+    case any =>
+      sys.error(s"Impossible, since, 'foldFree' eliminates the case for $any")
+  }
+```
+
+`foldFree` *folds* the computation of type `C[Y]` that is embedded in the computation ADT of type `FreeTransformed[C][Y]` by `Transform`, back to a computation of type `C[Y]`.
+
+Although `foldFree` is not fully tail recursive, the `Scala` compiler performs tail recursive optimization for those cases where it is tail recursive.
+
+The one but last `case` in `foldFree` corresponds to the *associativity of binding*.
+
+## `freeTransformedMaterialization`
+
+```scala
+package psbp.internalSpecification.materialization
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.computation.transformation.{ Free, foldFree, FreeTransformed }
+
+import Free._
+
+import psbp.specification.materialization.Materialization
+
+private[psbp] given freeTransformedMaterialization[
+  C[+ _]: Computation: 
+  [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y], Z, Y]: 
+  Materialization[[Z, Y] =>> Z => FreeTransformed[C][Y], Z, Y] with
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = FreeTransformed[F][Z] 
+
+  private type `=>F`[-Z, +Y] = Z => F[Y]
+  private type `=>T`[-Z, +Y] = Z => T[Y]
+
+  private val materializationF: Materialization[`=>F`, Z, Y] = summon[Materialization[`=>F`, Z, Y]]
+  import materializationF.{ materialize => materializeF }  
+
+  private def `tu=>fu`: T[Unit] => F[Unit] =
+    foldFree
+
+  override val materialize: (Unit `=>T` Unit) => Z => Y =
+    `u=>tu` =>
+      materializeF(`u=>tu` andThen `tu=>fu`)
+```
+
+Transforming materialization of `[Z, Y] =>> Z => C[Y],`, to free materialization, of `[Z, Y] =>> Z => Free[C, Y]`, is done using `freeTransformedMaterialization` that makes use of `foldFree`.
+
+## `freeCoResulting`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+import psbp.internalSpecification.computation.{ Computation, CoResulting }
+
+private[psbp] given freeCoResulting[C[+ _]: Computation: CoResulting]: CoResulting[FreeTransformed[C]] with
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = FreeTransformed[F][Z] 
+  
+  private val coResultingF : CoResulting[F] = summon[CoResulting[F]]
+  import coResultingF.{ coResult => `fz=>z` }
+
+  private def `tz=>fz`[Z]: T[Z] => F[Z] =
+    foldFree 
+
+  override def coResult[Z]: T[Z] => Z =
+    `tz=>fz` andThen `fz=>z`
+```
+
+Transforming co-resulting to free co-resulting is done using `freeCoResulting` that also makes use of `foldFree`.
+
+## Free active programming
+
+```scala
+package psbp.implementation.freeActive
+
+import psbp.specification.program.Program
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.given
+
+import psbp.internalSpecification.computation.transformation.given // freeTransformedComputation
+
+given Computation[FreeActive] = freeTransformedComputation[Active]
+
+import psbp.internalSpecification.computation.given // programFromComputation
+
+given Program[`=>FA`] = programFromComputation[FreeActive]
+```
+
+where
+
+```scala
+package psbp.implementation.freeActive
+
+import psbp.internalSpecification.computation.transformation.FreeTransformed
+
+import psbp.implementation.active.Active
+
+type FreeActive[+Y] = FreeTransformed[Active][Y] 
+
+type `=>FA`[-Z, +Y] = Z => FreeActive[Y]
+```
+
+Transforming from active programming with `` `=>A` `` to free active programming with `` `=>FA` `` is done by using a combination of `freeTransformedComputation` and `programFromComputation`.
+
+## Free active materialization
+
+```scala
+package psbp.implementation.freeActive
+
+import psbp.specification.materialization.Materialization
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.given
+
+import psbp.internalSpecification.materialization.given // freeTransformedMaterialization
+
+given Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]
+
+```
+
+Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization`.
+
+## Running tail recursive effectful active factorial
+
+```scala
+package examples.implementation.tailRecursiveActive.program.effectful
+
+import psbp.implementation.freeActive.given
+
+import examples.specification.program.effectful.mainFactorial
+
+@main def factorial(args: String*): Unit =
+  mainFactorial materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.tailRecursiveActive.program.effectful.factorial 
+Please type an integer
+10
+applying factorial to the integer argument 10 yields result 3628800
+[success] ...
+```
+
+Again, the only difference with the active and reactive versions is the usage of a different dependency injection by `import`.
+
+You can also try it with `10000` instead of `10`.
+
+You will not get a stack overflow.
 
