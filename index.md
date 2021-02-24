@@ -15,6 +15,8 @@ This document describes `PSBP`, a `Scala` library for *Program Specification Bas
 //          
 ```
 
+[source code](https://github.com/PSBP-Library/psbp-library.github.io)
+
 The document describes both 
 
 - the *definition* of the `PSBP` library,
@@ -893,5 +895,91 @@ A first product value `(subtractOne && subtractTwo)(i)`, which equals `(i - 1, i
 
 A second product value `(fibonacci &&& fibonacci)(i - 1, i - 2)` which equals `(fibonacci(i - 1), fibonacci(i - 2))` is constructed.
 
-The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(i - 1) + fibonacci(i - 2)`
+The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(i - 1) + fibonacci(i - 2)`.
 
+## `mainFactorial`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.specification.program.Program
+
+import examples.specification.program.factorial
+
+def mainFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
+  factorial toMainWith (
+    producer = intProducer,
+    consumer = factorialConsumer
+  )
+```
+
+where
+
+
+```scala
+package examples.specification.program.effectful
+
+import scala.language.postfixOps
+
+import psbp.specification.program.Program
+
+def intProducer[>-->[- _, + _]: Program]: Unit >--> BigInt = 
+  { (_: Unit) =>
+      println("Please type an integer")
+      BigInt(scala.io.StdIn.readInt)
+  } asProgram
+```
+
+and where
+
+```scala
+package examples.specification.program.effectful
+
+import scala.language.postfixOps
+
+import psbp.specification.program.{ &&, Program }
+
+def factorialConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
+  {
+    (`i&&j`: BigInt && BigInt) =>
+      val i = `i&&j`._1
+      val j = `i&&j`._2
+      println(s"applying factorial to the integer argument $i yields result $j")
+  } asProgram
+```
+
+`mainFactorial` is a main program that, for now, makes use of an *effectful* producer and an *effectful* consumer.
+
+## `mainFibonacci`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.specification.program.Program
+
+import examples.specification.program.fibonacci
+
+def mainFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
+  fibonacci toMainWith (
+    producer = intProducer,
+    consumer = fibonacciConsumer
+  )
+```
+
+where
+
+```scala
+package examples.specification.program.effectful
+
+// ...
+
+def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
+  {
+    (`i&&j`: BigInt && BigInt) =>
+      val i = `i&&j`._1
+      val j = `i&&j`._2
+      println(s"applying fibonacci to the integer argument $i yields result $j")
+  } asProgram
+```
+
+`mainFibonacci` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
