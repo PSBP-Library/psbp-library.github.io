@@ -1386,10 +1386,236 @@ applying fibonacci to the integer argument 10 yields result 55
 ```
 ## Some remarks
 
-Active `fibonacci` is extremely slow. 
+Active `fibonacci` is extremely inefficient. 
 
 Reactive `fibonacci` is even worse.
 
 Time for some optimizations!
+
+# Accumulator based optimization
+
+```scala
+package psbp.specification.program
+
+// ...
+
+// accumulator based optimization
+
+def optimizeWith[>-->[- _, + _]: Program, A, Z, Y](
+  accumulatorInitializer: Z >--> A,
+  argumentPredicate: Z >--> Boolean,
+  updater: (Z && A) >--> (Z && A),
+  resultExtractor: A >--> Y): Z >--> Y =
+
+  val program: Program[>-->] = summon[Program[>-->]]
+  import program.{ Let, If }
+
+  val argument: (Z && A) >--> Z = `(z&&y)>-->z`
+  val accumulator: (Z && A) >--> A = `(z&&y)>-->y`
+
+  lazy val recursiveAccumulatorUpdater: (Z && A) >--> A =
+    If(argument >--> argumentPredicate) {
+      accumulator
+    } Else {
+      updater >--> recursiveAccumulatorUpdater
+    }
+    
+  Let {
+    accumulatorInitializer
+  } In {
+    recursiveAccumulatorUpdater >--> resultExtractor
+  }   
+```
+
+Recursive programs like `fibonacci` can be optimized using an *accumulator*.
+
+`recursiveAccumulatorUpdater` is also a recursive program, but, when carefully designed, it should be efficient.
+
+## `optimizedFactorial`
+
+```scala
+package examples.specification.program
+
+import psbp.specification.program.Program
+
+import psbp.specification.program.{ `(z&&y)>-->z` => argument, `z>-->z` => accumulator, optimizeWith }
+
+def optimizedFactorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+  optimizeWith(
+    accumulatorInitializer = one, 
+    argumentPredicate = isZero, 
+    updater = (argument >--> subtractOne) && multiply, 
+    resultExtractor = accumulator
+  )
+```
+
+For `optimizedFactorial` the accumulator type is `BigInt`.
+
+One `BigInt` optimizes one recursion occurrence.
+
+## `optimizedFibonacci`
+
+```scala
+package examples.specification.program
+
+import psbp.specification.program.Program
+
+import psbp.specification.program.{ `(z&&y)>-->z` => firstAccumulator, `(z&&y)>-->y` => secondAccumulator, optimizeWith}
+
+def optimizedFibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+  optimizeWith(
+    accumulatorInitializer = one && one, 
+    argumentPredicate = isZero, 
+    updater = subtractOne &&& (secondAccumulator && add), 
+    resultExtractor = firstAccumulator
+  )
+```
+
+For `optimizedFibonacci` the accumulator type is `BigInt && BigInt`.
+
+Two `BigInt`'s optimize two recursion occurrences.
+
+## `mainOptimizedFactorial`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.specification.program.Program
+
+import examples.specification.program.optimizedFactorial
+
+def mainOptimizedFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
+  optimizedFactorial toMainWith (
+    producer = intProducer,
+    consumer = factorialConsumer
+  )
+```
+
+## `mainOptimizedFibonacci`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.specification.program.Program
+
+import examples.specification.program.optimizedFibonacci
+
+def mainOptimizedFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
+  optimizedFibonacci toMainWith (
+    producer = intProducer,
+    consumer = fibonacciConsumer
+  )
+```
+
+## Running active effectful optimized factorial
+
+```scala
+package examples.active.program.effectful
+
+import psbp.active.program.given
+
+import psbp.active.materialization.given
+
+import examples.specification.program.effectful.mainOptimizedFactorial
+
+@main def optimizedFactorial(args: String*): Unit =
+  mainOptimizedFactorial materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.program.effectful.optimizedFactorial 
+Please type an integer
+10
+applying factorial to the integer argument 10 yields result 3628800
+[success] ...
+```
+
+## Running active effectful optimized fibonacci
+
+```scala
+package examples.implementation.active.program.effectful
+
+import psbp.implementation.active.given
+
+import examples.specification.program.effectful.mainOptimizedFibonacci
+
+@main def optimizedFibonacci(args: String*): Unit =
+  mainOptimizedFibonacci materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.program.effectful.optimizedFibonacci 
+Please type an integer
+10
+applying fibonacci to the integer argument 10 yields result 89
+[success] ...
+```
+
+You can also try it with `1000` instead of `10`!
+
+With `10000` you will get a stack overflow.
+
+## Running reactive effectful optimized factorial
+
+```scala
+package examples.implementation.reactive.program.effectful
+
+import psbp.implementation.reactive.given
+
+import examples.specification.program.effectful.mainOptimizedFactorial
+
+@main def optimizedFactorial(args: String*): Unit =
+  mainOptimizedFactorial materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.reactive.program.effectful.optimizedFactorial 
+Please type an integer
+10
+applying factorial to the integer argument 10 yields result 3628800
+[success] ...
+```
+
+## reactive optimized `fibonacci`
+
+```scala
+package examples.implementation.reactive.program.effectful
+
+import psbp.implementation.reactive.given
+
+import examples.specification.program.effectful.mainOptimizedFibonacci
+
+@main def optimizedFibonacci(args: String*): Unit =
+  mainOptimizedFibonacci materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.reactive.program.effectful.optimizedFibonacci 
+Please type an integer
+10
+applying fibonacci to the integer argument 10 yields result 89
+[success] ...
+```
+You can also try it with `250` instead of `10`!
+
+With `1000` you will get a stack overflow.
+
+
 
 
