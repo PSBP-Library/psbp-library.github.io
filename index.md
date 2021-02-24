@@ -561,7 +561,59 @@ def conditionallyUsingIf[>-->[- _, + _]: Program, Z, Y, X]
     `(y||x)>-->x` >--> `x>-->z`
   }
 ```
+where
 
+```scala
+package psbp.specification.program
+
+// ...
+
+// condition
+
+def `(z||z)>-->z`[>-->[- _, + _]: Functional, Z]: (Z || Z) >--> Z =
+  `(z||z)=>z` asProgram  
+  
+def `(y||x)>-->b`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Boolean =
+  `(y||x)=>b` asProgram
+
+def `(y||x)>-->y`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Y =
+  `(y||x)=>y` asProgram
+
+def `(y||x)>-->x`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> X =
+  `(y||x)=>x` asProgram
+
+// ...
+```
+
+are program utilities,
+
+where
+
+```scala
+package psbp.specification.program
+
+// ...
+
+// condition
+
+// ...
+
+def `(z||z)=>z`[Z]: (Z || Z) => Z =
+  _.foldSum(z => z, z => z)  
+  
+def `(y||x)=>b`[Y, X]: (Y || X) => Boolean =
+  _.foldSum(_ => true, _ => false)
+
+def `(y||x)=>y`[Y, X]: (Y || X) => Y =
+  _.foldSum(y => y, _ => ???) 
+
+def `(y||x)=>x`[Y, X]: (Y || X) => X =
+  _.foldSum(_ => ???, x => x)
+```
+
+are function utilities.
+
+`|||` and `If() {} Else {}` have the same power of expression as `conditionally` and `||`.
 
 ## `factorial`
 
@@ -842,58 +894,4 @@ A first product value `(subtractOne && subtractTwo)(i)`, which equals `(i - 1, i
 A second product value `(fibonacci &&& fibonacci)(i - 1, i - 2)` which equals `(fibonacci(i - 1), fibonacci(i - 2))` is constructed.
 
 The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(i - 1) + fibonacci(i - 2)`
-
-where
-
-```scala
-package psbp.specification.program
-
-// ...
-
-// condition
-
-def `(z||z)>-->z`[>-->[- _, + _]: Functional, Z]: (Z || Z) >--> Z =
-  `(z||z)=>z` asProgram  
-  
-def `(y||x)>-->b`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Boolean =
-  `(y||x)=>b` asProgram
-
-def `(y||x)>-->y`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Y =
-  `(y||x)=>y` asProgram
-
-def `(y||x)>-->x`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> X =
-  `(y||x)=>x` asProgram
-
-// ...
-```
-
-are program utilities,
-
-where
-
-```scala
-package psbp.specification.program
-
-// ...
-
-// condition
-
-// ...
-
-def `(z||z)=>z`[Z]: (Z || Z) => Z =
-  _.foldSum(z => z, z => z)  
-  
-def `(y||x)=>b`[Y, X]: (Y || X) => Boolean =
-  _.foldSum(_ => true, _ => false)
-
-def `(y||x)=>y`[Y, X]: (Y || X) => Y =
-  _.foldSum(y => y, _ => ???) 
-
-def `(y||x)=>x`[Y, X]: (Y || X) => X =
-  _.foldSum(_ => ???, x => x)
-```
-
-are function utilities.
-
-`|||` and `If() {} Else {}` have the same power of expression as `conditionally` and `||`.
 
