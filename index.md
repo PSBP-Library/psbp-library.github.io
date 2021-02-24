@@ -1128,9 +1128,6 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
   private[psbp] override def conditionally[Z, Y, X]
     (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
     _.foldSum(`y>-->z`, `x>-->z`)
-
-  private[psbp] override def conditionally[Z, Y, X] (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
-    _.foldSum(`y>-->z`, `x>-->z`) 
 ```
 
 `programFromComputation` is a `given` that defines that the basic programming capabilities of a program of type `Z => C[Y]` can be defined in terms of the basic computational capabilities of the computation of type `C[Y]`.
