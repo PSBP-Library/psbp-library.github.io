@@ -1143,3 +1143,119 @@ The `PSBP` specification `trait`''s define an *application developer API*.
 The `PSBP` internal specification `trait`''s define a *library developer API*.
 
 It is a deliberate choice to not let application developers make use of the pointful library developer API, forcing them to think in a pointfree way.
+
+# Active programming
+
+So far no implementation of the basic computational capabilities has been given yet.
+
+A completely trivial way to implement computations of type `C[Y]` is as expressions of type `Y`, referred to as *active computations*.
+
+As a consequence, programs of type `Z => C[Y]`, are implemented as functions of type `Z => Y`, referred to as *active programs*.
+
+## `` Program[`=>A`] `` 
+
+```scala
+package psbp.implementation.active
+
+import psbp.specification.program.Program
+
+import psbp.internalSpecification.computation.{ Computation, programFromComputation }
+
+given Computation[Active] with
+
+  private[psbp] def result[Z]: Z => Active[Z] =
+    z =>
+      z
+
+  private[psbp] def bind[Z, Y] (cz: Active[Z], `z=>cy`: => Z => Active[Y]): Active[Y] =
+    `z=>cy`(cz)
+
+given Program[`=>A`] = programFromComputation[Active]
+```
+
+where
+
+```scala
+package psbp.implementation.active
+
+type Active[+Y] = Y
+
+type `=>A`[-Z, +Y] = Z => Active[Y]
+```
+
+`Active` is a  `given` implementation of `Computation`.
+
+As a consequence, `` `=>A` `` is an implementation of `Program`.
+
+Think of active programming as *pure functional programming*.
+
+Of course, using `Scala`, it is possible to write functions that perform side effects along the way of transforming their argument to a result.
+
+For example, inside of `mainFactorial`, `intProducer` are `factorialConsumer` perform side effects.
+
+Eventually side effects are unavoidable, but the intention is to push them as far as possible to the outside of programs in general, and main programs in particular.
+
+## `` Materialization[`=>A`, Unit, Unit] `` 
+
+```scala
+package psbp.implementation.active
+
+import psbp.specification.materialization.Materialization
+
+given Materialization[`=>A`, Unit, Unit] with
+
+  val materialize: (Unit `=>A` Unit) => Unit => Unit =
+    identity
+```
+
+Materialization of `` `=>A` `` is completely trivial.
+
+## running active effectful factorial
+
+```scala
+package examples.implementation.active.program.effectful
+
+import psbp.implementation.active.given
+
+import examples.specification.program.effectful.mainFactorial
+
+@main def factorial(args: String*): Unit =
+  mainFactorial materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.program.effectful.factorial 
+Please type an integer
+10
+applying factorial to the integer argument 10 yields result 3628800
+[success] ...
+```
+
+## running active effectful fibonacci
+
+```scala
+package examples.implementation.active.program.effectful
+
+import psbp.implementation.active.given
+
+import examples.specification.program.effectful.mainFibonacci
+
+@main def fibonacci(args: String*): Unit =
+  mainFibonacci materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.program.effectful.fibonacci 
+Please type an integer
+10
+applying fibonacci to the integer argument 10 yields result 55
+[success] ...
+```
