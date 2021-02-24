@@ -983,3 +983,165 @@ def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
 ```
 
 `mainFibonacci` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
+
+## Materialization
+
+```scala
+package psbp.specification.materialization
+
+trait Materialization[>-->[- _, + _], -Z, +Y]:
+
+  // declared
+
+  val materialize: (Unit >--> Unit) => Z => Y
+
+  // defined extensions
+
+  extension (`u>-->u`: Unit >--> Unit) def materialized: Z => Y =
+    materialize(`u>-->u`)
+```
+
+Main programs are materialized to functions.
+
+The function type `Z => Y` is generic to allow for various materializations of main programs.
+
+The public member `materialized` is an `extension` that can be used as postfix operator.
+
+# Computations
+
+An *internal specification part* of the `PSBP` library models *computing*.
+
+Think about it as explaining to `Scala` what computing is all about.
+
+Members of internal specification `trait`'s are referred to as *computational capabilities*.
+
+A `val` that is defined in terms of computational capabilities is referred to as a *computation*. 
+
+A computation has a *descriptive* nature, in fact it would be more appropriate to refer to it as a *computation description*.
+
+In a way a computation is a generalization of an *expression*.
+
+An expression of type `Y` evaluates to a *result* of type `Y`
+
+A computation of type `C[Y]` *describes* computing a result of type `Y`.
+
+A computation may, or may not, *describe* performing side effects along the way.
+
+## Basic computational capabilities
+
+The *basic* computational capabilities are
+
+- *resulting*
+- *binding*
+
+Computational capabilities have an *operational* nature.
+
+They contribute to *performing computations*
+
+Performing computations generalizes *evaluating expressions*.
+
+## `Resulting`
+
+```scala
+package psbp.internalSpecification.computation
+
+private[psbp] trait Resulting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def result[Z]: Z => C[Z]
+```
+
+The `result` member of `Computation` specifies that performing a computation yields a *result*.
+
+## `Binding`
+
+```scala
+package psbp.internalSpecification.computation
+
+private[psbp] trait Binding[C[+ _]]:
+
+  // declared
+
+  private[psbp] def bind[Z, Y] (cz: C[Z], `z=>cy`: => Z => C[Y]): C[Y]
+
+  // defined computational capability
+
+  private[psbp] def join[Z] (ccz: C[C[Z]]): C[Z] =
+    bind(ccz, identity)
+
+  // defined extensions
+
+  extension [Z, Y] (cz: C[Z]) def >=(`z=>cy`: => Z => C[Y]): C[Y] =
+    bind(cz, `z=>cy`)
+
+  extension [Z, Y] (ccz: C[C[Z]]) def joined =
+    join(ccz) 
+```
+
+The `bind` computational capability specifies that while performing a computation, the result yielded by performing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where performing continues with.
+
+Compare this with evaluating expressions.
+
+The `join` computational capability specifies that an inner computation result can be seen as an outer computation, modeling *nested computations*.
+
+Compare this with nested expressions.
+
+The member `>=` is an`extension` that can be used as infix operator.
+
+The member `joined` is an`extension` that can be used as postfix operator.
+
+## `Computation`
+
+```scala
+package psbp.internalSpecification.computation
+
+import psbp.specification.program.{ &&, ||, Program }
+
+private[psbp] trait Computation[C[+ _]] 
+  extends Resulting[C] 
+  with Binding[C]
+
+private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] =>> Z => C[Y]] with
+  
+  private val computation: Computation[C] = summon[Computation[C]]
+
+  import computation.{ result, bind }
+
+  private type `=>C`[-Z, +Y] = Z => C[Y]
+
+  private[psbp] override def toProgram[Z, Y]: (Z => Y) => Z `=>C` Y = 
+    `z=>y` => 
+      z =>
+        result(`z=>y`(z))
+
+  private[psbp] override def andThen[Z, Y, X](`z>-->y`: Z `=>C` Y, `y>-->x`: => Y `=>C` X): Z `=>C` X =
+    z =>
+      `z>-->y`(z) >= 
+        `y>-->x`
+
+  private[psbp] override def construct[Z, Y, X] (`z>-->y`: Z `=>C` Y, `z>-->x`: => Z `=>C` X): Z `=>C` (Y && X) =
+    z =>
+      `z>-->y`(z) >= { y => 
+        `z>-->x`(z) >= { x =>
+          result(y, x)
+        }
+      }
+
+  private[psbp] override def conditionally[Z, Y, X] (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
+    _.foldSum(`y>-->z`, `x>-->z`) 
+```
+
+`programFromComputation` is a `given` that defines that the basic programming capabilities of a program of type `Z => C[Y]` can be defined in terms of the basic computational capabilities of the computation of type `C[Y]`.
+
+Compare this with functions being defined in terms of expressions.
+
+## Setting the scene
+
+*The* `PSBP` *library limits the program types* `Z >--> Y` *to program types* `Z => C[Y]` *defined in terms of computation types* `C[Y]`.
+
+The `PSBP` specification `trait`''s define an *application developer API*.
+
+The `PSBP` internal specification `trait`''s define a *library developer API*.
+
+It is a deliberate choice to not let application developers make use of the pointful library developer API, forcing them to think in a pointfree way.
