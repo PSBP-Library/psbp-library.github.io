@@ -1,8 +1,6 @@
 package examples.specification.program
 
-import psbp.specification.program.{ ||, Program }
-
-import psbp.specification.program.{ `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
+import psbp.specification.program.{ ||, Program, `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
 
 def `conditionally using |||`[>-->[- _, + _]: Program, Z, Y, X](`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
   (`y>-->z` ||| `x>-->z`) >--> `(z||z)>-->z`

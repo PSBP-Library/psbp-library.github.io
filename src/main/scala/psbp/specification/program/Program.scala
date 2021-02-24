@@ -25,7 +25,6 @@ trait Program[>-->[- _, + _]]
         }
       }
     
-    
     // defined
     
     def Let[Z, Y, X](`z>-->y`: Z >--> Y): In[Z, Y, X] =

@@ -9,8 +9,6 @@ def `z>-->z`[>-->[- _, + _]: Functional, Z]: Z >--> Z =
     
 // construction
 
-import psbp.specification.program.&&
-
 def `(z&&y)>-->z`[>-->[- _, + _]: Functional, Z, Y]: (Z && Y) >--> Z =
   `(z&&y)=>z` asProgram
     
@@ -24,8 +22,6 @@ def `(z&&y&&x)>-->(y&&x)`[>-->[- _, + _]: Functional, Z, Y, X]: (Z && Y && X) >-
   `(z&&y&&x)=>(y&&x)` asProgram
 
 // condition
-
-import psbp.specification.program.||
 
 def `z>-->(z||y)`[>-->[- _, + _]: Functional, Z, Y]: Z >--> (Z || Y) =
   `z=>(z||y)` asProgram
