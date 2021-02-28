@@ -70,15 +70,15 @@ Main programs, together with the producers, programs and consumers in terms of w
 
 *Running materialized main program implementations*, typically, somehow behave as follows
 
-- the *materialized producer implementation*, somehow, produces an argument from an *input source*, possibly performing side effects along the way, 
-- the *materialized program implementation*, somehow, transforms the argument to a result, possibly performing side effects along the way,
-- the *materialized consumer implementation*,somehow, consumes the argument and result to an *output sink*, possibly performing side effects along the way.
+- the *producer implementation*, somehow, produces an argument from an *input source*, possibly performing side effects along the way, 
+- the *program implementation*, somehow, transforms the produced argument to a to be consumed result, possibly performing side effects along the way,
+- the *consumer implementation*,somehow, consumes the argument and result to an *output sink*, possibly performing side effects along the way.
 
 Side effects can be *external* or *internal*.
 
 External side effects interact with the external world.
 
-Internal side effects typically manifest themselves in the function types of materialized program implementations.
+Internal side effects typically manifest themselves in the function types of program implementations.
 
 Materialized main program implementations are, eventually, used in a *main* `Scala` *programs*.
 
@@ -2624,5 +2624,12 @@ Again, the only difference with the active, reactive and free versions is the us
 
 Also a `given` implementation of `Initial` for `Seed` needs to be provided.
 
+While running the materialized main program implementation the implementation of program `random && random`, somehow, transforms its argument, in this case no argument, to a result, in this case a product result with two component results, internal side effects happened along the way. 
+
+More precisely, the `Seed` computation state modified, resulting in different results and, as a consequence, the two component results are not equal.  
+
+The important takeway is that statefulness has been achieved *without using any* `var`*'s*.
+
+Instead, statefulness manifests itself in the function type `Z => (Seed => Active[(Seed, Y)])` of program implementations.
 
 
