@@ -4,7 +4,7 @@ trait Materialization[>-->[- _, + _], -Z, +Y]:
 
   // declared
 
-  val materialize: (Unit >--> Unit) => Z => Y
+  private[psbp] val materialize: (Unit >--> Unit) => Z => Y
 
   // defined extensions
 

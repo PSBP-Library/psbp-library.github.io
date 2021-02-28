@@ -19,3 +19,4 @@ def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
       val j = `i&&j`._2
       println(s"applying fibonacci to the integer argument $i yields result $j")
   } asProgram
+

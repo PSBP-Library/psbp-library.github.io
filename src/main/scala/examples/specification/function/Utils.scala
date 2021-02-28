@@ -33,3 +33,11 @@ val subtractTwo: BigInt => BigInt =
 val add: BigInt && BigInt => BigInt =
   (n, m) =>
     n + m
+
+val isNotNegative: BigInt => Boolean =
+  n =>
+   n >= 0
+
+val negate: BigInt => BigInt =
+  n =>
+    -n   

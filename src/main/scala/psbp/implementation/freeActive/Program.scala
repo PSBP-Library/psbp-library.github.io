@@ -4,14 +4,14 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
+import psbp.internalSpecification.computation.programFromComputation
+
+import psbp.internalSpecification.computation.transformation.freeTransformedComputation
+
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given
+import psbp.implementation.active.activeComputation
 
-import psbp.internalSpecification.computation.transformation.given // freeTransformedComputation
+given freeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
 
-given Computation[FreeActive] = freeTransformedComputation[Active]
-
-import psbp.internalSpecification.computation.given // programFromComputation
-
-given Program[`=>FA`] = programFromComputation[FreeActive]
+given freeActiveProgram: Program[`=>FA`] = programFromComputation[FreeActive]

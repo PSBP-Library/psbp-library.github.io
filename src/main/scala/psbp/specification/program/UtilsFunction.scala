@@ -6,6 +6,10 @@ def `z=>z`[Z]: Z => Z =
   z =>
     z 
 
+def `z=>u`[Z]: Z => Unit = 
+  z =>
+    ()    
+
 // construction
 
 def `(z&&y)=>z`[Z, Y]: (Z && Y) => Z =

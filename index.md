@@ -68,7 +68,7 @@ Programs of type `Z >--> Y` are, somehow, combined with *producers* of type `Uni
 
 Main programs, together with the producers, programs and consumers in terms of which they are defined, are *materialized* to functions.
 
-*Materialized main program implementations*, typically, somehow behave as follows
+*Running materialized main program implementations*, typically, somehow behave as follows
 
 - the *materialized producer implementation*, somehow, produces an argument from an *input source*, possibly performing side effects along the way, 
 - the *materialized program implementation*, somehow, transforms the argument to a result, possibly performing side effects along the way,
@@ -317,7 +317,10 @@ import scala.language.postfixOps
 
 def `z>-->z`[>-->[- _, + _]: Functional, Z]: Z >--> Z =
   `z=>z` asProgram
-    
+
+def identity[>-->[- _, + _]: Functional, Z]: Z >--> Z =
+  `z=>z` asProgram  
+
 // construction
 
 def `(z&&y)>-->z`[>-->[- _, + _]: Functional, Z, Y]: (Z && Y) >--> Z =
@@ -993,7 +996,7 @@ trait Materialization[>-->[- _, + _], -Z, +Y]:
 
   // declared
 
-  val materialize: (Unit >--> Unit) => Z => Y
+  private[psbp] val materialize: (Unit >--> Unit) => Z => Y
 
   // defined extensions
 
@@ -1013,9 +1016,9 @@ An *internal specification part* of the `PSBP` library models *computing*.
 
 Think about it as explaining to `Scala` what computing is all about.
 
-Members of internal specification `trait`'s are referred to as *computational capabilities*.
+Members of internal specification `trait`'s are referred to as *computing capabilities*.
 
-A `val` that is defined in terms of computational capabilities is referred to as a *computation*. 
+A `val` that is defined in terms of computing capabilities is referred to as a *computation*. 
 
 A computation has a *descriptive* nature, in fact it would be more appropriate to refer to it as a *computation description*.
 
@@ -1027,18 +1030,18 @@ A computation of type `C[Y]` *describes* computing a result of type `Y`.
 
 A computation may, or may not, *describe* performing side effects along the way.
 
-## Basic computational capabilities
+## Basic computing capabilities
 
-The *basic* computational capabilities are
+The *basic* computing capabilities are
 
 - *resulting*
 - *binding*
 
-Computational capabilities have an *operational* nature.
+computing capabilities have an *operational* nature.
 
-They contribute to *performing computations*
+Computing is about *performing computations*
 
-Performing computations generalizes *evaluating expressions*.
+Computing generalizes *evaluation* which is about *evaluating expressions*.
 
 ## `Resulting`
 
@@ -1065,7 +1068,7 @@ private[psbp] trait Binding[C[+ _]]:
 
   private[psbp] def bind[Z, Y] (cz: C[Z], `z=>cy`: => Z => C[Y]): C[Y]
 
-  // defined computational capability
+  // defined computing capability
 
   private[psbp] def join[Z] (ccz: C[C[Z]]): C[Z] =
     bind(ccz, identity)
@@ -1079,11 +1082,11 @@ private[psbp] trait Binding[C[+ _]]:
     join(ccz) 
 ```
 
-The `bind` computational capability specifies that while performing a computation, the result yielded by performing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where performing continues with.
+The `bind` computing capability specifies that while performing a computation, the result yielded by performing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where performing continues with.
 
 Compare this with evaluating expressions.
 
-The `join` computational capability specifies that an inner computation result can be seen as an outer computation, modeling *nested computations*.
+The `join` computing capability specifies *nested computations*.
 
 Compare this with nested expressions.
 
@@ -1130,13 +1133,13 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
     _.foldSum(`y>-->z`, `x>-->z`)
 ```
 
-`programFromComputation` is a `given` that defines that the basic programming capabilities of a program of type `Z => C[Y]` can be defined in terms of the basic computational capabilities of the computation of type `C[Y]`.
+`programFromComputation` is a `given` that defines that the basic programming capabilities of a program of type `Z => C[Y]` can be defined in terms of the basic computing capabilities of the computation of type `C[Y]`.
 
 Compare this with functions being defined in terms of expressions.
 
 ## Setting the scene
 
-*The* `PSBP` *library limits the program types* `Z >--> Y` *to program types* `Z => C[Y]` *defined in terms of computation types* `C[Y]`.
+*The* `PSBP` *library limits the program types* `>-->[- _, + _]` *to program types* `[Z, Y] =>> Z => C[Y]` *defined in terms of computation types* `[Y] =>> C[Y]`, or `C[+ _]` for short.
 
 The `PSBP` specification `trait`''s define an *application developer API*.
 
@@ -1146,7 +1149,7 @@ It is a deliberate choice to not let application developers make use of the poin
 
 # Active programming
 
-So far no implementation of the basic computational capabilities has been given yet.
+So far no implementation of the basic computing capabilities has been given yet.
 
 A completely trivial way to implement computations of type `C[Y]` is as expressions of type `Y`, referred to as *active computations*.
 
@@ -1161,7 +1164,7 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.{ Computation, programFromComputation }
 
-given Computation[Active] with
+given activeComputation: Computation[Active] with
 
   private[psbp] def result[Z]: Z => Active[Z] =
     z =>
@@ -1170,7 +1173,7 @@ given Computation[Active] with
   private[psbp] def bind[Z, Y] (cz: Active[Z], `z=>cy`: => Z => Active[Y]): Active[Y] =
     `z=>cy`(cz)
 
-given Program[`=>A`] = programFromComputation[Active]
+given activeProgram: Program[`=>A`] = programFromComputation[Active]
 ```
 
 where
@@ -1202,7 +1205,7 @@ package psbp.implementation.active
 
 import psbp.specification.materialization.Materialization
 
-given Materialization[`=>A`, Unit, Unit] with
+given activeMaterialization: Materialization[`=>A`, Unit, Unit] with
 
   val materialize: (Unit `=>A` Unit) => Unit => Unit =
     identity
@@ -1275,7 +1278,7 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
-given Computation[Reactive] with
+given reactiveComputation: Computation[Reactive] = reactiveTransformedComputation[Active]
 
   private[psbp] def result[Z]: Z => Reactive[Z] =
     z => 
@@ -1291,7 +1294,7 @@ given Computation[Reactive] with
 
 import psbp.internalSpecification.computation.given // programFromComputation
 
-given Program[`=>R`] = programFromComputation[Reactive]
+given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
 ```
 
 where
@@ -1299,9 +1302,9 @@ where
 ```scala
 package psbp.implementation.reactive
 
-type Reactive[+Y] = (Y => Unit) => Unit
+type Reactive = [Y] =>> (Y => Unit) => Unit
 
-type `=>R`[-Z, +Y] = Z => Reactive[Y]
+type `=>R` = [Z, Y] =>> Z => Reactive[Y]
 ```
 
 `Reactive` is a  `given` implementation of `Computation`.
@@ -1657,7 +1660,7 @@ private[psbp] trait Transformation[F[+ _]: Computation, T[+ _]] extends Computat
 
   private[psbp] val `f~>t`: F ~> T
   
-  // defined computational capabilities 
+  // defined computing capabilities 
   
   override private[psbp] def result[Z]: Z => T[Z] = 
 
@@ -1683,7 +1686,7 @@ package psbp.internalSpecification.computation.transformation
 private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
 ```
 
-A reactive transformed computation is a *computation callback handler*, handing *computation callbacks* instead of *value callbacks*.
+A reactive transformed computation is a *computation callback handler*, handing *computation* callbacks instead of *value* callbacks.
 
 ## `reactiveTransformedComputation`
 
@@ -1721,9 +1724,9 @@ private[psbp] given reactiveTransformedComputation[
         }
 ```
 
-Any computation of type `[Z] =>> C[Z]` can be transformed to a reactive computation of type `[Z] =>> (C[Z] => Unit) => Unit` using `reactiveTransformedComputation`
+Any computation of type `C[Z]` can be transformed to a computation callback handler of type `[Z] =>> (C[Z] => Unit) => Unit` using `reactiveTransformedComputation`
 
-The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in thee computation callback handler of type `(C[Y] => Unit) => Unit`. 
+The `` `f~>t` `` member trivially uses a computation of type `C[Z]` as a computation callback handler of type `(C[Z] => Unit) => Unit` using function application. 
 
 ## `CoResulting`
 
@@ -1772,7 +1775,9 @@ private[psbp] given reactiveTransformedMaterialization[
         `u>-->u`(u)(coResult)
 ```
 
-Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` which makes use of `coResult`
+Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` which makes use of `coResult`. 
+
+The definition of `materialize` is the only reasonable one to get the types right.
 
 ## `CoResulting[Active]`
 
@@ -1781,7 +1786,7 @@ package psbp.implementation.active
 
 import psbp.internalSpecification.computation.CoResulting
 
-given CoResulting[Active] with
+given activeCoResulting: CoResulting[Active] with
   override def coResult[Z]: Active[Z] => Z =
     identity
 ```
@@ -1797,17 +1802,17 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
+import psbp.internalSpecification.computation.programFromComputation
+
+import psbp.internalSpecification.computation.transformation.reactiveTransformedComputation
+
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given
+import psbp.implementation.active.activeComputation
 
-import psbp.internalSpecification.computation.transformation.given // reactiveTransformedComputation
+given reactiveComputation: Computation[Reactive] = reactiveTransformedComputation[Active]
 
-given Computation[Reactive] = reactiveTransformedComputation[Active]
-
-import psbp.internalSpecification.computation.given // programFromComputation
-
-given Program[`=>R`] = programFromComputation[Reactive]
+given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
 ```
 
 where
@@ -1819,9 +1824,9 @@ import psbp.internalSpecification.computation.transformation.ReactiveTransformed
 
 import psbp.implementation.active.Active
 
-type Reactive[+Y] = ReactiveTransformed[Active][Y] 
+type Reactive = [Y] =>> ReactiveTransformed[Active][Y] 
 
-type `=>R`[-Z, +Y] = Z => Reactive[Y]
+type `=>R` = [Z, Y] =>> Z => Reactive[Y]
 ```
 
 Transforming from active programming with `` `=>A` `` to reactive programming with `` `=>R` `` is done by using a combination of `reactiveTransformedComputation` and `programFromComputation`.
@@ -1833,14 +1838,13 @@ package psbp.implementation.reactive
 
 import psbp.specification.materialization.Materialization
 
+import psbp.internalSpecification.materialization.reactiveTransformedMaterialization
+
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given 
+import psbp.implementation.active.given
 
-import psbp.internalSpecification.materialization.given // reactiveTransformedMaterialization
-
-given Materialization[`=>R`, Unit, Unit] = reactiveTransformedMaterialization[Active, Unit, Unit]
-
+given reactiveMaterialization: Materialization[`=>R`, Unit, Unit] = reactiveTransformedMaterialization[Active, Unit, Unit]
 ```
 
 Transforming from active materialization of `` `=>A` `` to reactive materialization of `` `=>R` `` is done by using `reactiveTransformedMaterialization`.
@@ -1872,7 +1876,9 @@ private[psbp] enum Free[C[+ _], +Z]:
 private[psbp] type FreeTransformed[C[+ _]] = [Z] =>> Free[C, Z]
 ```
 
-A free transformed computation is a *computation algebraic data type*, also known as *computation ADT*, with `case`'s 
+A free transformed computation is a *computation algebraic data type*, also known as *computation ADT*.
+
+It has the following `case`'s 
 
 - `Transform` for transforming,
 - `Result` for resulting,
@@ -1910,11 +1916,11 @@ private[psbp] given freeTransformedComputation[C[+ _]: Computation]: Transformat
       Bind(tz, `z=>ty`)
 ```
 
-Any computation of type `[Z] =>> C[Z]` can be transformed to a free computation of type `[Z] =>> Free[C, Z]` using `freeTransformedComputation`.
+Any computation of type `C[Z]` can be transformed to a computation ADT of type `Free[C, Z]` using `freeTransformedComputation`.
 
-The `` `f~>t` `` member of the transformed computation *embeds* the original computation of type `C[Y]` in the computation ADT of type `Free[C, Y]`. 
+The `` `f~>t` `` member stores a computation of type `C[Y]` in a computation ADT of type `Free[C, Y]`. 
 
-The `result` and `bind` members of the transformed computation further *unfold* the embedded computation of type `C[Y]` in the computation ADT of type `Free[C, Y]`. 
+The `result` and `bind` members further *unfold* a stored computation of type `C[Y]` in a computation ADT of type `Free[C, Y]`. 
 
 ## `foldFree`
 
@@ -1947,7 +1953,7 @@ private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): 
   }
 ```
 
-`foldFree` *folds* the computation ADT of type `Free[C, Y]` in which the computation of type `C[Y]` is embedded by `Transform`, back to a computation of type `C[Y]`.
+`foldFree` *folds* a computation ADT of type `Free[C, Y]` in which a computation of type `C[Y]` is stored by `Transform`, and *restores* it to a computation of type `C[Y]`.
 
 Although `foldFree` is not fully tail recursive, the `Scala` compiler performs tail recursive optimization for those cases where it is tail recursive.
 
@@ -1958,13 +1964,13 @@ The one but last `case` in `foldFree` corresponds to the *associativity of bindi
 ```scala
 package psbp.internalSpecification.materialization
 
+import psbp.specification.materialization.Materialization
+
 import psbp.internalSpecification.computation.Computation
 
 import psbp.internalSpecification.computation.transformation.{ Free, foldFree, FreeTransformed }
 
 import Free._
-
-import psbp.specification.materialization.Materialization
 
 private[psbp] given freeTransformedMaterialization[
   C[+ _]: Computation: 
@@ -2023,17 +2029,17 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
+import psbp.internalSpecification.computation.programFromComputation
+
+import psbp.internalSpecification.computation.transformation.freeTransformedComputation
+
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given
+import psbp.implementation.active.activeComputation
 
-import psbp.internalSpecification.computation.transformation.given // freeTransformedComputation
+given freeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
 
-given Computation[FreeActive] = freeTransformedComputation[Active]
-
-import psbp.internalSpecification.computation.given // programFromComputation
-
-given Program[`=>FA`] = programFromComputation[FreeActive]
+given freeActiveProgram: Program[`=>FA`] = programFromComputation[FreeActive]
 ```
 
 where
@@ -2045,9 +2051,9 @@ import psbp.internalSpecification.computation.transformation.FreeTransformed
 
 import psbp.implementation.active.Active
 
-type FreeActive[+Y] = FreeTransformed[Active][Y] 
+type FreeActive = [Y] =>> FreeTransformed[Active][Y] 
 
-type `=>FA`[-Z, +Y] = Z => FreeActive[Y]
+type `=>FA` = [Z, Y] =>> Z => FreeActive[Y]
 ```
 
 Transforming from active programming with `` `=>A` `` to free active programming with `` `=>FA` `` is done by using a combination of `freeTransformedComputation` and `programFromComputation`.
@@ -2059,14 +2065,13 @@ package psbp.implementation.freeActive
 
 import psbp.specification.materialization.Materialization
 
+import psbp.internalSpecification.materialization.freeTransformedMaterialization
+
 import psbp.implementation.active.Active
 
 import psbp.implementation.active.given
 
-import psbp.internalSpecification.materialization.given // freeTransformedMaterialization
-
-given Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]
-
+given freeMaterialization: Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]
 ```
 
 Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization`.
@@ -2126,4 +2131,498 @@ applying fibonacci to the integer argument 10 yields result 89
 You can also try it with `10000` instead of `10`.
 
 You will not get a stack overflow.
+
+# Programming with state
+
+## `State`
+
+```scala
+package psbp.specification.state
+
+trait State[S, >-->[- _, + _]]:
+
+  // declared
+
+  def `u>-->s`: Unit >--> S
+
+  def `s>-->u`: S >--> Unit
+
+trait Initial[S]:
+ 
+  // declared
+
+  val s: S
+```
+
+`State` specifies that *programs can read and write state*.
+
+`Initial` specifies that `S` has an *initial state*. 
+
+## `ProgramWithState`
+
+```scala
+package psbp.specification.programWithState
+
+import psbp.specification.program.Program
+
+import psbp.specification.program.`z>-->u`
+
+import psbp.specification.state.State
+
+trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-->]:
+
+  private implicit val program: Program[>-->] = this
+
+  // defined
+
+  def readState[Z]: Z >--> S =
+    `z>-->u` >--> `u>-->s`  
+
+  def writeState: S >--> Unit =
+    `s>-->u` 
+    
+  def modifyStateWith[Z]: (S >--> S) => (Z >--> Unit) =
+    `s>-->s` =>
+      readState >--> `s>-->s` >--> writeState
+  
+  def readStateModifiedWith[Z]: (S >--> S) => (Z >--> S) =
+    `s>-->s` =>
+      modifyStateWith(`s>-->s`) >--> readState
+```
+
+where
+
+```scala
+package psbp.specification.program
+
+// ...
+// functional
+
+//...
+
+def `z>-->u`[>-->[- _, + _]: Functional, Z]: Z >--> Unit =
+  `z=>u` asProgram 
+
+// ...  
+```
+is a program utility
+
+where
+
+```scala
+package psbp.specification.program
+
+// functional
+
+// ...
+
+def `z=>u`[Z]: Z => Unit = 
+  z =>
+    ()   
+
+// ...    
+```
+
+is a function utility.
+
+`readState`, `writeState`, `modifyStateWith` and `readStateModifiedWith` are useful computation state handling programs
+
+## `programWithState`
+
+```scala
+package psbp.implementation
+
+import psbp.specification.program.Program
+
+import psbp.specification.state.State
+
+import psbp.specification.programWithState.ProgramWithState
+
+given programWithState[S: [S] =>> State[S, >-->], >-->[- _, + _]: Program]: ProgramWithState[S, >-->] with
+ 
+  private val program: Program[>-->] = summon[Program[>-->]]
+
+  private val state: State[S, >-->] = summon[State[S, >-->]]
+
+  export program.toProgram
+  export program.andThen
+  export program.construct
+  export program.conditionally
+
+  export state.`u>-->s`
+  export state.`s>-->u`
+```
+
+Using dependency injection by `import` of `programWithState`, a generic `given` implementation of `ProgramWithState` only `given` implementations of  `Program` and `State` need to be dependency injected by `import`.
+
+## `Random`
+
+```scala
+package examples.specification.programWithState
+
+import scala.language.postfixOps
+
+import psbp.specification.programWithState.ProgramWithState
+
+import examples.specification.program.negateIfNegative
+
+type Seed = Long
+
+def random[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Z >--> BigInt =
+
+  val programWithSeedState: ProgramWithState[Seed, >-->] = summon[ProgramWithState[Seed, >-->]]
+  import programWithSeedState.readStateModifiedWith
+  
+  object function {
+    val seedModifier: Seed => Seed = 
+      seed =>
+        (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
+  
+    val seed2randomBigInt: Seed => BigInt = 
+      seed =>
+        BigInt((seed >>> 16).toInt)
+        
+    val moduloSomeLong: BigInt => BigInt =
+      n =>
+        n % 9876543210L     
+  }
+ 
+  val seedModifier: Seed >--> Seed =
+    function.seedModifier asProgram
+
+  val seed2randomBigInt =
+    function.seed2randomBigInt asProgram
+
+  val moduloSomeLong =
+    function.moduloSomeLong asProgram
+
+  val readModifiedSeed = readStateModifiedWith(seedModifier)   
+
+  readModifiedSeed >--> seed2randomBigInt >--> negateIfNegative >--> moduloSomeLong 
+```
+
+where
+
+```scala
+package examples.specification.program
+
+// ...
+
+def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+  function.isNotNegative asProgram 
+
+def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+  function.negate asProgram   
+  
+import psbp.specification.program.Program  
+
+import psbp.specification.program.identity
+
+def negateIfNegative[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+
+  val program: Program[>-->] = summon[Program[>-->]]
+  import program.If
+
+  If(isNotNegative) {
+    identity
+  } Else {
+    negate
+  }
+```
+
+are program utilities
+
+where
+
+```scala
+package examples.specification.function
+
+// ...
+
+val isNotNegative: BigInt => Boolean =
+  n =>
+   n >= 0
+
+val negate: BigInt => BigInt =
+  n =>
+    -n  
+```
+
+are function utilities.
+
+The implementation details are not important: `random` does some number mumbo-jumbo to yield a random integer while modifying a seed state along the way.
+
+## `mainTwoRandoms`
+
+```scala
+package examples.specification.programWithState.effectful
+
+import psbp.specification.program.&&
+
+import psbp.specification.programWithState.ProgramWithState
+
+import examples.specification.programWithState.{ Seed, random }  
+
+def mainTwoRandoms[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Unit >--> Unit =
+  (random && random) toMainWith (
+    producer = unitProducer,
+    consumer = twoRandomsConsumer
+  )
+```
+
+where
+
+```scala
+package examples.specification.programWithState.effectful
+
+import scala.language.postfixOps
+
+import psbp.specification.program.Program
+
+def unitProducer[>-->[- _, + _]: Program]: Unit >--> Unit = 
+  { (_: Unit) =>
+      ()
+  } asProgram 
+```
+
+and where
+
+```scala
+package examples.specification.programWithState.effectful
+
+import scala.language.postfixOps
+
+import psbp.specification.program.{ &&, Program }
+
+def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >--> Unit =
+  {
+    (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
+      val `i&&j` = `u&&(i&&j)`._2
+      println(s"generating a two random big ints yields result ${`i&&j`}")
+  } asProgram
+```
+
+`mainRandom` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
+
+## `StateTransformed`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]
+```
+
+A state transformed computation is a *computation state handler*, handling computation state while performing a computation.
+
+## `stateTransformedComputation`
+
+```scala
+package psbp.internalSpecification.computation.transformation
+
+import psbp.specification.state.State
+
+import psbp.internalSpecification.naturalTransformation.~>
+
+import psbp.internalSpecification.computation.Computation
+
+private[psbp] given stateTransformedComputation[
+  S,
+  C[+ _]: Computation]: Transformation[C, StateTransformed[S, C]] 
+  with Computation[[Z] =>> StateTransformed[S, C][Z]]
+  with State[S, [Z, Y] =>> Z => StateTransformed[S, C][Y]] with 
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = StateTransformed[S, C][Z]
+
+  private type `=>T` = [Z, Y] =>> Z => StateTransformed[S, C][Y]
+
+  private val computationF: Computation[F] = summon[Computation[F]]
+  import computationF.{ result => resultF, bind => bindF }
+
+  override private[psbp] val `f~>t`: F ~> T = new {
+    def apply[Z]: F[Z] => T[Z] =
+      fz =>
+        s =>
+          bindF(fz, z => resultF((s, z)))
+  }
+
+  override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty`: => Z => T[Y]): T[Y] =
+    s =>
+      bindF(tz(s), (s, z) => `z=>ty`(z)(s))    
+
+  override def `u>-->s`: Unit `=>T` S =
+    _ => 
+      s =>
+        resultF((s, s))
+
+  override def `s>-->u`: S `=>T` Unit =
+    s => 
+      _ =>
+        resultF((s, ()))
+```
+
+Any computation of type `C[Z]` can be transformed to a computation state handler of type `S => C[(S, Z)]` using `stateTransformedComputation`.
+
+The `` `f~>t` `` member trivially uses a computation of type `C[Z]` as a computation state handler of type `S => C[(S, Z)]` not doing any computation performing and not doing any state handling. 
+
+The  `bind` member binds a computation state handler of type `S => C[(S, Z)]` not doing any state handling along the way. 
+
+The  `` `u>-->s` `` member reads the state not doing any computation performing.
+
+The  `` `s>-->u` `` member writes the state not doing any computation performing.
+
+## `stateTransformedMaterialization`
+
+```scala
+package psbp.internalSpecification.materialization
+
+import psbp.specification.program.&&
+
+import psbp.specification.state.Initial
+
+import psbp.specification.materialization.Materialization
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.computation.transformation.StateTransformed
+
+private[psbp] given stateTransformedMaterialization[
+  S: Initial,
+  C[+ _]: Computation: 
+  [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y], Z, Y]: 
+  Materialization[[Z, Y] =>> Z => StateTransformed[S, C][Y], Z, C[Y]] with
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = StateTransformed[S, C][Z]
+
+  private type `=>F`[-Z, +Y] = Z => F[Y]
+  private type `=>T`[-Z, +Y] = Z => T[Y]
+
+  private val Materialization: Materialization[`=>F`, Z, Y] = summon[Materialization[`=>F`, Z, Y]]
+  import Materialization.{ materialize => materializeF }
+
+  private val computation: Computation[C] = summon[Computation[F]]
+  import computation.{ result => resultF, bind => bindF }  
+
+  private val initial: Initial[S] = summon[Initial[S]]
+  import initial.{ s => initialS }
+
+  override val materialize: (Unit `=>T` Unit) => Z => C[Y] =
+    `u=>tu` =>
+      z =>
+        bindF(`u=>tu`(())(initialS), (s, _) => resultF(materializeF(resultF)(z)))
+```
+
+Using `initialS`, `materialize` materializes to a function of type `Z => C[Y]`.
+
+## Stateful active programming
+
+```scala
+package psbp.implementation.stateActive
+
+import psbp.specification.program.Program
+
+import psbp.specification.state.State
+
+import psbp.specification.programWithState.ProgramWithState
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.computation.programFromComputation
+
+import psbp.internalSpecification.computation.transformation.stateTransformedComputation
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.activeComputation
+
+given stateActiveComputation[S]: Computation[StateActive[S]] = stateTransformedComputation[S, Active]
+
+given stateActiveState[S]: State[S, `=>SA`[S]] = stateTransformedComputation[S, Active]
+
+given stateActiveProgram[S]: Program[`=>SA`[S]] = programFromComputation[StateActive[S]]
+```
+
+where
+
+```scala
+package psbp.implementation.stateActive
+
+import psbp.internalSpecification.computation.transformation.StateTransformed
+
+import psbp.implementation.active.Active
+
+type StateActive[S] = [Y] =>> StateTransformed[S, Active][Y] 
+
+type `=>SA`[S] = [Z, Y] =>> Z => StateActive[S][Y]
+```
+
+Transforming from active programming with `` `=>A` `` to stateful active programming with `` `=>SA[S]` `` is done by using a combination of `stateTransformedComputation` and `programFromComputation`.
+
+## Stateful active marerialization
+
+```scala
+package psbp.implementation.stateActive
+
+import psbp.specification.program.&&
+
+import psbp.specification.state.Initial
+
+import psbp.specification.materialization.Materialization
+
+import psbp.internalSpecification.materialization.stateTransformedMaterialization
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.given
+
+given stateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, Unit] =
+  stateTransformedMaterialization[S, Active, Unit, Unit]
+```
+
+Transforming from active materialization of `` `=>A` `` to stateful active materialization of `` `=>SA`[S] `` is done by using `stateTransformedMaterialization`.
+
+## Running stateful effectful active two randoms
+
+```scala
+package examples.implementation.active.programWithState.effectful
+
+import psbp.specification.state.Initial
+
+import psbp.specification.programWithState.ProgramWithState
+
+import examples.specification.programWithState.Seed
+
+import psbp.implementation.programWithState
+
+import psbp.implementation.stateActive.`=>SA`
+
+import psbp.implementation.stateActive.given
+
+import examples.specification.programWithState.effectful.mainTwoRandoms
+
+given initialSeedState: Initial[Seed] = 
+  new { 
+    override val s = 1L 
+  }
+
+@main def twoRandoms(args: String*): Unit =
+  mainTwoRandoms materialized ()
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.programWithState.effectful.twoRandoms 
+generating two random integers yields result (384748,1151252339)
+[success] ...
+```
+
+Again, the only difference with the active, reactive and free versions is the usage of a different dependency injection by `import`.
+
+Also a `given` implementation of `Initial` for `Seed` needs to be provided.
+
+
 

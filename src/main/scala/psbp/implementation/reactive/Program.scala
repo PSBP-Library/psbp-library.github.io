@@ -4,13 +4,19 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
+import psbp.internalSpecification.computation.programFromComputation
+
+import psbp.internalSpecification.computation.transformation.reactiveTransformedComputation
+
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given
+import psbp.implementation.active.activeComputation
 
-import psbp.internalSpecification.computation.transformation.given // reactiveTransformedComputation
+given reactiveComputation: Computation[Reactive] = reactiveTransformedComputation[Active]
 
-// given Computation[Reactive] with
+given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
+
+// given reactiveComputation: Computation[Reactive] with
 
 //   private[psbp] def result[Z]: Z => Reactive[Z] =
 //     z => 
@@ -23,9 +29,3 @@ import psbp.internalSpecification.computation.transformation.given // reactiveTr
 //         z =>
 //           `z=>cy`(z)(`y=>u`)
 //       }
-
-given Computation[Reactive] = reactiveTransformedComputation[Active]
-
-import psbp.internalSpecification.computation.given // programFromComputation
-
-given Program[`=>R`] = programFromComputation[Reactive]

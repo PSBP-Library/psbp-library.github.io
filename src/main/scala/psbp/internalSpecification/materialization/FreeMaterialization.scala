@@ -1,12 +1,12 @@
 package psbp.internalSpecification.materialization
 
+import psbp.specification.materialization.Materialization
+
 import psbp.internalSpecification.computation.Computation
 
 import psbp.internalSpecification.computation.transformation.{ Free, foldFree, FreeTransformed }
 
 import Free._
-
-import psbp.specification.materialization.Materialization
 
 private[psbp] given freeTransformedMaterialization[
   C[+ _]: Computation: 

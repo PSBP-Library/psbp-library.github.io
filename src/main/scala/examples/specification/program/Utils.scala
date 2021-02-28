@@ -28,4 +28,25 @@ def subtractTwo[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
   function.subtractTwo asProgram  
 
 def add[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =  
-  function.add asProgram  
+  function.add asProgram 
+  
+def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+  function.isNotNegative asProgram 
+
+def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+  function.negate asProgram   
+  
+import psbp.specification.program.Program  
+
+import psbp.specification.program.identity
+
+def negateIfNegative[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+
+  val program: Program[>-->] = summon[Program[>-->]]
+  import program.If
+
+  If(isNotNegative) {
+    identity
+  } Else {
+    negate
+  }

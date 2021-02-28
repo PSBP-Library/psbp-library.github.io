@@ -6,6 +6,12 @@ import scala.language.postfixOps
 
 def `z>-->z`[>-->[- _, + _]: Functional, Z]: Z >--> Z =
   `z=>z` asProgram
+
+def identity[>-->[- _, + _]: Functional, Z]: Z >--> Z =
+  `z=>z` asProgram  
+
+def `z>-->u`[>-->[- _, + _]: Functional, Z]: Z >--> Unit =
+  `z=>u` asProgram  
     
 // construction
 
