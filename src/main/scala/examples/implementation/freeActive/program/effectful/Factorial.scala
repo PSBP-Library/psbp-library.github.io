@@ -1,4 +1,4 @@
-package examples.implementation.tailRecursiveActive.program.effectful
+package examples.implementation.freeActive.program.effectful
 
 import psbp.implementation.freeActive.given
 

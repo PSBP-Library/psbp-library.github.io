@@ -1456,7 +1456,7 @@ def optimizedFactorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
 For `optimizedFactorial` the accumulator type is `BigInt`.
 
-One `BigInt` optimizes one recursion occurrence.
+One `BigInt` optimizes one recursive occurrence.
 
 ## `optimizedFibonacci`
 
@@ -1480,7 +1480,7 @@ def optimizedFibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
 For `optimizedFibonacci` the accumulator type is `BigInt && BigInt`.
 
-Two `BigInt`'s optimize two recursion occurrences.
+Two `BigInt`'s optimize two recursive occurrences.
 
 ## `mainOptimizedFactorial`
 
@@ -1851,9 +1851,9 @@ Transforming from active materialization of `` `=>A` `` to reactive materializat
 
 All reactive examples above still run fine, but you will get a stack overflow with large numbers.
 
-Time for *tail recursion*!
+Time for *tail recursive optimization*!
 
-# Tail recursion
+# Tail recursive optimization
 
 ## `FreeTransformed`
 
@@ -2079,7 +2079,7 @@ Transforming from active materialization of `` `=>A` `` to free active materiali
 ## Running tail recursive effectful active factorial
 
 ```scala
-package examples.implementation.tailRecursiveActive.program.effectful
+package examples.implementation.freeActive.program.effectful
 
 import psbp.implementation.freeActive.given
 
@@ -2094,7 +2094,7 @@ Let's run it
 ```scala
 sbt:PSBP> run
 ...
-[info] running examples.implementation.tailRecursiveActive.program.effectful.factorial 
+[info] running examples.implementation.freeActive.program.effectful.factorial 
 Please type an integer
 10
 applying factorial to the integer argument 10 yields result 3628800
@@ -2106,7 +2106,7 @@ Again, the only difference with the active and reactive versions is the usage of
 ## Running tail recursive effectful active optimized fibonacci
 
 ```scala
-package examples.implementation.tailRecursiveActive.program.effectful
+package examples.implementation.freeActive.program.effectful
 
 import psbp.implementation.freeActive.given
 
@@ -2121,7 +2121,7 @@ Let's run it
 ```scala
 sbt:PSBP> run
 ...
-[info] running examples.implementation.tailRecursiveActive.program.effectful.optimizedFibonacci 
+[info] running examples.implementation.freeActive.program.effectful.optimizedFibonacci 
 Please type an integer
 10
 applying fibonacci to the integer argument 10 yields result 89
