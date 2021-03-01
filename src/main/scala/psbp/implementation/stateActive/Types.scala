@@ -1,6 +1,6 @@
 package psbp.implementation.stateActive
 
-import psbp.internalSpecification.computation.transformation.StateTransformed
+import psbp.internalImplementation.computation.transformation.StateTransformed
 
 import psbp.implementation.active.Active
 

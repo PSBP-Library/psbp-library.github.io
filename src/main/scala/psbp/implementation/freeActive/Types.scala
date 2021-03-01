@@ -1,6 +1,6 @@
 package psbp.implementation.freeActive
 
-import psbp.internalSpecification.computation.transformation.FreeTransformed
+import psbp.internalImplementation.computation.transformation.FreeTransformed
 
 import psbp.implementation.active.Active
 

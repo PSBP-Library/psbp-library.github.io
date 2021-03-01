@@ -1,6 +1,4 @@
-package psbp.internalSpecification.materialization
-
-import psbp.specification.program.&&
+package psbp.internalImplementation.materialization
 
 import psbp.specification.state.Initial
 
@@ -8,7 +6,7 @@ import psbp.specification.materialization.Materialization
 
 import psbp.internalSpecification.computation.Computation
 
-import psbp.internalSpecification.computation.transformation.StateTransformed
+import psbp.internalImplementation.computation.transformation.StateTransformed
 
 private[psbp] given stateTransformedMaterialization[
   S: Initial,

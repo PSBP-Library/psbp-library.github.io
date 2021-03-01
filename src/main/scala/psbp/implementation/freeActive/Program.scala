@@ -4,9 +4,9 @@ import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
-import psbp.internalSpecification.computation.programFromComputation
+import psbp.internalImplementation.computation.programFromComputation
 
-import psbp.internalSpecification.computation.transformation.freeTransformedComputation
+import psbp.internalImplementation.computation.transformation.freeTransformedComputation
 
 import psbp.implementation.active.Active
 

@@ -2,7 +2,9 @@ package psbp.implementation.active
 
 import psbp.specification.program.Program
 
-import psbp.internalSpecification.computation.{ Computation, programFromComputation }
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalImplementation.computation.programFromComputation
 
 given activeComputation: Computation[Active] with
 

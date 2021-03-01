@@ -1,4 +1,4 @@
-package psbp.implementation
+package psbp.internalImplementation.programWithState
 
 import psbp.specification.program.Program
 

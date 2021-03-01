@@ -1,10 +1,10 @@
-package psbp.internalSpecification.materialization
+package psbp.internalImplementation.materialization
 
 import psbp.specification.materialization.Materialization
 
 import psbp.internalSpecification.computation.Computation
 
-import psbp.internalSpecification.computation.transformation.{ Free, foldFree, FreeTransformed }
+import psbp.internalImplementation.computation.transformation.{ Free, foldFree, FreeTransformed }
 
 import Free._
 

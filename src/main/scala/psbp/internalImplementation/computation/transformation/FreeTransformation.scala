@@ -1,10 +1,12 @@
-package psbp.internalSpecification.computation.transformation
+package psbp.internalImplementation.computation.transformation
 
 import psbp.specification.program.Program
 
+import psbp.internalSpecification.computation.Computation
+
 import psbp.internalSpecification.naturalTransformation.~>
 
-import psbp.internalSpecification.computation.Computation
+import psbp.internalSpecification.computation.transformation.Transformation
 
 import Free._
 

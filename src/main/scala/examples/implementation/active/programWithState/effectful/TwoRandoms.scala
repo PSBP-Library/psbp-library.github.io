@@ -4,13 +4,13 @@ import psbp.specification.state.Initial
 
 import psbp.specification.programWithState.ProgramWithState
 
-import examples.specification.programWithState.Seed
-
-import psbp.implementation.programWithState
+import psbp.internalImplementation.programWithState.given
 
 import psbp.implementation.stateActive.`=>SA`
 
 import psbp.implementation.stateActive.given
+
+import examples.specification.programWithState.Seed
 
 import examples.specification.programWithState.effectful.mainTwoRandoms
 

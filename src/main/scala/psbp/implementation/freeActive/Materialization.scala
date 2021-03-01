@@ -2,10 +2,10 @@ package psbp.implementation.freeActive
 
 import psbp.specification.materialization.Materialization
 
-import psbp.internalSpecification.materialization.freeTransformedMaterialization
+import psbp.internalImplementation.materialization.freeTransformedMaterialization
 
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.given
+import psbp.implementation.active.{ activeComputation, activeMaterialization }
 
-given freeMaterialization: Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]
+given freeActiveMaterialization: Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]

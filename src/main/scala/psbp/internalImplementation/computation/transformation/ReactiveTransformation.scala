@@ -1,8 +1,10 @@
-package psbp.internalSpecification.computation.transformation
+package psbp.internalImplementation.computation.transformation
 
 import psbp.internalSpecification.naturalTransformation.~>
 
 import psbp.internalSpecification.computation.Computation
+
+import psbp.internalSpecification.computation.transformation.Transformation
 
 private[psbp] given reactiveTransformedComputation[
   C[+ _]: Computation]: Transformation[C, ReactiveTransformed[C]] 

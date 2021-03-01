@@ -1,6 +1,6 @@
 package psbp.implementation.reactive
 
-import psbp.internalSpecification.computation.transformation.ReactiveTransformed
+import psbp.internalImplementation.computation.transformation.ReactiveTransformed
 
 import psbp.implementation.active.Active
 

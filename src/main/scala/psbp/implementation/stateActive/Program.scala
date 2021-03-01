@@ -8,9 +8,9 @@ import psbp.specification.programWithState.ProgramWithState
 
 import psbp.internalSpecification.computation.Computation
 
-import psbp.internalSpecification.computation.programFromComputation
+import psbp.internalImplementation.computation.programFromComputation
 
-import psbp.internalSpecification.computation.transformation.stateTransformedComputation
+import psbp.internalImplementation.computation.transformation.stateTransformedComputation
 
 import psbp.implementation.active.Active
 

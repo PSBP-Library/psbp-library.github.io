@@ -1,4 +1,4 @@
-package psbp.internalSpecification.computation.transformation
+package psbp.internalImplementation.computation.transformation
 
 import psbp.internalSpecification.computation.{ Computation, CoResulting }
 
