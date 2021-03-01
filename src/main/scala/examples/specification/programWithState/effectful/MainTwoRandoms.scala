@@ -4,10 +4,10 @@ import psbp.specification.program.&&
 
 import psbp.specification.programWithState.ProgramWithState
 
-import examples.specification.programWithState.{ Seed, random }  
+import examples.specification.programWithState.{ Seed, twoRandoms }  
 
 def mainTwoRandoms[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Unit >--> Unit =
-  (random && random) toMainWith (
+  twoRandoms toMainWith (
     producer = unitProducer,
     consumer = twoRandomsConsumer
   )

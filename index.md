@@ -1213,7 +1213,7 @@ given activeMaterialization: Materialization[`=>A`, Unit, Unit] with
 
 Materialization of `` `=>A` `` is completely trivial.
 
-## Running active effectful factorial
+## Running active factorial (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1238,7 +1238,7 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-## Running active effectful fibonacci
+## Running active fibonacci (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1336,7 +1336,7 @@ This is a recurring theme in pure functional programming and, as a generalizatio
 
 Often an almost trivial choice for a function component, resp. program component does the trick to get the types right.
 
-## Running reactive effectful `factorial`
+## Running reactive `factorial` (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1363,7 +1363,7 @@ applying factorial to the integer argument 10 yields result 3628800
 
 The only difference with the active version is the usage of a different dependency injection by `import`.
 
-## Running reactive effectful `fibonacci`
+## Running reactive `fibonacci` (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1514,7 +1514,7 @@ def mainOptimizedFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
   )
 ```
 
-## Running active effectful optimized factorial
+## Running active optimized factorial (with an effectful producer and consumer)
 
 ```scala
 package examples.active.program.effectful
@@ -1541,7 +1541,7 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-## Running active effectful optimized fibonacci
+## Running active optimized fibonacci (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1570,7 +1570,7 @@ You can also try it with `1000` instead of `10`.
 
 With `10000` you will get a stack overflow.
 
-## Running reactive effectful optimized factorial
+## Running reactive optimized factorial (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1686,7 +1686,7 @@ package psbp.internalSpecification.computation.transformation
 private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
 ```
 
-A reactive transformed computation is a *computation callback handler*, handing *computation* callbacks instead of *value* callbacks.
+A reactive transformed computation is a *computation callback handler*, a computation handling *computation* callbacks.
 
 ## `reactiveTransformedComputation`
 
@@ -1724,9 +1724,9 @@ private[psbp] given reactiveTransformedComputation[
         }
 ```
 
-Any computation of type `C[Z]` can be transformed to a computation callback handler of type `[Z] =>> (C[Z] => Unit) => Unit` using `reactiveTransformedComputation`
+Any computation of type `C[Z]` can, using `reactiveTransformedComputation`, be transformed to a computation of type `(C[Z] => Unit) => Unit` that is a computation callback handler. 
 
-The `` `f~>t` `` member trivially uses a computation of type `C[Z]` as a computation callback handler of type `(C[Z] => Unit) => Unit` using function application. 
+The `` `f~>t` `` member trivially uses a computation as a computation callback handler of type using function application. 
 
 ## `CoResulting`
 
@@ -1775,7 +1775,7 @@ private[psbp] given reactiveTransformedMaterialization[
         `u>-->u`(u)(coResult)
 ```
 
-Transforming materialization of `[Z, Y] =>> Z => C[Y]`, to reactive materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit`, is done using `reactiveTransformedMaterialization` which makes use of `coResult`. 
+Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization, of `[Z, Y] =>> Z => (C[Y] => Unit) => Unit, Unit, Unit`, is done using `reactiveTransformedMaterialization` which makes use of `coResult`. 
 
 The definition of `materialize` is the only reasonable one to get the types right.
 
@@ -1844,7 +1844,8 @@ import psbp.implementation.active.Active
 
 import psbp.implementation.active.given
 
-given reactiveMaterialization: Materialization[`=>R`, Unit, Unit] = reactiveTransformedMaterialization[Active, Unit, Unit]
+given reactiveMaterialization: Materialization[`=>R`, Unit, Unit] = 
+  reactiveTransformedMaterialization[Active, Unit, Unit]
 ```
 
 Transforming from active materialization of `` `=>A` `` to reactive materialization of `` `=>R` `` is done by using `reactiveTransformedMaterialization`.
@@ -1916,11 +1917,11 @@ private[psbp] given freeTransformedComputation[C[+ _]: Computation]: Transformat
       Bind(tz, `z=>ty`)
 ```
 
-Any computation of type `C[Z]` can be transformed to a computation ADT of type `Free[C, Z]` using `freeTransformedComputation`.
+Any computation of type `C[Z]` can, using `freeTransformedComputation`, be transformed to a computation of type `Free[C, Y]` that is a computation ADT.
 
-The `` `f~>t` `` member stores a computation of type `C[Y]` in a computation ADT of type `Free[C, Y]`. 
+The `` `f~>t` `` member trivially stores a computation of type in a computation ADT of type. 
 
-The `result` and `bind` members further *unfold* a stored computation of type `C[Y]` in a computation ADT of type `Free[C, Y]`. 
+The `result` and `bind` members further *unfold* a stored computation of type in a computation ADT. 
 
 ## `foldFree`
 
@@ -1994,7 +1995,7 @@ private[psbp] given freeTransformedMaterialization[
       materializeF(`u=>tu` andThen `tu=>fu`)
 ```
 
-Transforming materialization of `[Z, Y] =>> Z => C[Y],`, to free materialization, of `[Z, Y] =>> Z => Free[C, Y]`, is done using `freeTransformedMaterialization` which makes use of `foldFree`.
+Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization, of `[Z, Y] =>> Z => Free[C, Y], Z, Y`, is done using `freeTransformedMaterialization` which makes use of `foldFree`.
 
 ## `freeCoResulting`
 
@@ -2076,7 +2077,7 @@ given freeMaterialization: Materialization[`=>FA`, Unit, Unit] = freeTransformed
 
 Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization`.
 
-## Running tail recursive effectful active factorial
+## Running tail recursive active factorial (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2103,7 +2104,7 @@ applying factorial to the integer argument 10 yields result 3628800
 
 Again, the only difference with the active and reactive versions is the usage of a different dependency injection by `import`.
 
-## Running tail recursive effectful active optimized fibonacci
+## Running tail recursive active optimized fibonacci (with an effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2225,7 +2226,7 @@ def `z=>u`[Z]: Z => Unit =
 
 is a function utility.
 
-`readState`, `writeState`, `modifyStateWith` and `readStateModifiedWith` are useful computation state handling programs
+`readState`, `writeState`, `modifyStateWith` and `readStateModifiedWith` are useful state handling programs
 
 ## `programWithState`
 
@@ -2253,9 +2254,9 @@ given programWithState[S: [S] =>> State[S, >-->], >-->[- _, + _]: Program]: Prog
   export state.`s>-->u`
 ```
 
-Using dependency injection by `import` of `programWithState`, a generic `given` implementation of `ProgramWithState` only `given` implementations of  `Program` and `State` need to be dependency injected by `import`.
+Using dependency injection by `import` of `programWithState`, a generic `given` implementation of `ProgramWithState`, only `given` implementations of  `Program` and `State` need to be dependency injected by `import`.
 
-## `Random`
+## `random`
 
 ```scala
 package examples.specification.programWithState
@@ -2350,7 +2351,24 @@ val negate: BigInt => BigInt =
 
 are function utilities.
 
-The implementation details are not important: `random` does some number mumbo-jumbo to yield a random integer while modifying a seed state along the way.
+The implementation details are not important: while, somehow , transforming any argument to a random integer result, `random` modifies a seed computation state along the way.
+
+## `twoRandoms`
+
+```scala
+package examples.specification.programWithState
+
+import psbp.specification.program.&&
+
+import psbp.specification.programWithState.ProgramWithState
+
+def twoRandoms[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Z >--> (BigInt && BigInt) =
+  random && random
+```
+
+Illustrating statefulness can be done by using `twoRandoms`, somehow , transforming any argument to two random integer results.
+
+When running materialized main `twoRandoms` implementations the two random integer results are not equal.
 
 ## `mainTwoRandoms`
 
@@ -2361,10 +2379,10 @@ import psbp.specification.program.&&
 
 import psbp.specification.programWithState.ProgramWithState
 
-import examples.specification.programWithState.{ Seed, random }  
+import examples.specification.programWithState.{ Seed, twoRandoms }  
 
 def mainTwoRandoms[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Unit >--> Unit =
-  (random && random) toMainWith (
+  twoRandoms toMainWith (
     producer = unitProducer,
     consumer = twoRandomsConsumer
   )
@@ -2402,7 +2420,7 @@ def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >-
   } asProgram
 ```
 
-`mainRandom` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
+`mainRandom` is a main program that, makes use of a trivial producer and, for now, makes use of an effectful consumer.
 
 ## `StateTransformed`
 
@@ -2412,7 +2430,7 @@ package psbp.internalSpecification.computation.transformation
 private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]
 ```
 
-A state transformed computation is a *computation state handler*, handling computation state while performing a computation.
+A state transformed computation is a *computation state handler*, a computation handling computation state while being performed.
 
 ## `stateTransformedComputation`
 
@@ -2461,11 +2479,11 @@ private[psbp] given stateTransformedComputation[
         resultF((s, ()))
 ```
 
-Any computation of type `C[Z]` can be transformed to a computation state handler of type `S => C[(S, Z)]` using `stateTransformedComputation`.
+Any computation of type `C[Z]` can, using `stateTransformedComputation`, be transformed to a computation of type `S => C[(S, Z)]` that handles computation state .
 
-The `` `f~>t` `` member trivially uses a computation of type `C[Z]` as a computation state handler of type `S => C[(S, Z)]` not doing any computation performing and not doing any state handling. 
+The `` `f~>t` `` member trivially uses a computation as a computation that handles computation state, not doing any computation performing and not doing any computation state handling. 
 
-The  `bind` member binds a computation state handler of type `S => C[(S, Z)]` not doing any state handling along the way. 
+The  `bind` member binds a computation that handles computation state not doing any state handling along the way. 
 
 The  `` `u>-->s` `` member reads the state not doing any computation performing.
 
@@ -2513,7 +2531,7 @@ private[psbp] given stateTransformedMaterialization[
         bindF(`u=>tu`(())(initialS), (s, _) => resultF(materializeF(resultF)(z)))
 ```
 
-Using `initialS`, `materialize` materializes to a function of type `Z => C[Y]`.
+Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization, of `[Z, Y] =>> Z => (S => C[(S, Y)]), Z, C[Y]`, is done using `stateTransformedMaterialization` which makes use of `initialS`. 
 
 ## Stateful active programming
 
@@ -2582,7 +2600,7 @@ given stateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, U
 
 Transforming from active materialization of `` `=>A` `` to stateful active materialization of `` `=>SA`[S] `` is done by using `stateTransformedMaterialization`.
 
-## Running stateful effectful active two randoms
+## Running stateful active two randoms (with an effectful consumer)
 
 ```scala
 package examples.implementation.active.programWithState.effectful
@@ -2624,14 +2642,16 @@ Again, the only difference with the active, reactive and free versions is the us
 
 Also a `given` implementation of `Initial` for `Seed` needs to be provided.
 
-Running the materialized main program implementation, the implementation of program `random && random`, somehow, transforms its argument, in this case no argument, to a result, in this case a product result with two different result components `384748` and `1151252339`. 
+When running the materialized main program implementation, the implementation of program `twoRandoms`, somehow, transforms its argument, in this case no argument, to a result, in this case a product result.
 
-The result components are different because, while transforming, internal side effects are happening along the way.
+This product result consists of two *different* random integers, `384748` and `1151252339`. 
 
-More precisely, the `Seed` computation state modified, and, as a consequence, the two component results are not equal.
+They are different because, while transforming, internal side effects are happening along the way.
 
-The important takeway is that statefulness has been achieved *without using any* `var`*'s*.
+More precisely, the `Seed` computation state modifies.
 
-Instead, statefulness manifests itself in the function type `Z => (Seed => [(Seed, Y)])` of program implementations.
+The important takeway is that statefulness can be achieved *without using any* `var`*'s*.
+
+Instead, statefulness manifests itself, internally, in the function type `Z => (Seed => [(Seed, Y)])` of program implementations.
 
 

@@ -1,4 +1,4 @@
-val scala3Version = "3.0.0-RC1"
+val scala3Version = "3.0.0-RC2-bin-20210228-4d0d591-NIGHTLY"
 
 lazy val root = project
   .in(file("."))
@@ -10,8 +10,8 @@ lazy val root = project
 
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
     libraryDependencies ++= Seq(
-       "com.typesafe.akka" %% "akka-actor-typed" % "2.6.12",
-       "com.typesafe.akka" %% "akka-slf4j"       % "2.6.12"
+       "com.typesafe.akka" %% "akka-actor-typed" % "2.6.13",
+       "com.typesafe.akka" %% "akka-slf4j"       % "2.6.13"
     ).map(_.withDottyCompat(scalaVersion.value))
         
   )
