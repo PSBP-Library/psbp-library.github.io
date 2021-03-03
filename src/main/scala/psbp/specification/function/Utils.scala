@@ -1,4 +1,6 @@
-package psbp.specification.program
+package psbp.specification.function
+
+import psbp.specification.types.{ &&, || }
 
 // functional
 
@@ -8,7 +10,10 @@ def `z=>z`[Z]: Z => Z =
 
 def `z=>u`[Z]: Z => Unit = 
   z =>
-    ()    
+    () 
+    
+def `u=>u`: Unit => Unit = 
+  `z=>z`[Unit]     
 
 // construction
 
@@ -27,6 +32,14 @@ def `z=>(z&&z)`[Z]: Z => (Z && Z) =
 def `(z&&y&&x)=>(y&&x)`[Z, Y, X]: (Z && Y && X) => (Y && X) =
   case ((_, y), x) =>
     (y, x)  
+
+def `z=>(z&&u)`[Z]: Z => (Z && Unit) =
+  z =>
+    (z, ()) 
+
+def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
+  (y, _) => 
+    y       
 
 // condition
 

@@ -1,8 +1,8 @@
 package psbp.implementation.stateActive
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
-import psbp.specification.state.Initial
+import psbp.specification.program.state.Initial
 
 import psbp.specification.materialization.Materialization
 

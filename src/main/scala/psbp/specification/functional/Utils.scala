@@ -1,6 +1,12 @@
-package psbp.specification.program
+package psbp.specification.functional
 
 import scala.language.postfixOps
+
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.program.Functional
+
+import psbp.specification.function._
 
 // functional
 
@@ -12,7 +18,10 @@ def identity[>-->[- _, + _]: Functional, Z]: Z >--> Z =
 
 def `z>-->u`[>-->[- _, + _]: Functional, Z]: Z >--> Unit =
   `z=>u` asProgram  
-    
+
+def `u>-->u`[>-->[- _, + _]: Functional]: Unit >--> Unit =
+  `u=>u` asProgram
+
 // construction
 
 def `(z&&y)>-->z`[>-->[- _, + _]: Functional, Z, Y]: (Z && Y) >--> Z =
@@ -26,6 +35,12 @@ def `z>-->(z&&z)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Z) =
 
 def `(z&&y&&x)>-->(y&&x)`[>-->[- _, + _]: Functional, Z, Y, X]: (Z && Y && X) >--> (Y && X) =
   `(z&&y&&x)=>(y&&x)` asProgram
+    
+def `z>-->(z&&u)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Unit) =
+  `z=>(z&&u)` asProgram
+
+def `(y&&u)>-->y`[>-->[- _, + _]: Functional, Y]: (Y && Unit) >--> Y =
+  `(y&&u)=>y` asProgram 
 
 // condition
 
@@ -51,30 +66,4 @@ def `(y||x)>-->x`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> X =
   
 def `(z&&b)>-->(z||z)`[>-->[- _, + _]: Functional, Z]: (Z && Boolean) >--> (Z || Z) =
   `(z&&b)=>(z||z)` asProgram 
-
-// accumulator based optimization
-
-def optimizeWith[>-->[- _, + _]: Program, A, Z, Y](
-  accumulatorInitializer: Z >--> A,
-  argumentPredicate: Z >--> Boolean,
-  updater: (Z && A) >--> (Z && A),
-  resultExtractor: A >--> Y): Z >--> Y =
-
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.{ Let, If }
-
-  val argument: (Z && A) >--> Z = `(z&&y)>-->z`
-  val accumulator: (Z && A) >--> A = `(z&&y)>-->y`
-
-  lazy val recursiveAccumulatorUpdater: (Z && A) >--> A =
-    If(argument >--> argumentPredicate) {
-      accumulator
-    } Else {
-      updater >--> recursiveAccumulatorUpdater
-    }
-    
-  Let {
-    accumulatorInitializer
-  } In {
-    recursiveAccumulatorUpdater >--> resultExtractor
-  }   
+ 

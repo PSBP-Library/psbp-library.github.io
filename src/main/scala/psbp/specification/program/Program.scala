@@ -1,5 +1,10 @@
 package psbp.specification.program
 
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.functional.{ 
+  `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
+
 trait Program[>-->[- _, + _]]
   extends Functional[>-->]
   with Composition[>-->]

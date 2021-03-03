@@ -2,6 +2,8 @@ package examples.specification.program
 
 import psbp.specification.program.Program
 
+import examples.specification.functional.{ isZero, one, subtractOne, multiply }
+
 def factorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
   val program: Program[>-->] = summon[Program[>-->]]

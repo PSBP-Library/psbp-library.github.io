@@ -10,7 +10,7 @@ private[psbp] trait Transformation[F[+ _]: Computation, T[+ _]] extends Computat
 
   private[psbp] val `f~>t`: F ~> T
   
-  // defined computing capabilities 
+  // defined
   
   override private[psbp] def result[Z]: Z => T[Z] = 
 

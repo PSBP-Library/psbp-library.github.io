@@ -165,6 +165,8 @@ Funny looking names like `` `z>-->y` `` can be thought of as typeful generic nam
 ```scala
 package psbp.specification.program
 
+import psbp.specification.types.&&
+
 trait Construction[>-->[- _, + _]]:
 
   // declared
@@ -180,7 +182,7 @@ trait Construction[>-->[- _, + _]]:
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.types
 
 // product
 
@@ -202,7 +204,7 @@ The type of the second argument of `construct` is a call-by-name one.
 ```scala
 package psbp.specification.program
 
-// import psbp.specification.types.||
+import psbp.specification.types.||
 
 trait Condition[>-->[- _, + _]]:
 
@@ -219,7 +221,7 @@ trait Condition[>-->[- _, + _]]:
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.types
 
 // ...
 
@@ -249,6 +251,11 @@ The types of the arguments of `conditionally` are call-by-name ones.
 
 ```scala
 package psbp.specification.program
+
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.functional.{ 
+  `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
 
 trait Program[>-->[- _, + _]]
   extends Functional[>-->]
@@ -311,9 +318,15 @@ trait Program[>-->[- _, + _]]
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.functional
 
 import scala.language.postfixOps
+
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.program.Functional
+
+import psbp.specification.function._
 
 // functional
 
@@ -352,7 +365,7 @@ are program utilities,
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.function
 
 // functional
 
@@ -478,7 +491,11 @@ The result is `consumer(z, y)`, which equals `consumer(z, program(z))`, which eq
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.{ &&, Program, `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
+
+import psbp.specification.functional.{ `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
 
 def `construct using &&&`[>-->[- _, + _]: Program, Z, Y, X] 
   (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =
@@ -550,7 +567,11 @@ are function utilities.
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.{ ||, Program, `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
+import psbp.specification.types.||
+
+import psbp.specification.program.Program
+
+import psbp.specification.functional.{ `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
 
 def `conditionally using |||`[>-->[- _, + _]: Program, Z, Y, X]
   (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
@@ -597,7 +618,7 @@ are program utilities,
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.function
 
 // ...
 
@@ -629,6 +650,8 @@ package examples.specification.program
 
 import psbp.specification.program.Program
 
+import examples.specification.functional.{ isZero, one, subtractOne, multiply }
+
 def factorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
   val program: Program[>-->] = summon[Program[>-->]]
@@ -648,13 +671,13 @@ def factorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 where
 
 ```scala
-package examples.specification.program
+package examples.specification.functional
 
 import scala.language.postfixOps
 
 import psbp.specification.types.&&
 
-import psbp.specification.functional.Functional
+import psbp.specification.program.Functional
 
 import examples.specification.function
 
@@ -768,10 +791,12 @@ package examples.specification.program
 
 import psbp.specification.program.Program
 
+import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
+
 def fibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
   val program: Program[>-->] = summon[Program[>-->]]
-  import program.{ Let, If }
+  import program.If
 
   If(isZero) {
     zero
@@ -817,7 +842,7 @@ are program utilities,
 where
 
 ```scala
-package examples.specification.program
+package examples.specification.functional
 
 // ..
 
@@ -942,7 +967,9 @@ package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.{ &&, Program }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program 
 
 def factorialConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
   {
@@ -1041,7 +1068,7 @@ The *basic* computing capabilities are
 
 computing capabilities have an *operational* nature.
 
-Computing is about *performing computations*
+Computing is about *executing computations*
 
 Computing generalizes *evaluation* which is about *evaluating expressions*.
 
@@ -1057,7 +1084,7 @@ private[psbp] trait Resulting[C[+ _]]:
   private[psbp] def result[Z]: Z => C[Z]
 ```
 
-The `result` member of `Computation` specifies that performing a computation yields a *result*.
+The `result` member of `Computation` specifies that executing a computation yields a *result*.
 
 ## `Binding`
 
@@ -1070,7 +1097,7 @@ private[psbp] trait Binding[C[+ _]]:
 
   private[psbp] def bind[Z, Y] (cz: C[Z], `z=>cy`: => Z => C[Y]): C[Y]
 
-  // defined computing capability
+  // defined
 
   private[psbp] def join[Z] (ccz: C[C[Z]]): C[Z] =
     bind(ccz, identity)
@@ -1084,7 +1111,7 @@ private[psbp] trait Binding[C[+ _]]:
     join(ccz) 
 ```
 
-The `bind` computing capability specifies that while performing a computation, the result yielded by performing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where performing continues with.
+The `bind` computing capability specifies that while executing a computation, the result yielded by executing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where executing continues with.
 
 Compare this with evaluating expressions.
 
@@ -1111,7 +1138,9 @@ private[psbp] trait Computation[C[+ _]]
 ```scala
 package psbp.internalImplementation.computation
 
-import psbp.specification.program.{ &&, ||, Program }
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.program.Program
 
 import psbp.internalSpecification.computation.Computation
 
@@ -1231,7 +1260,7 @@ given activeMaterialization: Materialization[`=>A`, Unit, Unit] with
 
 Materialization of `` `=>A` `` is completely trivial.
 
-## Running `active` `factorial` (with an effectful producer and consumer)
+## Running `active` `factorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1256,7 +1285,7 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-## Running `active` `fibonacci` (with an effectful producer and consumer)
+## Running `active` `fibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1354,7 +1383,7 @@ This is a recurring theme in pure functional programming and, as a generalizatio
 
 Often an almost trivial choice for a function component, resp. program component does the trick to get the types right.
 
-## Running `reactive` `factorial` (with an effectful producer and consumer)
+## Running `reactive` `factorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1381,7 +1410,7 @@ applying factorial to the integer argument 10 yields result 3628800
 
 The only difference with the active version is the usage of a different injection by `import`.
 
-## Running `reactive` `fibonacci` (with an effectful producer and consumer)
+## Running `reactive` `fibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1418,7 +1447,11 @@ Time for *optimization*!
 ```scala
 package psbp.specification.program
 
-// ...
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
+
+import psbp.specification.functional.{ `(z&&y)>-->z`, `(z&&y)>-->y` }
 
 // accumulator based optimization
 
@@ -1445,7 +1478,7 @@ def optimizeWith[>-->[- _, + _]: Program, A, Z, Y](
     accumulatorInitializer
   } In {
     recursiveAccumulatorUpdater >--> resultExtractor
-  }   
+  }    
 ```
 
 Recursive programs like `fibonacci` can be optimized using an *accumulator*.
@@ -1459,9 +1492,11 @@ package examples.specification.program
 
 import psbp.specification.program.Program
 
-import psbp.specification.program.{ 
-  `(z&&y)>-->z` => argument, `z>-->z` => accumulator, optimizeWith
-  }
+import psbp.specification.functional.{ `(z&&y)>-->z` => argument, `z>-->z` => accumulator }
+
+import psbp.specification.program.optimizeWith
+
+import examples.specification.functional.{ isZero, one, subtractOne, multiply }
 
 def optimizedFactorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
   optimizeWith(
@@ -1483,9 +1518,11 @@ package examples.specification.program
 
 import psbp.specification.program.Program
 
-import psbp.specification.program.{ 
-  `(z&&y)>-->z` => firstAccumulator, `(z&&y)>-->y` => secondAccumulator, optimizeWith 
-  }
+import psbp.specification.functional.{ `(z&&y)>-->z` => firstAccumulator, `(z&&y)>-->y` => secondAccumulator }
+
+import psbp.specification.program.optimizeWith
+
+import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
 
 def optimizedFibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
   optimizeWith(
@@ -1532,7 +1569,7 @@ def mainOptimizedFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
   )
 ```
 
-## Running `active` `optimizedFactorial` (with an effectful producer and consumer)
+## Running `active` `optimizedFactorial` (effectful producer and consumer)
 
 ```scala
 package examples.active.program.effectful
@@ -1559,7 +1596,7 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-## Running `active` `optimizedFibonacci` (with an effectful producer and consumer)
+## Running `active` `optimizedFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
@@ -1588,7 +1625,7 @@ You can also try it with `1000` instead of `10`.
 
 With `10000` you will get a stack overflow.
 
-## Running `reactive` `optimizedFactorial` (with an effectful producer and consumer)
+## Running `reactive` `optimizedFactorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
@@ -1678,7 +1715,7 @@ private[psbp] trait Transformation[F[+ _]: Computation, T[+ _]] extends Computat
 
   private[psbp] val `f~>t`: F ~> T
   
-  // defined computing capabilities 
+  // defined
   
   override private[psbp] def result[Z]: Z => T[Z] = 
 
@@ -1701,7 +1738,11 @@ It cannot be defined as a `given` since `bind` is not defined yet.
 ```scala
 package psbp.internalImplementation.computation.transformation
 
+// ReactiveTransformed
+
 private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
+
+// ...
 ```
 
 A reactive transformed computation is a *computation callback handler*, a computation handling *computation* callbacks.
@@ -1721,27 +1762,27 @@ private[psbp] given reactiveTransformedComputation[
   C[+ _]: Computation]: Transformation[C, ReactiveTransformed[C]] 
   with Computation[ReactiveTransformed[C]] with 
 
-    private type F[+Z] = C[Z]
-    private type T[+Z] = ReactiveTransformed[F][Z]
+  private type F[+Z] = C[Z]
+  private type T[+Z] = ReactiveTransformed[F][Z]
   
-    private val computationF: Computation[F] = summon[Computation[F]]
-    import computationF.{ result => resultF, bind => bindF }
+  private val computationF: Computation[F] = summon[Computation[F]]
+  import computationF.{ result => resultF, bind => bindF }
     
-    override private[psbp] val `f~>t`: F ~> T = new {
-      def apply[Z]: F[Z] => T[Z] =
-        fz => 
-          `fz=>u` =>
-            `fz=>u`(fz)
-      }
+  override private[psbp] val `f~>t`: F ~> T = new {
+    def apply[Z]: F[Z] => T[Z] =
+      fz => 
+        `fz=>u` =>
+          `fz=>u`(fz)
+  }
   
-    override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] =
-      `fy=>u` =>
-        tz { 
-          fz =>
-            bindF(fz, { z =>
-              resultF(`z=>ty`(z)(`fy=>u`))
-            })
-        }
+  override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] =
+    `fy=>u` =>
+      tz { 
+        fz =>
+          bindF(fz, { z =>
+            resultF(`z=>ty`(z)(`fy=>u`))
+          })
+      }
 ```
 
 Any computation of type `C[Z]` can, using `reactiveTransformedComputation`, be transformed to a computation of type `(C[Z] => Unit) => Unit` that is a computation callback handler. 
@@ -1881,9 +1922,9 @@ Time for *tail recursive optimization*!
 ```scala
 package psbp.internalImplementation.computation.transformation
 
-import psbp.internalSpecification.computation.Computation
+//...
 
-import Free._
+// FreeTransformed
 
 private[psbp] enum Free[C[+ _], +Z]:
 
@@ -1895,6 +1936,8 @@ private[psbp] enum Free[C[+ _], +Z]:
     (fczz: Free[C, ZZ], `z=>fcy`: Z => FreeTransformed[C][Y]) extends Free[C, Y]
 
 private[psbp] type FreeTransformed[C[+ _]] = [Z] =>> Free[C, Z]
+
+// ...
 ```
 
 A free transformed computation is a *computation algebraic data type*, also known as *computation ADT*.
@@ -1922,21 +1965,21 @@ import Free._
 
 private[psbp] given freeTransformedComputation[C[+ _]: Computation]: Transformation[C, FreeTransformed[C]] with
 
-    private type F[+Z] = C[Z]
-    private type T[+Z] = FreeTransformed[F][Z] 
+  private type F[+Z] = C[Z]
+  private type T[+Z] = FreeTransformed[F][Z] 
     
-    override private[psbp] val `f~>t`: F ~> T = new {
-      def apply[Z]: F[Z] => T[Z] =
-        fz => 
-          Transform(fz)
-    }    
+  override private[psbp] val `f~>t`: F ~> T = new {
+    def apply[Z]: F[Z] => T[Z] =
+      fz => 
+        Transform(fz)
+  }    
 
-    override private[psbp] def result[Z]: Z => T[Z] =
-      z =>
-        Result(z)
+  override private[psbp] def result[Z]: Z => T[Z] =
+    z =>
+      Result(z)
 
-    override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] = 
-      Bind(tz, `z=>ty`) 
+  override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] = 
+    Bind(tz, `z=>ty`) 
 ```
 
 Any computation of type `C[Z]` can, using `freeTransformedComputation`, be transformed to a computation of type `Free[C, Y]` that is a computation ADT.
@@ -1951,6 +1994,10 @@ The `result` and `bind` members further *unfold* a stored computation of type in
 package psbp.internalImplementation.computation.transformation
 
 // ...
+
+import Free._
+
+import psbp.internalSpecification.computation.Computation
 
 private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): C[Z] =
 
@@ -1974,6 +2021,8 @@ private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): 
     case any =>
       sys.error(s"Impossible, since, 'foldFree' eliminates the case for $any")
   }
+
+// ...  
 ```
 
 `foldFree` *folds* a computation ADT of type `Free[C, Y]` in which a computation of type `C[Y]` is stored by `Transform`, and *restores* it to a computation of type `C[Y]`.
@@ -2079,7 +2128,7 @@ type FreeActive = [Y] =>> FreeTransformed[Active][Y]
 type `=>FA`= [Z, Y] =>> Z => FreeActive[Y]
 ```
 
-Transforming from active programming with `` `=>A` `` to free active programming with `` `=>FA` `` is done by using a combination of `freeTransformedComputation` and `programFromComputation`.
+Transforming from active programming with `` `=>A` `` to tail recursive active programming with `` `=>FA` `` is done by using a combination of `freeTransformedComputation` and `programFromComputation`.
 
 ## `freeActiveMaterialization`
 
@@ -2094,12 +2143,13 @@ import psbp.implementation.active.Active
 
 import psbp.implementation.active.{ activeComputation, activeMaterialization }
 
-given freeActiveMaterialization: Materialization[`=>FA`, Unit, Unit] = freeTransformedMaterialization[Active, Unit, Unit]
+given freeActiveMaterialization: Materialization[`=>FA`, Unit, Unit] = 
+  freeTransformedMaterialization[Active, Unit, Unit]
 ```
 
 Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization`.
 
-## Running tail recursive `freeActive` `factorial` (with an effectful producer and consumer)
+## Running tail recursive `freeActive` `factorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2126,7 +2176,7 @@ applying factorial to the integer argument 10 yields result 3628800
 
 Again, the only difference with the active and reactive versions is the usage of a different injection by `import`.
 
-## Running tail recursive `freeActive` `optimizedFibonacci` (with an effectful producer and consumer)
+## Running tail recursive `freeActive` `optimizedFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2160,15 +2210,15 @@ You will not get a stack overflow.
 ## `State`
 
 ```scala
-package psbp.specification.state
+package psbp.specification.program.state
 
 trait State[S, >-->[- _, + _]]:
 
   // declared
 
-  def `u>-->s`: Unit >--> S
+  private[psbp] def `u>-->s`: Unit >--> S
 
-  def `s>-->u`: S >--> Unit
+  private[psbp] def `s>-->u`: S >--> Unit
 
 trait Initial[S]:
  
@@ -2188,9 +2238,9 @@ package psbp.specification.programWithState
 
 import psbp.specification.program.Program
 
-import psbp.specification.program.`z>-->u`
+import psbp.specification.program.state.State
 
-import psbp.specification.state.State
+import psbp.specification.functional.`z>-->u`
 
 trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-->]:
 
@@ -2233,7 +2283,7 @@ is a program utility
 where
 
 ```scala
-package psbp.specification.program
+package psbp.specification.function
 
 // functional
 
@@ -2257,11 +2307,11 @@ package psbp.internalImplementation.programWithState
 
 import psbp.specification.program.Program
 
-import psbp.specification.state.State
+import psbp.specification.program.state.State
 
 import psbp.specification.programWithState.ProgramWithState
 
-given programWithState[S: [S] =>> State[S, >-->], >-->[- _, + _]: Program]: ProgramWithState[S, >-->] with
+given programWithState[S, >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
  
   private val program: Program[>-->] = summon[Program[>-->]]
 
@@ -2327,7 +2377,7 @@ def random[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]
 where
 
 ```scala
-package examples.specification.program
+package examples.specification.functional
 
 // ...
 
@@ -2336,10 +2386,19 @@ def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =
 
 def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
   function.negate asProgram   
+```
+are program utilities
+
+and
+
+```scala
+package examples.specification.program
   
 import psbp.specification.program.Program  
 
-import psbp.specification.program.identity
+import psbp.specification.functional.identity
+
+import examples.specification.functional.{ isNotNegative, negate }
 
 def negateIfNegative[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 
@@ -2380,7 +2439,7 @@ The implementation details are not important: while, somehow , transforming any 
 ```scala
 package examples.specification.programWithState
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
 import psbp.specification.programWithState.ProgramWithState
 
@@ -2397,11 +2456,11 @@ When running materialized main `twoRandoms` implementations the two random integ
 ```scala
 package examples.specification.programWithState.effectful
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
 import psbp.specification.programWithState.ProgramWithState
 
-import examples.specification.programWithState.{ Seed, twoRandoms }  
+import examples.specification.programWithState.{ Seed, twoRandoms } 
 
 def mainTwoRandoms[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Unit >--> Unit =
   twoRandoms toMainWith (
@@ -2432,13 +2491,15 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.{ &&, Program }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
 
 def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >--> Unit =
   {
     (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
       val `i&&j` = `u&&(i&&j)`._2
-      println(s"generating a two random big ints yields result ${`i&&j`}")
+      println(s"generating two random integers yields result ${`i&&j`}")
   } asProgram
 ```
 
@@ -2449,7 +2510,11 @@ def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >-
 ```scala
 package psbp.internalImplementation.computation.transformation
 
+// StateTransformed
+
 private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]
+
+// ...
 ```
 
 A state transformed computation is a *computation state handler*, a computation handling computation state while being performed.
@@ -2459,7 +2524,7 @@ A state transformed computation is a *computation state handler*, a computation 
 ```scala
 package psbp.internalImplementation.computation.transformation
 
-import psbp.specification.state.State
+import psbp.specification.program.state.State
 
 import psbp.internalSpecification.computation.Computation
 
@@ -2470,13 +2535,12 @@ import psbp.internalSpecification.naturalTransformation.~>
 private[psbp] given stateTransformedComputation[
   S,
   C[+ _]: Computation]: Transformation[C, StateTransformed[S, C]] 
-  with Computation[[Z] =>> StateTransformed[S, C][Z]]
-  with State[S, [Z, Y] =>> Z => StateTransformed[S, C][Y]] with 
+  with Computation[[Z] =>> StateTransformed[S, C][Z]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = StateTransformed[S, C][Z]
 
-  private type `=>T` = [Z, Y] =>> Z => StateTransformed[S, C][Y]
+  private type `=>T` = [Z, Y] =>> Z => T[Y]
 
   private val computationF: Computation[F] = summon[Computation[F]]
   import computationF.{ result => resultF, bind => bindF }
@@ -2492,12 +2556,25 @@ private[psbp] given stateTransformedComputation[
     s =>
       bindF(tz(s), (s, z) => `z=>ty`(z)(s))    
 
-  override def `u>-->s`: Unit `=>T` S =
+
+private[psbp] given stateTransformedState[
+  S,
+  C[+ _]: Computation]: State[S, [Z, Y] =>> Z => StateTransformed[S, C][Y]] with 
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = StateTransformed[S, C][Z]
+
+  private type `=>T` = [Z, Y] =>> Z => T[Y]
+
+  private val computationF: Computation[F] = summon[Computation[F]]
+  import computationF.{ result => resultF, bind => bindF }
+
+  override private[psbp] def `u>-->s`: Unit `=>T` S =
     _ => 
       s =>
         resultF((s, s))
 
-  override def `s>-->u`: S `=>T` Unit =
+  override private[psbp] def `s>-->u`: S `=>T` Unit =
     s => 
       _ =>
         resultF((s, ()))
@@ -2505,20 +2582,20 @@ private[psbp] given stateTransformedComputation[
 
 Any computation of type `C[Z]` can, using `stateTransformedComputation`, be transformed to a computation of type `S => C[(S, Z)]` that handles computation state .
 
-The `` `f~>t` `` member trivially uses a computation as a computation that handles computation state, not doing any computation performing and not doing any computation state handling. 
+The `` `f~>t` `` member trivially uses a computation as a computation that handles computation state, not doing any computation executing and not doing any computation state handling. 
 
 The  `bind` member binds a computation that handles computation state not doing any state handling along the way. 
 
-The  `` `u>-->s` `` member reads the state not doing any computation performing.
+The  `` `u>-->s` `` member reads the state not doing any computation executing.
 
-The  `` `s>-->u` `` member writes the state not doing any computation performing.
+The  `` `s>-->u` `` member writes the state not doing any computation executing.
 
 ## `stateTransformedMaterialization`
 
 ```scala
 package psbp.internalImplementation.materialization
 
-import psbp.specification.state.Initial
+import psbp.specification.program.state.Initial
 
 import psbp.specification.materialization.Materialization
 
@@ -2555,16 +2632,12 @@ private[psbp] given stateTransformedMaterialization[
 
 Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization, of `[Z, Y] =>> Z => (S => C[(S, Y)]), Z, C[Y]`, is done using `stateTransformedMaterialization` which makes use of `initialS`. 
 
-## `stateActiveProgram`
+## `stateActiveProgram` and `stateActiveState`
 
 ```scala
 package psbp.implementation.stateActive
 
 import psbp.specification.program.Program
-
-import psbp.specification.state.State
-
-import psbp.specification.programWithState.ProgramWithState
 
 import psbp.internalSpecification.computation.Computation
 
@@ -2578,9 +2651,23 @@ import psbp.implementation.active.activeComputation
 
 given stateActiveComputation[S]: Computation[StateActive[S]] = stateTransformedComputation[S, Active]
 
-given stateActiveState[S]: State[S, `=>SA`[S]] = stateTransformedComputation[S, Active]
-
 given stateActiveProgram[S]: Program[`=>SA`[S]] = programFromComputation[StateActive[S]]
+```
+
+and
+
+```scala
+package psbp.implementation.stateActive
+
+import psbp.specification.program.state.State
+
+import psbp.internalImplementation.computation.transformation.stateTransformedState
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.activeComputation
+
+given stateActiveState[S]: State[S, `=>SA`[S]] = stateTransformedState[S, Active]
 ```
 
 where
@@ -2597,16 +2684,16 @@ type StateActive[S] = [Y] =>> StateTransformed[S, Active][Y]
 type `=>SA`[S] = [Z, Y] =>> Z => StateActive[S][Y]
 ```
 
-Transforming from active programming with `` `=>A` `` to active programming with state with `` `=>SA[S]` `` is done by using a combination of `stateTransformedComputation` and `programFromComputation`.
+Transforming from active programming with `` `=>A` `` to active programming with state with `` `=>SA[S]` `` is done by using a combination of `stateTransformedComputation`, `stateTransformedState` and `programFromComputation`.
 
 ## `stateActiveMaterialization`
 
 ```scala
 package psbp.implementation.stateActive
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
-import psbp.specification.state.Initial
+import psbp.specification.program.state.Initial
 
 import psbp.specification.materialization.Materialization
 
@@ -2622,22 +2709,18 @@ given stateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, U
 
 Transforming from active materialization of `` `=>A` `` to active materialization with state of `` `=>SA`[S] `` is done by using `stateTransformedMaterialization`.
 
-## Running `stateActive` `twoRandoms` (with an effectful consumer)
+## Running `stateActive` `twoRandoms` (effectful consumer)
 
 ```scala
 package examples.implementation.active.programWithState.effectful
 
-import psbp.specification.state.Initial
+import psbp.specification.program.state.Initial
 
-import psbp.specification.programWithState.ProgramWithState
-
-import examples.specification.programWithState.Seed
-
-import psbp.implementation.programWithState
-
-import psbp.implementation.stateActive.`=>SA`
+import psbp.internalImplementation.programWithState.given
 
 import psbp.implementation.stateActive.given
+
+import examples.specification.programWithState.Seed
 
 import examples.specification.programWithState.effectful.mainTwoRandoms
 
@@ -2660,7 +2743,7 @@ generating two random integers yields result (384748,1151252339)
 [success] ...
 ```
 
-Again, the only difference with the active, reactive and free versions is the usage of a different injection by `import`.
+Again, the main difference with the active, reactive and free versions is the usage of a different injection by `import`.
 
 Also a `given` implementation of `Initial` for `Seed` needs to be provided.
 
@@ -2675,5 +2758,520 @@ More precisely, the `Seed` computation state modifies.
 The important takeway is that programming with state can be achieved *without using any* `var`*'s*.
 
 Instead, state manifests itself, internally, in the function type `Z => (S => [(S, Y)])` of program implementations.
+
+# Programming with parallelism
+
+## `Parallel`
+
+```scala
+package psbp.specification.program.parallel
+
+import psbp.specification.types.&&
+
+trait Parallel[>-->[- _, + _]]:
+  
+  // declared
+
+  private[psbp] def par[Z, Y, X, W] (`z>-->x`: Z >--> X, `y>-->w`: Y >--> W): (Z && Y) >--> (X && W)
+
+  def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y 
+  
+  // defined extensions
+
+  extension [Z, Y, X, W] (`z>-->x`: Z >--> X) def |&&&|(`y>-->w`: Y >--> W): (Z && Y) >--> (X && W) =
+    par(`z>-->x`, `y>-->w`)
+
+  extension [Z, Y] (`z>-->y`: Z >--> Y) def async: Z >--> Y  =
+    asynchronous(`z>-->y`)
+```
+
+`Parallel` specifies that programs can be *composed in parallel* and can be "performed asynchronously".
+
+The public member `|&&&|` is an extension that can be used as infix operator.
+
+The public member `async` is an extension that can be used as postfix operator.
+
+## `ProgramWithParallel`
+
+```scala
+package psbp.specification.programWithParallel
+
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
+
+import psbp.specification.program.parallel.Parallel
+
+import psbp.specification.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
+
+trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-->]:
+
+  private implicit val program: Program[>-->] = this
+
+  // defined
+  
+  override def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
+    `z>-->(z&&u)` >--> (`z>-->y` |&&&| `u>-->u`[>-->]) >--> `(y&&u)>-->y`
+
+  // defined extensions
+
+  extension [Z, Y, X] (`z>-->y`: Z >--> Y) def |&&|(`z>-->x`: Z >--> X): Z >--> (Y && X) =
+    `z>-->(z&&z)` >--> (`z>-->y` |&&&| `z>-->x`)
+```
+
+where
+
+```scala
+package psbp.specification.program
+
+import scala.language.postfixOps
+
+// functional
+
+// ...  
+
+def `u>-->u`[>-->[- _, + _]: Functional]: Unit >--> Unit =
+  `u=>u` asProgram
+
+// construction
+
+// ...
+    
+def `z>-->(z&&u)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Unit) =
+  `z=>(z&&u)` asProgram
+
+def `(y&&u)>-->y`[>-->[- _, + _]: Functional, Y]: (Y && Unit) >--> Y =
+  `(y&&u)=>y` asProgram 
+
+// ...
+```
+
+are program utilities
+where
+
+```scala
+package psbp.specification.function
+
+// functional
+
+// ...
+    
+def `u=>u`: Unit => Unit = 
+  `z=>z`[Unit]     
+
+// construction
+
+// ...  
+
+def `z=>(z&&u)`[Z]: Z => (Z && Unit) =
+  z =>
+    (z, ()) 
+
+def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
+  (y, _) => 
+    y       
+
+// ...
+```
+
+are function utilities.
+
+`asynchronous` can, by default, be defined, albeit in a somewhat sub-optimal way, in terms of `par`. 
+
+The public member `|&&|` is an extension that can be used as infix operator.
+
+## `programWithParallel`
+
+```scala
+package psbp.internalImplementation.programWithParallel
+
+import psbp.specification.program.Program
+
+import psbp.specification.program.parallel.Parallel
+
+import psbp.specification.programWithParallel.ProgramWithParallel
+
+given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParallel[>-->] with
+ 
+  private val program: Program[>-->] = summon[Program[>-->]]
+
+  private val parallel: Parallel[>-->] = summon[Parallel[>-->]]
+
+  export program.toProgram
+  export program.andThen
+  export program.construct
+  export program.conditionally
+
+  export parallel.par
+```
+
+Using injection by `import` of `programWithParallel`, a generic `given` implementation of `ProgramWithParallel`, only given implementations of `Program` and `Parallel` need to be injected by `import`.
+
+## `parallelFibonacci`
+
+```scala
+package examples.specification.programWithParallel
+
+import psbp.specification.programWithParallel.ProgramWithParallel
+
+import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
+
+def parallelFibonacci[>-->[- _, + _]: ProgramWithParallel]: BigInt >--> BigInt =
+
+  val programWithParallel: ProgramWithParallel[>-->] = summon[ProgramWithParallel[>-->]]
+  import programWithParallel.If
+
+  If(isZero) {
+    zero
+  } Else {
+    If(isOne) {
+      one
+    } Else {
+      (subtractOne && subtractTwo) >-->
+        (parallelFibonacci |&&&| parallelFibonacci) >-->
+        add
+    }
+  }
+```
+
+The definition of `parallelFibonacci` only differs from the definion of `fibonacci` by its usage of `|&&&|` instead of `&&&`.
+
+## `reactiveTransformedParallel`
+
+```scala
+package psbp.internalImplementation.computation.transformation
+
+import akka.actor.typed.{ ActorSystem, ActorRef, Behavior }
+
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+
+import Behaviors.{ receive, stopped }
+
+import ch.qos.logback.classic.{ Logger, LoggerContext, Level }
+
+import Level.{ INFO, ERROR}
+
+import org.slf4j.LoggerFactory.getILoggerFactory
+
+import language.implicitConversions
+
+import psbp.specification.types.&&
+
+import psbp.specification.program.parallel.Parallel
+
+import psbp.internalSpecification.computation.Computation
+
+import psbp.internalImplementation.computation.transformation.ReactiveTransformed
+
+val packageName = "psbp.internalImplementation.computation.transformation"
+
+def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
+  val logger: Logger = getILoggerFactory().asInstanceOf[LoggerContext].getLogger(packageName);
+  logger.setLevel(INFO);
+  actorContext.log.info(message)
+  logger.setLevel(ERROR);  
+}
+
+private[psbp] given reactiveTransformedParallel[
+  C[+ _]: Computation]: Parallel[[Z, Y] =>> Z => ReactiveTransformed[C][Y]] with
+
+  private type F[+Z] = C[Z]
+  private type T[+Z] = ReactiveTransformed[C][Z]
+  
+  private val computation: Computation[F] = summon[Computation[F]]
+  import computation.{ result => resultF, bind => bindF }
+  
+  override private[psbp] def parallel[Z, Y, X, W](`z=>tx`: Z => T[X], `y=>tw`: Y => T[W]): (Z && Y) => T[X && W] =
+    (z, y) => 
+      `f(x,w)=>u` =>
+        val `(x,w)=>f(x,w)` = resultF[(X && W)]
+        val `(x,w)=>u` = `(x,w)=>f(x,w)` andThen `f(x,w)=>u`
+  
+        lazy val reactor = ActorSystem(Reactor(), s"reactor")
+        lazy val leftActor = ActorSystem(LeftActor(reactor), s"leftActor")
+        lazy val rightActor = ActorSystem(RightActor(reactor), s"rightActor")
+  
+        import Reactor.React
+        import React.{ LeftReact, RightReact }
+  
+        import LeftActor.LeftAct
+        import RightActor.RightAct
+  
+        object LeftActor:
+  
+          case object LeftAct
+  
+          def apply(reactor: ActorRef[React[X, W]]): Behavior[LeftAct.type] =
+            receive { (context, message) =>
+              log(context)(s"leftActor received LeftAct")
+              val tx: T[X] = `z=>tx`(z)
+              tx { 
+                fx =>
+                  bindF (fx, { 
+                    x =>
+                      resultF(reactor ! LeftReact(x))
+                  })
+              }
+              stopped
+            }
+          
+        object RightActor:
+  
+          case object RightAct
+  
+          def apply(reactor: ActorRef[React[X, W]]): Behavior[RightAct.type] =
+            receive { (context, message) =>
+              log(context)(s"rightActor received RightAct")
+              val tw: T[W] = `y=>tw`(y)
+              tw { 
+                fw =>
+                  bindF( fw, { 
+                    w =>
+                      resultF(reactor ! RightReact(w))
+                  })
+              }
+              stopped
+            }
+  
+        object Reactor:
+  
+          enum React[X, W]:
+            case LeftReact(x: X) extends React[X, W]
+            case RightReact(w: W) extends React[X, W]
+  
+          def react(`option[x]`: Option[X], `option[w]`: Option[W]): Behavior[React[X, W]] =
+            receive { (context, message) =>
+              message match {
+                case LeftReact(x) => 
+                  `option[w]` match {
+                    case Some(w) =>
+                      log(context)(s"reactor received both LeftReact($x) and RightReact($w)")
+                      `(x,w)=>u`(x,w)
+                      stopped
+                    case None => 
+                      react(Some(x), None)
+                  }
+                case RightReact(w) => 
+                  `option[x]` match {
+                    case Some(x) => 
+                      log(context)(s"reactor received both RightReact($w) and LeftReact($x)")
+                      `(x,w)=>u`(x,w)
+                      stopped
+                    case None => 
+                      react(None, Some(w))
+                  }              
+              }
+            }  
+  
+          def apply(): Behavior[React[X, W]] =
+            react(None, None)      
+  
+        leftActor ! LeftAct
+        rightActor ! RightAct
+  
+  override private[psbp] def asynchronous[Z, Y](`z=>ty`: Z => T[Y]): Z => T[Y] =
+    z => 
+      `fy=>u` =>
+        val `y=>fy` = resultF[Y]
+        val `y=>u` = `y=>fy` andThen `fy=>u`
+    
+        lazy val reactor = ActorSystem(Reactor(), s"reactor")
+        lazy val actor = ActorSystem(Actor(reactor), s"actor")        
+         
+        import Reactor.React
+        import Actor.Act
+     
+        object Actor:
+    
+          case object Act
+    
+          def apply(reactor: ActorRef[React[Y]]): Behavior[Act.type] =
+            receive { (context, message) =>
+              val ty: T[Y] = `z=>ty`(z)
+              ty { 
+                fy =>
+                  bindF(fy, { 
+                    y =>
+                      resultF(reactor ! React(y))
+                  })
+              }
+              stopped
+            }
+            
+        object Reactor:
+    
+          case class React[Y](y: Y)
+    
+          def react(`option[y]`: Option[Y]): Behavior[React[Y]] =
+            receive { (context, message) =>
+              message match {
+                case React(y) => 
+                  log(context)(s"reactor received React($y)")
+                  `y=>u`(y)
+                  stopped
+              }            
+            }
+    
+          def apply(): Behavior[React[Y]] =
+            react(None)
+        
+        actor ! Act        
+    
+```
+
+Implementing parallelism can easily be done using `actor`'s.
+
+A `leftActor` and `rightActor` act together in parallel sending their results to a `reactor` to react to.
+
+## `reactiveParallel`
+
+```scala
+package psbp.implementation.reactive
+
+import psbp.specification.program.parallel.Parallel
+
+import psbp.internalImplementation.computation.transformation.reactiveTransformedParallel
+
+import psbp.implementation.active.Active
+
+import psbp.implementation.active.activeComputation
+
+given reactiveParallel: Parallel[`=>R`] = reactiveTransformedParallel[Active]
+```
+
+Transforming from active programming with `` `=>A` `` to active programming with parallelism with `` `=>R` `` is done by using a combination of `reactiveTransformedParallel`.
+
+## `mainParallelFibinacci`
+
+```scala
+package examples.specification.programWithParallel.effectful
+
+import psbp.specification.types.&&
+
+import psbp.specification.programWithParallel.ProgramWithParallel
+
+import examples.specification.programWithParallel.parallelFibonacci 
+
+import examples.specification.program.effectful.intProducer
+
+def mainParallelFibonacci[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithParallel[>-->]]: Unit >--> Unit =
+  parallelFibonacci toMainWith (
+    producer = intProducer,
+    consumer = parallelFibonacciConsumer
+  )
+```
+
+where
+
+```scala
+package examples.specification.programWithParallel.effectful
+
+import scala.language.postfixOps
+
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program 
+
+import akka.actor.typed.{ ActorSystem, Behavior }
+
+import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+  
+import Behaviors.{ receive, stopped }
+  
+import ch.qos.logback.classic.{Level, Logger, LoggerContext}
+import Level.{ INFO, ERROR}
+  
+import org.slf4j.LoggerFactory
+  
+val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext];
+val logger: Logger = loggerContext.getLogger("examples.specification.program.effectful");
+  
+def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
+  logger.setLevel(INFO);
+  actorContext.log.info(message)
+  logger.setLevel(ERROR);  
+}
+  
+def actorParallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
+    
+  object Consumer {
+
+    case class Consume(i: BigInt, j: BigInt)
+
+    def apply(): Behavior[Consume] = receive { (context, message) =>
+      message match {
+        case Consume(i, j) =>
+          log(context)(s"applying parallel fibonacci to argument $i yields result $j")
+          stopped
+      }
+    }
+
+  }
+
+  val consumer = ActorSystem(Consumer(), "consumer")  
+   
+  import Consumer.Consume
+
+  {
+    (`i&&j`: BigInt && BigInt) =>
+      val i = `i&&j`._1
+      val j = `i&&j`._2
+      consumer ! Consume(i, j)
+  } asProgram 
+
+// ...  
+```
+
+## Running parallel `reactive` `parallelFibonacci` (effectful producer and consumer)
+
+```scala
+package examples.implementation.reactive.programWithParallel.effectful
+
+import psbp.implementation.reactive.given
+
+import psbp.internalImplementation.programWithParallel.given
+
+import examples.specification.programWithParallel.effectful.mainParallelFibonacci
+
+@main def fibonacci(args: String*): Unit =
+  mainParallelFibonacci materialized ()
+
+```
+
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.reactive.programWithParallel.effectful.fibonacci 
+Please type an integer
+5
+[2021-03-03 11:36:00,472] - leftActor received LeftAct 
+[2021-03-03 11:36:00,497] - rightActor received RightAct 
+[2021-03-03 11:36:00,530] - leftActor received LeftAct 
+[2021-03-03 11:36:00,571] - leftActor received LeftAct 
+[2021-03-03 11:36:00,576] - rightActor received RightAct 
+[2021-03-03 11:36:00,651] - rightActor received RightAct 
+[2021-03-03 11:36:00,699] - leftActor received LeftAct 
+[2021-03-03 11:36:00,735] - leftActor received LeftAct 
+[2021-03-03 11:36:00,795] - rightActor received RightAct 
+[2021-03-03 11:36:00,796] - rightActor received RightAct 
+[2021-03-03 11:36:00,797] - leftActor received LeftAct 
+[2021-03-03 11:36:00,797] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-03-03 11:36:00,911] - rightActor received RightAct 
+[2021-03-03 11:36:00,911] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-03-03 11:36:00,912] - reactor received both LeftReact(1) and RightReact(1) 
+[2021-03-03 11:36:00,933] - leftActor received LeftAct 
+[2021-03-03 11:36:00,998] - rightActor received RightAct 
+[2021-03-03 11:36:00,999] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-03-03 11:36:01,002] - reactor received both LeftReact(1) and RightReact(1) 
+[2021-03-03 11:36:01,002] - reactor received both LeftReact(2) and RightReact(1) 
+[2021-03-03 11:36:01,002] - reactor received both LeftReact(3) and RightReact(2) 
+[2021-03-03 11:36:01,018] - applying parallel fibonacci to argument 5 yields result 5 
+[success] ...
+```
+
+Again, the main difference with the active, reactive, free and state versions is the usage of a different injection by `import`.
+
 
 

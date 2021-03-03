@@ -1,6 +1,6 @@
 package examples.specification.programWithState
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
 import psbp.specification.programWithState.ProgramWithState
 

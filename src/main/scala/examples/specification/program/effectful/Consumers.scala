@@ -2,7 +2,9 @@ package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.{ &&, Program }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program 
 
 def factorialConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
   {

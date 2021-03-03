@@ -1,6 +1,10 @@
 package examples.specification.program
 
-import psbp.specification.program.{ &&, Program, `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
+
+import psbp.specification.functional.{ `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
 
 def `construct using &&&`[>-->[- _, + _]: Program, Z, Y, X] 
   (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =

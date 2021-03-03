@@ -1,5 +1,7 @@
 package psbp.specification.program
 
+import psbp.specification.types.&&
+
 trait Construction[>-->[- _, + _]]:
 
   // declared

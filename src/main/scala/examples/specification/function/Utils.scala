@@ -1,6 +1,6 @@
 package examples.specification.function
 
-import psbp.specification.program.&&
+import psbp.specification.types.&&
 
 val isZero: BigInt => Boolean =
   n =>

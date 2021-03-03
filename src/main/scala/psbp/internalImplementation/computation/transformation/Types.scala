@@ -1,8 +1,10 @@
 package psbp.internalImplementation.computation.transformation
 
-import psbp.internalSpecification.computation.Computation
+// ReactiveTransformed
 
-import Free._
+private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
+
+// FreeTransformed
 
 private[psbp] enum Free[C[+ _], +Z]:
 
@@ -14,6 +16,10 @@ private[psbp] enum Free[C[+ _], +Z]:
     (fczz: Free[C, ZZ], `z=>fcy`: Z => FreeTransformed[C][Y]) extends Free[C, Y]
 
 private[psbp] type FreeTransformed[C[+ _]] = [Z] =>> Free[C, Z]
+
+import Free._
+
+import psbp.internalSpecification.computation.Computation
 
 private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): C[Z] =
 
@@ -37,3 +43,7 @@ private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): 
     case any =>
       sys.error(s"Impossible, since, 'foldFree' eliminates the case for $any")
   }
+
+// StateTransformed
+
+private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]  

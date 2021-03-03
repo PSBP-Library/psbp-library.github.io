@@ -1,6 +1,6 @@
 package psbp.specification.program
 
-// import psbp.specification.types.||
+import psbp.specification.types.||
 
 trait Condition[>-->[- _, + _]]:
 

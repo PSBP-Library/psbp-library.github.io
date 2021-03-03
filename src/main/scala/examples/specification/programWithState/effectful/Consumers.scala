@@ -2,7 +2,9 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.{ &&, Program }
+import psbp.specification.types.&&
+
+import psbp.specification.program.Program
 
 def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >--> Unit =
   {

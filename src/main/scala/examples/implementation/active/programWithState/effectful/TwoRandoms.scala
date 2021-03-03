@@ -1,12 +1,8 @@
 package examples.implementation.active.programWithState.effectful
 
-import psbp.specification.state.Initial
-
-import psbp.specification.programWithState.ProgramWithState
+import psbp.specification.program.state.Initial
 
 import psbp.internalImplementation.programWithState.given
-
-import psbp.implementation.stateActive.`=>SA`
 
 import psbp.implementation.stateActive.given
 

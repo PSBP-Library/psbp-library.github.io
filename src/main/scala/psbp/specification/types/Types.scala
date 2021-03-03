@@ -1,4 +1,4 @@
-package psbp.specification.program
+package psbp.specification.types
 
 // product
 

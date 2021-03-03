@@ -1,7 +1,5 @@
 package psbp.internalImplementation.computation.transformation
 
-import psbp.specification.state.State
-
 import psbp.internalSpecification.computation.Computation
 
 import psbp.internalSpecification.computation.transformation.Transformation
@@ -11,13 +9,12 @@ import psbp.internalSpecification.naturalTransformation.~>
 private[psbp] given stateTransformedComputation[
   S,
   C[+ _]: Computation]: Transformation[C, StateTransformed[S, C]] 
-  with Computation[[Z] =>> StateTransformed[S, C][Z]]
-  with State[S, [Z, Y] =>> Z => StateTransformed[S, C][Y]] with 
-
+  with Computation[[Z] =>> StateTransformed[S, C][Z]] with
+  
   private type F[+Z] = C[Z]
   private type T[+Z] = StateTransformed[S, C][Z]
 
-  private type `=>T` = [Z, Y] =>> Z => StateTransformed[S, C][Y]
+  private type `=>T` = [Z, Y] =>> Z => T[Y]
 
   private val computationF: Computation[F] = summon[Computation[F]]
   import computationF.{ result => resultF, bind => bindF }
@@ -33,14 +30,5 @@ private[psbp] given stateTransformedComputation[
     s =>
       bindF(tz(s), (s, z) => `z=>ty`(z)(s))    
 
-  override def `u>-->s`: Unit `=>T` S =
-    _ => 
-      s =>
-        resultF((s, s))
-
-  override def `s>-->u`: S `=>T` Unit =
-    s => 
-      _ =>
-        resultF((s, ()))
 
       

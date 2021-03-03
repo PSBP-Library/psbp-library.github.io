@@ -6,7 +6,7 @@ private[psbp] trait Binding[C[+ _]]:
 
   private[psbp] def bind[Z, Y] (cz: C[Z], `z=>cy`: => Z => C[Y]): C[Y]
 
-  // defined computational capability
+  // defined
 
   private[psbp] def join[Z] (ccz: C[C[Z]]): C[Z] =
     bind(ccz, identity)
