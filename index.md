@@ -33,10 +33,8 @@ The definition of the `PSBP` library separates *specifications* from *implementa
 
 The usage of the `PSBP` library is in terms of examples that are 
 
-- *defined* in terms of members of specification `trait`'s
-- *used* in terms of implementation `given`'s that are made available using *dependency injection by* `import`.
-
-From now on dependency injection by `import` is simply referred to as *injection by* `import`.
+- *defined* only using members of specification `trait`'s,
+- *used* using dependency on implementation `given`'s that are resolved using injection by `import`.
 
 # Programs
 
@@ -44,9 +42,9 @@ The *specification part* of the `PSBP` library models *programming*.
 
 Think about it as explaining to `Scala` what programming is all about.
 
-Members of specification `trait`'s are referred to as *programming capabilities*.
+Members of specification `trait`'s are referred to as *programming ingredients*.
 
-A `val` that is defined in terms of programming capabilities is referred to as a *program*. 
+A `val` that is defined in terms of programming ingredients is referred to as a *program*. 
 
 A program has a *descriptive* nature, in fact it would be more appropriate to refer to it as a *program description*.
 
@@ -54,15 +52,39 @@ Compare this with the famous painting [Ceci n'est pas une pipe](https://en.wikip
 
 The painting is not a *pipe*, it is a *pipe description*.
 
-In a way a program is a generalization of a *function*.
+In a way a program is a generalized descriptive version of a *function*.
 
-A function of type `Z => Y` *transforms* an *argument* of type `Z` to a *result* of type `Y`.
+Running a function of type `Z => Y` *transforms* an *argument* of type `Z` to a *result* of type `Y`.
 
-A program of type `Z >--> Y` *describes* transforming an argument of type `Z` to a result of type `Y`.
+A program of type `Z >--> Y` *describes* running a function of type `Z => Y` transforming an argument of type `Z` to a result of type `Y`.
 
 A program may, or may not, *describe* performing side effects along the way.
 
 A described side effect is referred to as an *effect*.
+
+## Basic Programming ingredients
+
+The *basic* programming ingredients are
+
+- being *functional*
+
+and
+
+- *sequential composition*
+- *construction*
+- *condition*
+
+Programming ingredients, just like the corresponding function ingredients have a *denotational* nature.
+
+They are also *pointfree*.
+
+There also exists a *pointful* function ingredient
+
+- *application*
+
+A *function application* is an *expression*.
+
+## Main programs
 
 A *main program* is a program of type `Unit >--> Unit`.
 
@@ -83,30 +105,6 @@ External side effects interact with the external world.
 Internal side effects typically manifest themselves in the function types of program implementations.
 
 Materialized main program implementations are, eventually, used in a *main* `Scala` *programs*.
-
-## Basic Programming Capabilities
-
-The *basic* programming capabilities are
-
-- being *functional*
-
-and
-
-- *sequential composition*
-- *construction*
-- *condition*
-
-Programming capabilities have a *denotational*, *pointfree* nature.
-
-They generalize corresponding capabilities of functions.
-
-Functions also have an important capability having an *operational*, *pointful* nature
-
-- *application*
-
-A *function application* is an *expression*.
-
-Expressions are operational artifacts: they are *evaluated* to a result.
 
 ## `Functional`
 
@@ -411,11 +409,11 @@ are function utilities.
 
 The members `&&&` resp. `|||` are `extension`'s that are more complex versions of `&&` resp. `||`.
 
-The `Let {} In {}` programming capability specifies that programs can *define local values*.
+The `Let {} In {}` programming ingredient specifies that programs can *define local values*.
 
-The `If() {} Else {}` programming capability specifies that programs can *perform if-then-else based logic*.
+The `If() {} Else {}` programming ingredient specifies that programs can *perform if-then-else based logic*.
 
-`Let {} In {}` and `If() {} Else {}` are perfect examples of the **sca**lable **la**nguage capability of `Scala`.
+`Let {} In {}` and `If() {} Else {}` are perfect examples of the **sca**lable **la**nguage ingredient of `Scala`.
 
 The member `toMainWith` is an `extension` that combines a program with a producer and a consumer to a main program.
 
@@ -727,7 +725,7 @@ val multiply: BigInt && BigInt => BigInt =
 
 are function utilities.
 
-`factorial` is a program that makes use of programming capabilities 
+`factorial` is a program that makes use of programming ingredients 
 
 - `asProgram` (being functional)
 - `>-->` (sequential composition)
@@ -860,7 +858,7 @@ def add[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =
 
 are function utilities.
 
-`fibonacci` is a program that makes use of programming capabilities 
+`fibonacci` is a program that makes use of programming ingredients 
 
 - `asProgram` (being functional)
 - `>-->` (sequential composition)
@@ -1045,32 +1043,32 @@ An *internal specification part* of the `PSBP` library models *computing*.
 
 Think about it as explaining to `Scala` what computing is all about.
 
-Members of internal specification `trait`'s are referred to as *computing capabilities*.
+Members of internal specification `trait`'s are referred to as *computing ingredients*.
 
-A `val` that is defined in terms of computing capabilities is referred to as a *computation*. 
+A `val` that is defined in terms of computing ingredients is referred to as a *computation*. 
 
 A computation has a *descriptive* nature, in fact it would be more appropriate to refer to it as a *computation description*.
 
-In a way a computation is a generalization of an *expression*.
+In a way a computation, is a generalized descriptive version of an *expression*.
 
-An expression of type `Y` evaluates to a *result* of type `Y`
+In a way computing, performing a computation, is a generalized descriptive version of *evaluating an expression*.
 
-A computation of type `C[Y]` *describes* computing a result of type `Y`.
+Evaluating an expression of type `C[Y]` yields *result* of type `Y`.
+
+A computation *describes* evaluating an expression of type `Y` yielding a result of type `Y`.
 
 A computation may, or may not, *describe* performing side effects along the way.
 
-## Basic computing capabilities
+## Basic computing ingredients
 
-The *basic* computing capabilities are
+The *basic* computing ingredients are
 
 - *resulting*
 - *binding*
 
-computing capabilities have an *operational* nature.
+Computing ingredients, just like the corresponding expression evaluation ingredients have an *operational* nature.
 
-Computing is about *executing computations*
-
-Computing generalizes *evaluation* which is about *evaluating expressions*.
+They are also *pointful*.
 
 ## `Resulting`
 
@@ -1111,11 +1109,11 @@ private[psbp] trait Binding[C[+ _]]:
     join(ccz) 
 ```
 
-The `bind` computing capability specifies that while executing a computation, the result yielded by executing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where executing continues with.
+The `bind` computing ingredient specifies that while executing a computation, the result yielded by executing an inner computation can be *bound* to the argument of a *continuation function* transforming it to a result that is an outer computation where executing continues with.
 
 Compare this with evaluating expressions.
 
-The `join` computing capability specifies *nested computations*.
+The `join` computing ingredient specifies *nested computations*.
 
 Compare this with nested expressions.
 
@@ -1176,7 +1174,7 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
     _.foldSum(`y>-->z`, `x>-->z`) 
 ```
 
-`programFromComputation` is a `given` that defines the basic programming capabilities of a program of type `Z => C[Y]` in terms of the basic computing capabilities of the computation of type `C[Y]`.
+`programFromComputation` is a `given` that defines the basic programming ingredients of a program of type `Z => C[Y]` in terms of the basic computing ingredients of the computation of type `C[Y]`.
 
 Compare this with functions being defined in terms of expressions.
 
@@ -1194,7 +1192,7 @@ It is a deliberate choice to not let application developers make use of the poin
 
 # Active programming
 
-So far no implementation of the basic computing capabilities has been given yet.
+So far no implementation of the basic computing ingredients has been given yet.
 
 A completely trivial way to implement computations of type `C[Y]` is as expressions of type `Y`, referred to as *active computations*.
 
@@ -2149,7 +2147,7 @@ given freeActiveMaterialization: Materialization[`=>FA`, Unit, Unit] =
 
 Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization`.
 
-## Running tail recursive `freeActive` `factorial` (effectful producer and consumer)
+## Running `freeActive` `factorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2176,7 +2174,7 @@ applying factorial to the integer argument 10 yields result 3628800
 
 Again, the only difference with the active and reactive versions is the usage of a different injection by `import`.
 
-## Running tail recursive `freeActive` `optimizedFibonacci` (effectful producer and consumer)
+## Running tail `freeActive` `optimizedFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -2772,20 +2770,20 @@ trait Parallel[>-->[- _, + _]]:
   
   // declared
 
-  private[psbp] def par[Z, Y, X, W] (`z>-->x`: Z >--> X, `y>-->w`: Y >--> W): (Z && Y) >--> (X && W)
+  private[psbp] def parallel[Z, Y, X, W] (`z>-->x`: Z >--> X, `y>-->w`: Y >--> W): (Z && Y) >--> (X && W)
 
-  def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y 
+  private[psbp] def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y 
   
   // defined extensions
 
   extension [Z, Y, X, W] (`z>-->x`: Z >--> X) def |&&&|(`y>-->w`: Y >--> W): (Z && Y) >--> (X && W) =
-    par(`z>-->x`, `y>-->w`)
+    parallel(`z>-->x`, `y>-->w`)
 
   extension [Z, Y] (`z>-->y`: Z >--> Y) def async: Z >--> Y  =
     asynchronous(`z>-->y`)
 ```
 
-`Parallel` specifies that programs can be *composed in parallel* and can be "performed asynchronously".
+`Parallel` specifies that programs can be *run in parallel* and can *run asynchronously*.
 
 The public member `|&&&|` is an extension that can be used as infix operator.
 
@@ -2810,7 +2808,7 @@ trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-
 
   // defined
   
-  override def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
+  override private[psbp] def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
     `z>-->(z&&u)` >--> (`z>-->y` |&&&| `u>-->u`[>-->]) >--> `(y&&u)>-->y`
 
   // defined extensions
@@ -2847,6 +2845,7 @@ def `(y&&u)>-->y`[>-->[- _, + _]: Functional, Y]: (Y && Unit) >--> Y =
 ```
 
 are program utilities
+
 where
 
 ```scala
@@ -2876,7 +2875,7 @@ def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
 
 are function utilities.
 
-`asynchronous` can, by default, be defined, albeit in a somewhat sub-optimal way, in terms of `par`. 
+`asynchronous` can, by default, be defined, albeit in a somewhat sub-optimal way, in terms of `parallel`. 
 
 The public member `|&&|` is an extension that can be used as infix operator.
 
@@ -2902,7 +2901,7 @@ given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParalle
   export program.construct
   export program.conditionally
 
-  export parallel.par
+  export parallel.parallel
 ```
 
 Using injection by `import` of `programWithParallel`, a generic `given` implementation of `ProgramWithParallel`, only given implementations of `Program` and `Parallel` need to be injected by `import`.
@@ -3121,6 +3120,8 @@ private[psbp] given reactiveTransformedParallel[
 
 Implementing parallelism can easily be done using `actor`'s.
 
+Some logging has been added in to illustrate how `leftActor` and `rightActor` act, resp. `reactor` reacts.
+
 A `leftActor` and `rightActor` act together in parallel sending their results to a `reactor` to react to.
 
 ## `reactiveParallel`
@@ -3139,7 +3140,7 @@ import psbp.implementation.active.activeComputation
 given reactiveParallel: Parallel[`=>R`] = reactiveTransformedParallel[Active]
 ```
 
-Transforming from active programming with `` `=>A` `` to active programming with parallelism with `` `=>R` `` is done by using a combination of `reactiveTransformedParallel`.
+Transforming from active programming with `` `=>A` `` to reactive programming with parallelism with `` `=>R` `` is done by using `reactiveTransformedParallel`.
 
 ## `mainParallelFibinacci`
 
@@ -3183,8 +3184,8 @@ import Level.{ INFO, ERROR}
   
 import org.slf4j.LoggerFactory
   
-val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext];
-val logger: Logger = loggerContext.getLogger("examples.specification.program.effectful");
+val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
+val logger: Logger = loggerContext.getLogger("examples.specification.program.effectful")
   
 def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
   logger.setLevel(INFO);
@@ -3222,7 +3223,7 @@ def actorParallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) 
 // ...  
 ```
 
-## Running parallel `reactive` `parallelFibonacci` (effectful producer and consumer)
+## Running `reactive` `parallelFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.programWithParallel.effectful

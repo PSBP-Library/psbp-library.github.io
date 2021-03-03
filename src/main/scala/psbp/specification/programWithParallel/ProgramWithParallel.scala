@@ -14,7 +14,7 @@ trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-
 
   // defined
   
-  private[psbp] override def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
+  override private[psbp] def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
     `z>-->(z&&u)` >--> (`z>-->y` |&&&| `u>-->u`[>-->]) >--> `(y&&u)>-->y`
 
   // defined extensions

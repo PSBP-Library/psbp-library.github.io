@@ -17,8 +17,8 @@ import Level.{ INFO, ERROR}
   
 import org.slf4j.LoggerFactory
   
-val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext];
-val logger: Logger = loggerContext.getLogger("examples.specification.programWithParallel.effectful");
+val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
+val logger: Logger = loggerContext.getLogger("examples.specification.programWithParallel.effectful")
   
 def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
   logger.setLevel(INFO);
