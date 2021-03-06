@@ -4,12 +4,12 @@ import psbp.specification.program.Program
 
 import psbp.specification.functional.{ `(z&&y)>-->z` => argument, `z>-->z` => accumulator }
 
-import psbp.specification.program.optimizeWith
+import psbp.specification.program.optimize
 
 import examples.specification.functional.{ isZero, one, subtractOne, multiply }
 
 def optimizedFactorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
-  optimizeWith(
+  optimize(
     accumulatorInitializer = one, 
     argumentPredicate = isZero, 
     updater = (argument >--> subtractOne) && multiply, 

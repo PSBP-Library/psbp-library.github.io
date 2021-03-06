@@ -2,7 +2,7 @@ package examples.implementation.active.programWithState.effectful
 
 import psbp.specification.program.state.Initial
 
-import psbp.internalImplementation.programWithState.given
+import psbp.implementation.programWithState
 
 import psbp.implementation.stateActive.given
 

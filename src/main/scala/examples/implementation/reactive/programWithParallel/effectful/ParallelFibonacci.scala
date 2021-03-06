@@ -1,8 +1,8 @@
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.implementation.reactive.given
+import psbp.implementation.programWithParallel
 
-import psbp.internalImplementation.programWithParallel.given
+import psbp.implementation.reactive.given
 
 import examples.specification.programWithParallel.effectful.mainParallelFibonacci
 
