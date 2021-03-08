@@ -933,7 +933,7 @@ See
 
 for more details.
 
-## `twoRandoms`
+### `twoRandoms`
 
 ```scala
 package examples.specification.programWithState
@@ -950,7 +950,7 @@ Illustrating statefulness can be done by using `twoRandoms`, somehow , transform
 
 When running materialized main `twoRandoms` implementations the two random integer results are *different*.
 
-## `mainTwoRandoms`
+### `mainTwoRandoms`
 
 ```scala
 package examples.specification.programWithState.effectful
@@ -1470,7 +1470,7 @@ The important takeway is that programming with state can be achieved *without us
 
 Instead, state manifests itself, internally, in the function type `Z => (S => [(S, Y)])` of program implementations.
 
-## Running `reactive` `parallelFibonacci` (effectful producer and consumer)
+### Running `reactive` `parallelFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.programWithParallel.effectful
@@ -1522,7 +1522,7 @@ Again, the main difference with the active free and state versions is the usage 
 
 `@main def parallelFibonacci` uses injection by `import` of `reactive` `given` implementations.
 
-See [reativeProgram](https://psbp-library.github.io#reactiveprogram), [reactiveParallel](https://psbp-library.github.io#reactiveParallel) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
+See [reactiveProgram](https://psbp-library.github.io#reactiveprogram), [reactiveParallel](https://psbp-library.github.io#reactiveParallel) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
 
 # Library development
 
@@ -3002,7 +3002,7 @@ For `materialize` the trivial choice for a programming component is `materialize
 
 `freeTransformedMaterialization` and `reactiveTransformedMaterialization` do not make use of the materialization ingredients of `F[+ _]` at all.
 
-## `reactiveTransformedParallel`
+### `reactiveTransformedParallel`
 
 ```scala
 package psbp.internal.implementation.computation.transformation
@@ -3479,7 +3479,7 @@ Transforming from active programming with `` `=>A` `` to active with state progr
 
 See [programFromComputation](https://psbp-library.github.io#programfromcomputation), [stateTransformedBinding](https://psbp-library.github.io#statetransformedbinding), [stateTransformedState](https://psbp-library.github.io#statetransformedstate), [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) and [resultingFromTransformation](https://psbp-library.github.io#resultingfromtransformation) for more details.
 
-## `stateActiveMaterialization`
+### `stateActiveMaterialization`
 
 ```scala
 package psbp.implementation.stateActive
@@ -3504,7 +3504,7 @@ Transforming from active materialization of `` `=>A` `` to active with state mat
 
 See [stateTransformedMaterialization](https://psbp-library.github.io#stateTransformedmaterialization) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
 
-## `reactiveParallel`
+### `reactiveParallel`
 
 ```scala
 package psbp.implementation.reactive
