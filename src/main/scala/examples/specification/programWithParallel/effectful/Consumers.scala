@@ -16,9 +16,11 @@ import ch.qos.logback.classic.{Level, Logger, LoggerContext}
 import Level.{ INFO, ERROR}
   
 import org.slf4j.LoggerFactory
+
+val packageName = "examples.specification.programWithParallel.effectful"
   
 val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
-val logger: Logger = loggerContext.getLogger("examples.specification.programWithParallel.effectful")
+val logger: Logger = loggerContext.getLogger(packageName)
   
 def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
   logger.setLevel(INFO);
@@ -35,7 +37,8 @@ def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> 
     def apply(): Behavior[Consume] = receive { (context, message) =>
       message match {
         case Consume(i, j) =>
-          log(context)(s"applying parallel fibonacci to argument $i yields result $j")
+          val logging = log(context)
+          logging(s"applying parallel fibonacci to argument $i yields result $j")
           stopped
       }
     }

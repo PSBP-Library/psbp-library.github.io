@@ -62,7 +62,8 @@ private[psbp] given reactiveTransformedParallel[
   
           def apply(reactor: ActorRef[React[X, W]]): Behavior[LeftAct.type] =
             receive { (context, message) =>
-              log(context)(s"leftActor received LeftAct")
+              val logging = log(context)
+              logging(s"leftActor received LeftAct")
               val tx: T[X] = `z=>tx`(z)
               tx { 
                 fx =>
@@ -80,7 +81,8 @@ private[psbp] given reactiveTransformedParallel[
   
           def apply(reactor: ActorRef[React[X, W]]): Behavior[RightAct.type] =
             receive { (context, message) =>
-              log(context)(s"rightActor received RightAct")
+              val logging = log(context)
+              logging(s"rightActor received RightAct")
               val tw: T[W] = `y=>tw`(y)
               tw { 
                 fw =>
@@ -104,7 +106,8 @@ private[psbp] given reactiveTransformedParallel[
                 case LeftReact(x) => 
                   `option[w]` match {
                     case Some(w) =>
-                      log(context)(s"reactor received both LeftReact($x) and RightReact($w)")
+                      val logging = log(context)
+                      logging(s"reactor received both LeftReact($x) and RightReact($w)")
                       `(x,w)=>u`(x,w)
                       stopped
                     case None => 
@@ -113,7 +116,8 @@ private[psbp] given reactiveTransformedParallel[
                 case RightReact(w) => 
                   `option[x]` match {
                     case Some(x) => 
-                      log(context)(s"reactor received both RightReact($w) and LeftReact($x)")
+                      val logging = log(context)
+                      logging(s"reactor received both RightReact($w) and LeftReact($x)")
                       `(x,w)=>u`(x,w)
                       stopped
                     case None => 
@@ -165,7 +169,8 @@ private[psbp] given reactiveTransformedParallel[
             receive { (context, message) =>
               message match {
                 case React(y) => 
-                  log(context)(s"reactor received React($y)")
+                  val logging = log(context)
+                  logging(s"reactor received React($y)")
                   `y=>u`(y)
                   stopped
               }            

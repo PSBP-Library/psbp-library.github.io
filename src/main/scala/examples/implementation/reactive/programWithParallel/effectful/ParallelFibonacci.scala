@@ -6,5 +6,5 @@ import psbp.implementation.reactive.given
 
 import examples.specification.programWithParallel.effectful.mainParallelFibonacci
 
-@main def fibonacci(args: String*): Unit =
+@main def parallelFibonacci(args: String*): Unit =
   mainParallelFibonacci materialized ()

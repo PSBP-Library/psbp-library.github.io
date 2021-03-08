@@ -4,9 +4,7 @@ import psbp.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.Computation
 
-import psbp.internal.implementation.computation.transformation.{ Free, foldFree, FreeTransformed }
-
-import Free._
+import psbp.internal.implementation.computation.transformation.{ FreeTransformed, foldFree }
 
 private[psbp] given freeTransformedMaterialization[
   C[+ _]: Computation: 

@@ -2,30 +2,20 @@ package psbp.implementation.reactive
 
 import psbp.specification.program.Program
 
-import psbp.internal.specification.computation.Computation
+import psbp.internal.specification.computation.Binding
 
-import psbp.implementation.programFromComputation
+import psbp.internal.specification.computation.programFromComputation
 
-import psbp.internal.implementation.computation.transformation.reactiveTransformedComputation
+import psbp.internal.specification.computation.computationFromResultingAndBinding
+
+import psbp.internal.specification.computation.transformation.resultingFromTransformation
+
+import psbp.internal.implementation.computation.transformation.reactiveTransformedBinding
 
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.activeComputation
+import psbp.implementation.active.{ activeResulting, activeBinding }
 
-given reactiveComputation: Computation[Reactive] = reactiveTransformedComputation[Active]
+given Binding[Reactive] = reactiveTransformedBinding[Active]
 
-given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
-
-// given reactiveComputation: Computation[Reactive] with
-
-//   private[psbp] def result[Z]: Z => Reactive[Z] =
-//     z => 
-//       `z=>u` =>
-//         `z=>u`(z)
-
-//   private[psbp] def bind[Z, Y] (cz: Reactive[Z], `z=>cy`: => Z => Reactive[Y]): Reactive[Y] =
-//     `y=>u` =>
-//       cz { 
-//         z =>
-//           `z=>cy`(z)(`y=>u`)
-//       }
+given Program[`=>R`] = programFromComputation[Reactive]

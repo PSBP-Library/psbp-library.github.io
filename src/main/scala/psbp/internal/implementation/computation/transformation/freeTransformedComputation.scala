@@ -10,7 +10,7 @@ import psbp.internal.specification.computation.transformation.Transformation
 
 import Free._
 
-private[psbp] given freeTransformedComputation[C[+ _]: Computation]: Transformation[C, FreeTransformed[C]] with
+private[psbp] given freeTransformedComputation[C[+ _]]: Transformation[C, FreeTransformed[C]] with Computation[FreeTransformed[C]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = FreeTransformed[F][Z] 

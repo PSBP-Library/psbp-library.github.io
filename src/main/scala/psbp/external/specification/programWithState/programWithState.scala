@@ -1,10 +1,10 @@
-package psbp.implementation
+package psbp.specification.programWithState
 
 import psbp.specification.program.Program
 
 import psbp.specification.program.state.State
 
-import psbp.specification.programWithState.ProgramWithState
+// import psbp.specification.programWithState.ProgramWithState
 
 given programWithState[S, >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
  

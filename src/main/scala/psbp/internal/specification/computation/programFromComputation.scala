@@ -1,4 +1,4 @@
-package psbp.implementation
+package psbp.internal.specification.computation
 
 import psbp.specification.types.{ &&, || }
 
@@ -13,7 +13,7 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
 
   private type `=>C`[-Z, +Y] = Z => C[Y]
 
-  // defined proramming capa
+  // defined
 
   private[psbp] override def toProgram[Z, Y]: (Z => Y) => Z `=>C` Y = 
     `z=>y` => 

@@ -1,15 +1,17 @@
 package psbp.internal.implementation.computation.transformation
 
-import psbp.internal.specification.computation.Computation
+import psbp.internal.specification.computation.Binding
 
-import psbp.internal.specification.computation.transformation.Transformation
+import psbp.internal.specification.computation.Computation
 
 import psbp.internal.specification.naturalTransformation.~>
 
-private[psbp] given stateTransformedComputation[
+import psbp.internal.specification.computation.transformation.Transformation
+
+private[psbp] given stateTransformedBinding[
   S,
   C[+ _]: Computation]: Transformation[C, StateTransformed[S, C]] 
-  with Computation[[Z] =>> StateTransformed[S, C][Z]] with
+  with Binding[[Z] =>> StateTransformed[S, C][Z]] with
   
   private type F[+Z] = C[Z]
   private type T[+Z] = StateTransformed[S, C][Z]

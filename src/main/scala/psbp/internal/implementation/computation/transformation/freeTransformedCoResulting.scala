@@ -2,7 +2,7 @@ package psbp.internal.implementation.computation.transformation
 
 import psbp.internal.specification.computation.{ Computation, CoResulting }
 
-private[psbp] given freeCoResulting[C[+ _]: Computation: CoResulting]: CoResulting[FreeTransformed[C]] with
+private[psbp] given freeTransformedCoResulting[C[+ _]: Computation: CoResulting]: CoResulting[FreeTransformed[C]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = FreeTransformed[F][Z] 

@@ -2,17 +2,20 @@ package psbp.implementation.stateActive
 
 import psbp.specification.program.Program
 
-import psbp.internal.specification.computation.Computation
+import psbp.internal.specification.computation.Binding
 
-import psbp.implementation.programFromComputation
+import psbp.internal.specification.computation.programFromComputation
 
-import psbp.internal.implementation.computation.transformation.stateTransformedComputation
+import psbp.internal.specification.computation.computationFromResultingAndBinding
+
+import psbp.internal.specification.computation.transformation.resultingFromTransformation
+
+import psbp.internal.implementation.computation.transformation.stateTransformedBinding
 
 import psbp.implementation.active.Active
 
-import psbp.implementation.active.activeComputation
+import psbp.implementation.active.{ activeResulting, activeBinding }
 
-given stateActiveComputation[S]: Computation[StateActive[S]] = stateTransformedComputation[S, Active]
+given stateActiveBinding[S]: Binding[StateActive[S]] = stateTransformedBinding[S, Active]
 
 given stateActiveProgram[S]: Program[`=>SA`[S]] = programFromComputation[StateActive[S]]
-
