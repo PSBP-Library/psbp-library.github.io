@@ -160,6 +160,7 @@ Library level development is in terms of
 3. internal specification `trait`'s that declare computing ingredients
 4. one important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
 5. internal specification level implementation `given`'s that define computing ingredients
+5. internal implementation level implementation `given`'s that define computing ingredients
 6. specific implementation `given`'s that define programming ingredients for specific types
 
 # Application development
@@ -2565,7 +2566,7 @@ Using a natural transformation to define `result` of the `T[+ _]` computation in
 
 Using injection by `import` of `resultingFromTransformation`, a specification level `given` implementation of `Resulting`, only `given` implementations of `Binding` need to be injected by `import`.
 
-## Internal specification level implementation `given`'s
+## Internal implementation level implementation `given`'s
 
 ### `ReactiveTransformed`
 
