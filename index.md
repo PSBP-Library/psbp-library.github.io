@@ -170,10 +170,11 @@ Library level development is in terms of
 1. specification `trait`'s that declare programming ingredients
 2. specification level implementation `given`'s that define programming ingredients
 3. internal specification `trait`'s that declare computing ingredients
-4. the most important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
-5. internal specification level implementation `given`'s that define computing ingredients
-5. internal implementation level implementation `given`'s that define computing ingredients
-6. specific implementation level implementation `given`'s that define programming ingredients for specific types
+4. important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
+5. important internal specification level implementation `given` that defines lifting ingredients in terms of computation ingredients
+6. internal specification level implementation `given`'s that define computing ingredients
+7. internal implementation level implementation `given`'s that define computing ingredients
+8. specific implementation level implementation `given`'s that define programming ingredients for specific types
 
 That's a whole mouth full of words, but things will become clear when reading the document.
 
@@ -2074,17 +2075,20 @@ package psbp.specification.function
 
 // ...
 
+def foldSum[Z, Y, X](`y=>z`: => Y => Z, `x=>z`: => X => Z): (Y || X) => Z =
+  _.foldSum(`y=>z`, `x=>z`)
+
 def `(z||z)=>z`[Z]: (Z || Z) => Z =
-  _.foldSum(z => z, z => z)  
+  foldSum(z => z, z => z)  
   
 def `(y||x)=>b`[Y, X]: (Y || X) => Boolean =
-  _.foldSum(_ => true, _ => false)
+  foldSum(_ => true, _ => false)
 
 def `(y||x)=>y`[Y, X]: (Y || X) => Y =
-  _.foldSum(y => y, _ => ???) 
+  foldSum(y => y, _ => ???) 
 
 def `(y||x)=>x`[Y, X]: (Y || X) => X =
-  _.foldSum(_ => ???, x => x)
+  foldSum(_ => ???, x => x)
 ```
 
 are function utilities.
@@ -2335,6 +2339,8 @@ are function utilities.
 
 The member `|&&|` is an extension that can be used as infix operator.
 
+
+
 ## Specification level implementation `given`'s
 
 ### `programWithState`
@@ -2503,7 +2509,7 @@ It turns out to be useful for reactive materialization.
 
 See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactivetransformedmaterialization) for more details.
 
-## The most important specification level implementaton `given`
+## Important specification level implementaton `given`
 
 ### `programFromComputation`
 
@@ -2511,6 +2517,8 @@ See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactive
 package psbp.internal.specification.computation
 
 import psbp.specification.types.{ &&, || }
+
+import psbp.specification.function.foldSum
 
 import psbp.specification.program.Program
 
@@ -2547,7 +2555,7 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
 
   private[psbp] override def conditionally[Z, Y, X]
     (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
-    _.foldSum(`y>-->z`, `x>-->z`) 
+    foldSum(`y>-->z`, `x>-->z`) 
 ```
 
 `programFromComputation` is a `given` that defines the basic programming ingredients of a program of type `Z => C[Y]` in terms of the basic computing ingredients of a computation of type `C[Y]`.
@@ -2574,6 +2582,10 @@ def function[Z, Y]: Z => Y =
 ```
 
 *Although programs of type* ``Z => C[Y]`` *can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*
+
+## Important internal specification level implementaton `given`
+
+TODO
 
 ## Internal specification level implementation `given`'s
 

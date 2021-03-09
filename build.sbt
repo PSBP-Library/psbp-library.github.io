@@ -1,4 +1,4 @@
-val scala3Version = "3.0.0-RC2-bin-20210228-4d0d591-NIGHTLY"
+// val scala3Version = "3.0.0-RC1"
 
 lazy val root = project
   .in(file("."))
@@ -6,7 +6,9 @@ lazy val root = project
     name := "PSBP",
     version := "1.0.0-RC1",
 
-    scalaVersion := scala3Version,
+    // scalaVersion := scala3Version,
+    
+    scalaVersion := dottyLatestNightlyBuild.get,
 
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
     libraryDependencies ++= Seq(

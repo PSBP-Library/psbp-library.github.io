@@ -2,6 +2,8 @@ package psbp.internal.specification.computation
 
 import psbp.specification.types.{ &&, || }
 
+import psbp.specification.function.foldSum
+
 import psbp.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
@@ -37,4 +39,4 @@ private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] 
 
   private[psbp] override def conditionally[Z, Y, X]
     (`y>-->z`: => Y `=>C` Z, `x>-->z`: => X `=>C` Z): (Y || X) `=>C` Z =
-    _.foldSum(`y>-->z`, `x>-->z`) 
+    foldSum(`y>-->z`, `x>-->z`) 

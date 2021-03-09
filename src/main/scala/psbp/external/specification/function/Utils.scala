@@ -23,8 +23,8 @@ def `(z&&y)=>z`[Z, Y]: (Z && Y) => Z =
 
 def `(z&&y)=>y`[Z, Y]: (Z && Y) => Y =
   (_, y) => 
-    y   
-    
+    y
+
 def `z=>(z&&z)`[Z]: Z => (Z && Z) =
   z =>
     (z, z)   
@@ -41,6 +41,37 @@ def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
   (y, _) => 
     y       
 
+// new 
+
+def `((z=>y)&&z)=>y`[Z, Y]: ((Z => Y) && Z) => Y =
+  (z2y, z) =>
+    z2y(z)
+
+// new
+
+def `(z&&y)=>(z&&y)`[Z, Y]: (Z && Y) => (Z && Y) =
+  z2y =>
+    z2y
+
+// new
+
+def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
+  z =>
+    (`z=>y`(z), `z=>x`(z))
+
+// new
+
+def and[Z, Y, X, W]: ((Z => X) && (Y => W)) => (Z && Y) => (X && W) =
+  (`z=>x`, `y=>w`) =>
+    unfoldProduct(`(z&&y)=>z` andThen `z=>x`, `(z&&y)=>y` andThen `y=>w`)
+
+// new
+
+def `(z=>y)=>((z&&x)=>(y&&x)))`[Z, Y, X]: (Z => Y) => ((Z && X) => (Y && X)) =
+  `z=>y` => 
+    (z, x) =>
+      (`z=>y`(z), x)
+
 // condition
 
 import ||.{ Left, Right }
@@ -53,17 +84,26 @@ def `y=>(z||y)`[Z, Y]: Y => (Z || Y) =
   y =>
     Right(y)   
 
+def foldSum[Z, Y, X](`y=>z`: => Y => Z, `x=>z`: => X => Z): (Y || X) => Z =
+  _.foldSum(`y=>z`, `x=>z`)
+
 def `(z||z)=>z`[Z]: (Z || Z) => Z =
-  _.foldSum(z => z, z => z)  
+  foldSum(z => z, z => z)  
   
 def `(y||x)=>b`[Y, X]: (Y || X) => Boolean =
-  _.foldSum(_ => true, _ => false)
+  foldSum(_ => true, _ => false)
 
 def `(y||x)=>y`[Y, X]: (Y || X) => Y =
-  _.foldSum(y => y, _ => ???) 
+  foldSum(y => y, _ => ???) 
 
 def `(y||x)=>x`[Y, X]: (Y || X) => X =
-  _.foldSum(_ => ???, x => x) 
+  foldSum(_ => ???, x => x) 
+
+// new
+
+def or[Z, Y, X, W]: ((X => Z) && (W => Y)) => (X || W) => (Z || Y) =
+  (`x=>z`, `w=>y`) =>
+    foldSum(`x=>z` andThen `z=>(z||y)`, `w=>y` andThen `y=>(z||y)`)   
 
 // construction and condition
 
