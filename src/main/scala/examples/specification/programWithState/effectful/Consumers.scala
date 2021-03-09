@@ -10,6 +10,6 @@ def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >-
   {
     (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
       val `i&&j` = `u&&(i&&j)`._2
-      println(s"generating two random integers yields result ${`i&&j`}")
+      println(s"generating two random numbers yields result ${`i&&j`}")
   } asProgram
 

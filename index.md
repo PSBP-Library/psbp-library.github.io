@@ -36,6 +36,10 @@ This document uses vocabulary that you may not be used to.
 
 Hopefully you can relate the vocabulary to the one you are used to.
 
+Excpect frequent additions to this document.
+
+Also expect changes to this document.
+
 ## Introduction
 
 The `PSBP` library strictly separates *specifications* from *implementations*.
@@ -46,7 +50,7 @@ Implementations *define* members.
 
 The `PSBP` library also strictly separates *external* specifications and corresponding implementations from *internal* specifications and corresponding implementations.
 
-Specifications, both internal and external, are defined as `trait`'s that declare members for *binary type constructors* and *unary type constructors* for them to belong to *type constructor classes*. 
+Specifications, both internal and external, are defined as `trait`'s that declare members for *binary type constructors* and *unary type constructors* in order to belong to *type constructor classes*. 
 
 Implementations, both internal and external, are defined as `given`'s that define members for binary type constructors and unary type constructors such that they belong to type constructor classes. 
 
@@ -58,11 +62,11 @@ The specification part of the `PSBP` library models *programming*.
 
 Think about it as explaining to `Scala` what the *essense of programming* is all about.
 
-Members of specification `trait`'s are referred to as *programming ingredients*.
+Members of *specification* `trait`*'s* are referred to as *programming ingredients*.
 
 A `val` that is defined in terms of programming ingredients is referred to as a *program*. 
 
-Think of a program of type `Z >--> Y` as specifying some generalization of a *function* of type `Z => Y`, *transforming* an *argument* of type `Z` to a *result* of type `Y` and, maybe, *performing side effects* along the way.
+Think of a program of type `Z >--> Y` as *specifying* some generalization of a *function* of type `Z => Y`, *transforming* an *argument* of type `Z` to a *result* of type `Y` and, maybe, *performing side effects* along the way.
 
 A program, just like a function, is a *denotational* artifact.
 
@@ -75,33 +79,21 @@ Formulated somewhat informally, the basic denotational programming ingredients a
 
 A program specifies *what* generalized functions *do* : somehow transforming an argument of type to a result.
 
-Programs, typically, can be a given meaningful name.
+Programs, just like functions, can be a given meaningful name.
 
 The last three programming ingredients are *pointfree*, they only involve programs.
 
-The first programming ingredient also involve functions.
-
-Programming with functions, is also referred to as *functional programming*.
-
-Functional programming is, essentially, also pointfree.
-
-Agreed, *function application* is, almost by definition, a pointful functional programming ingredient.
-
-Function application connects the denotational pointfree world of functions to the operational pointful world of evaluation of expressions.
-
-*This pointful ingredient of the world of functions is, deliberately, not exposed to the pointfree world of programs*.
-
 ### Computations
 
-The internal specification part of the `PSBP` library models *computing*, also .
+The internal specification part of the `PSBP` library models *computing*.
 
 Think about it as explaining to `Scala` what the *essense of computing* is all about.
 
-Members of internal specification `trait`'s are referred to as *computing ingredients*.
+Members of *internal specification* `trait`*'s* are referred to as *computing ingredients*.
 
 A `val` that is defined in terms of computing ingredients is referred to as a *computation*. 
 
-Think of a computation of type `C[Y]` as specifying some generalization of the *evaluation of an expression* of type `Y` *yielding* a *result* of type `Y` and, maybe, *performing side effects* along the way.
+Think of a computation of type `C[Y]` as *specifying* some generalization of the *evaluation of an expression* of type `Y` *yielding* a *result* of type `Y` and, maybe, *performing side effects* along the way.
 
 A computation, just like the evaluation of an expression, is an *operational* artifact.
 
@@ -112,9 +104,27 @@ Formulated somewhat informally, the basic operational computing ingredients are
 
 A computation specifies *how* generalized evaluation of expressions *is done*.
 
-Computations, typically, cannot be given a meaningful name.
+Computations, just like evaluations of expressions, cannot be given a meaningful name.
 
 Computation ingredients are *pointful*, they do not only involve computations but also the results they yield.
+
+### Effects
+
+Side effect specifications are referred to as *effects*.
+
+### Functional programming and function application
+
+The first programming ingredient of [Programs](https://psbp-library.github.io#programs) also involve functions.
+
+Programming with functions, is also referred to as *functional programming*.
+
+Functional programming is, essentially, pointfree.
+
+Agreed, *function application* is, almost by definition, a pointful functional programming ingredient.
+
+Function application connects the denotational pointfree world of functions to the operational pointful world of evaluation of expressions.
+
+*This pointful ingredient of the world of functions is, deliberately, not exposed to the pointfree world of programs*.
 
 ### Main programs
 
@@ -124,21 +134,23 @@ A program of type `Z >--> Y` is, somehow, combined with a *producer* of type `Un
 
 Main programs of type `Unit >--> Unit` are *materialized* to functions of type `Z => Y`.
 
-Materialized main program implementations are, eventually, used in *main* `Scala` *programs* where they, typically, somehow, behave as follows
+Materialized main program implementations are used in *main* `Scala` *programs* where they, somehow, behave as follows
 
 - the producer produces an argument from an *input source*, possibly performing side effects along the way, 
 - the program transforms the being produced argument to a to be consumed result, possibly performing side effects along the way,
-- the consumer consumes the argument and result to an *output sink*, possibly performing side effects along the way.
+- the consumer consumes *both the argument and the result* to an *output sink*, possibly performing side effects along the way.
 
-Eventually, side effects are unavoidable. 
+### Side effects
 
-The intention is to push them to the *outside* of materialized main program implementations to allow for maximum flexibility.
+Let's face it: side effects are unavoidable. 
+
+The intention is to push them to the *outside border* of materialized main program implementations to allow for maximum flexibility.
 
 Side effects can be *external* or *internal*.
 
 External side effects interact with the external world.
 
-Internal side effects typically manifest themselves in the function types of program implementations.
+Internal side effects manifest themselves in the function types of program implementations.
 
 ### Application development
 
@@ -147,7 +159,7 @@ The program level specification `trait`'s define an *application developer API*.
 Application level development is in terms of *program examples* that are
 
 1. defined using programming ingredients of specification `trait`'s
-2. run as part of materialized main program implementations, used in a main `Scala` programs that use *dependency injection* by `import` of implementation `given`'s
+2. run as part of materialized main program implementations, used in a main `Scala` programs that use *injection* by `import` of implementation `given`'s
 
 ### Library development
 
@@ -158,10 +170,12 @@ Library level development is in terms of
 1. specification `trait`'s that declare programming ingredients
 2. specification level implementation `given`'s that define programming ingredients
 3. internal specification `trait`'s that declare computing ingredients
-4. one important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
+4. the most important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
 5. internal specification level implementation `given`'s that define computing ingredients
 5. internal implementation level implementation `given`'s that define computing ingredients
-6. specific implementation `given`'s that define programming ingredients for specific types
+6. specific implementation level implementation `given`'s that define programming ingredients for specific types
+
+That's a whole mouth full of words, but things will become clear when reading the document.
 
 # Application development
 
@@ -357,15 +371,15 @@ val factorial: BigInt => BigInt =
     }
 ```
 
-using the auxiliary function definitions used by the auxiliary functional ones.
+using the auxiliary function definitions used by the auxiliary functional definitions.
 
 On the one hand using abstraction is an *advantage* because it simplifies *complexity*.
 
-Compexity is something that is *difficult to handle* by human beings.
+Compexity needs to be *handled*, which is difficult for most human beings.
 
 On the other hand using abstraction is a *disadvantage*.
 
-Astraction needs to be *understood* by human beings.
+Abstraction needs to be *understood*, which is difficult for some human beings.
 
 But here is the thing: many *different* definitions have *similar* complexity.
 
@@ -455,6 +469,26 @@ def fibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
 where
 
 ```scala
+package examples.specification.functional
+
+// ..
+
+def isOne[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+  function.isOne asProgram  
+
+def subtractTwo[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+  function.subtractTwo asProgram  
+
+def add[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =  
+  function.add asProgram 
+
+// ...
+```
+are program utilities,
+
+where
+
+```scala
 package examples.specification.program
 
 // ...
@@ -478,42 +512,21 @@ val add: BigInt && BigInt => BigInt =
 // ...
 ```
 
-are program utilities,
-
-where
-
-```scala
-package examples.specification.functional
-
-// ..
-
-def isOne[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
-  function.isOne asProgram  
-
-def subtractTwo[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
-  function.subtractTwo asProgram  
-
-def add[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =  
-  function.add asProgram 
-
-// ...
-```
-
 are function utilities.
 
 `fibonacci` is a program that makes use of programming ingredients 
 
-- `asProgram` (being functional)
-- `>-->` (sequential composition)
-- `&&` and `&&&` (construction)
+- `asProgram` (from `Functional`)
+- `>-->` (from `Composition`)
+- `&&` and `&&&` (from `Construction`)
 - `If() {} Else {}` (if-then-else logic, equivalent to `||` from `Condition`)
 
 See 
 
 - [Functional](https://psbp-library.github.io#functional)
-- [Composition](https://psbp-library.github.io#program)
-- [Construction](https://psbp-library.github.io#program)
-- [Condition](https://psbp-library.github.io#program) 
+- [Composition](https://psbp-library.github.io#composition)
+- [Construction](https://psbp-library.github.io#construction)
+- [Condition](https://psbp-library.github.io#condition) 
 
 and 
 
@@ -572,14 +585,38 @@ Otherwise, in other words, if `i != 1` then,
 at level `3.2`, `fibonacci` looks like
 
 ```scala
+      /* level 4.1 */ >-->
+        /* level 4.2 */  >-->
+        /* level 4.3 */ 
+```
+
+```scala
       (subtractOne && subtractTwo) >-->
         (fibonacci &&& fibonacci) >-->
         add
 ```
 
+At level `4.1` `fibonacci` looks like
+
+```scala
+      subtractOne && subtractTwo
+```
+
 A first product value `(subtractOne && subtractTwo)(i)`, which equals `(i - 1, i - 2)`, is constructed.
 
+At level `4.2` `fibonacci` looks like
+
+```scala
+        fibonacci &&& fibonacci
+```
+
 A second product value `(fibonacci &&& fibonacci)(i - 1, i - 2)` which equals `(fibonacci(i - 1), fibonacci(i - 2))` is constructed.
+
+At level `4.3` `fibonacci` looks like
+
+```scala
+        add
+```
 
 The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(i - 1) + fibonacci(i - 2)`.
 
@@ -852,43 +889,13 @@ def random[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]
 
   val readModifiedSeed = readStateModifiedWith(seedModifier)   
 
-  readModifiedSeed >--> seed2randomBigInt >--> negateIfNegative >--> moduloSomeLong 
+  readModifiedSeed >--> 
+    seed2randomBigInt >--> 
+      negateIfNegative >--> 
+        moduloSomeLong 
 ```
 
 where
-
-```scala
-package examples.specification.functional
-
-// ...
-
-def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
-  function.isNotNegative asProgram 
-
-def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
-  function.negate asProgram   
-```
-are program utilities,
-
-where
-
-```scala
-package examples.specification.function
-
-// ...
-
-val isNotNegative: BigInt => Boolean =
-  n =>
-   n >= 0
-
-val negate: BigInt => BigInt =
-  n =>
-    -n  
-```
-
-are function utilities
-
-and where
 
 ```scala
 package examples.specification.program
@@ -911,11 +918,45 @@ def negateIfNegative[>-->[- _, + _]: Program]: BigInt >--> BigInt =
   }
 ```
 
-is a program utility
+is a program utility,
 
-The implementation details are not important.
+where
 
-While, somehow , transforming any argument to a random integer result, `random` internally modifies a seed computation state along the way.
+```scala
+package examples.specification.functional
+
+// ...
+
+def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+  function.isNotNegative asProgram 
+
+def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+  function.negate asProgram   
+```
+
+are program utilities,
+
+where
+
+```scala
+package examples.specification.function
+
+// ...
+
+val isNotNegative: BigInt => Boolean =
+  n =>
+   n >= 0
+
+val negate: BigInt => BigInt =
+  n =>
+    -n  
+```
+
+are function utilities
+
+The implementation details are not important (in fact it not really a good random number generation program at all).
+
+While, somehow , transforming any argument to a random number result, `random` internally modifies a seed computation state along the way.
 
 `random` is a program that makes use of programming ingredients 
 
@@ -925,7 +966,7 @@ While, somehow , transforming any argument to a random integer result, `random` 
 
 and
 
-- `readStateModifiedWith`
+- `readStateModifiedWith` (from `ProgramWithState`)
 
 See
 
@@ -947,9 +988,7 @@ def twoRandoms[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-
   random && random
 ```
 
-Illustrating statefulness can be done by using `twoRandoms`, somehow , transforming any argument to two random integer results.
-
-When running materialized main `twoRandoms` implementations the two random integer results are *different*.
+Illustrating statefulness can be done by using `twoRandoms`, somehow , transforming any argument to two random number results (they should be *different*).
 
 ### `mainTwoRandoms`
 
@@ -999,7 +1038,7 @@ def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >-
   {
     (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
       val `i&&j` = `u&&(i&&j)`._2
-      println(s"generating two random integers yields result ${`i&&j`}")
+      println(s"generating two random numbers yields result ${`i&&j`}")
   } asProgram
 ```
 
@@ -1125,7 +1164,7 @@ def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> 
 // ...  
 ```
 
-`mainParallelFibonacci` is a main program that, for now, makes use of the same effectful producer as `fibonacci` and that makes use of an *akka actor* and *logback logging* based effectful consumer.
+`mainParallelFibonacci` is a main program that, for now, makes use of the same effectful producer as `fibonacci` and makes use of an *akka actor* and *logback logging* based effectful consumer.
 
 Actor `consumer` is sent a message `Consume(i, j)` which causes `logging` to do its work.
 
@@ -1155,6 +1194,8 @@ Please type an integer
 applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
+
+See [mainFactorial](https://psbp-library.github.io#mainfactorial) for more details.
 
 `@main def factorial` uses injection by `import` of `active` `given` implementations.
 
@@ -1243,7 +1284,9 @@ applying fibonacci to the integer argument 10 yields result 89
 
 Running `active` `fibonacci` can also be done with `1000` instead of `10`.
 
-Using `10000` produces a stack overflow.
+Running `active` `fibonacci` with `10000` produces a stack overflow.
+
+Time for *tail recursive optimization*!
 
 ### Running `reactive` `factorial` (effectful producer and consumer)
 
@@ -1270,9 +1313,11 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-The only difference with the active version is the usage of a different injection by `import`.
+The only difference with the `active` version is the usage of a different injection by `import`.
 
 `@main def factorial` uses injection by `import` of `reactive` `given` implementations.
+
+This will be a recurring theme when running program examples.
 
 See [reactiveProgram](https://psbp-library.github.io#reactiveprogram) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
 
@@ -1353,9 +1398,9 @@ applying fibonacci to the integer argument 10 yields result 89
 
 Running `reactive` `optimizedFibonacci` can also be done with `250` instead of `10`.
 
-Using `1000` produces a stack overflow.
+Running `reactive` `optimizedFibonacci` with `1000` produces a stack overflow.
 
-Time for *tail recursive optimization* (for `active` `optimizedFibonacci` and certainly for `reactive` `optimizedFibonacci`)!
+Even more time for tail recursive optimization!
 
 ### Running tail recursive `freeActive` `factorial` (effectful producer and consumer)
 
@@ -1382,13 +1427,13 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-Again, the only difference with the active and reactive versions is the usage of a different injection by `import`.
+Again, the only difference with other versions is the usage of a different injection by `import`.
 
 `@main def factorial` uses injection by `import` of `freeActive` `given` implementations.
 
 See [freeActiveProgram](https://psbp-library.github.io#freeactiveprogram) and [freeActiveMaterialization](https://psbp-library.github.io#freeactivematerialization) for more details.
 
-### Running tail `freeActive` `optimizedFibonacci` (effectful producer and consumer)
+### Running tail recursive `freeActive` `optimizedFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
@@ -1415,7 +1460,7 @@ applying fibonacci to the integer argument 10 yields result 89
 
 Running `freeActive` `optimizedFibonacci` can also be done with `10000` instead of `10`.
 
-Using `10000` does not produce a stack overflow.
+Running `freeActive` `optimizedFibonacci` with `10000` does not produce a stack overflow.
 
 ### Running `stateActive` `twoRandoms` (effectful consumer)
 
@@ -1447,25 +1492,25 @@ Let's run it
 sbt:PSBP> run
 ...
 [info] running examples.implementation.active.programWithState.effectful.twoRandoms 
-generating two random integers yields result (384748,1151252339)
+generating two random numbers yields result (384748,1151252339)
 [success] ...
 ```
 
-Again, the main difference with the active, reactive and free versions is the usage of a different injection by `import`.
+Again, an important difference with other examples is the usage of a different injection by `import`.
 
 `@main def twoRandoms` uses injection by `import` of `stateActive` `given` implementations.
 
 See [stateActiveProgram](https://psbp-library.github.io#stateactiveprogram), [stateActiveState](https://psbp-library.github.io#stateactivestate) and [stateActiveMaterialization](https://psbp-library.github.io#stateactivematerialization) for more details.
 
-`@main def twoRandoms` also a `given` implementation of `Initial` for `Seed`.
+`@main def twoRandoms` also uses a `given` implementation of `Initial` for `Seed`.
 
 When running the materialized main program implementation, the implementation of program `twoRandoms`, somehow, transforms its argument, in this case no argument, to a result, in this case a product result.
 
-This product result consists of two *different* random integers, `384748` and `1151252339`. 
+This product result consists of two *different* random numbers, `384748` and `1151252339`. 
 
 They are different because, while transforming, internal side effects are happening along the way.
 
-More precisely, the `Seed` computation state modifies.
+More precisely, the `Seed` computation state (on which random number generation depends) modifies.
 
 The important takeway is that programming with state can be achieved *without using any* `var`*'s*.
 
@@ -1519,11 +1564,11 @@ Please type an integer
 [success] ...
 ```
 
-Again, the main difference with the active free and state versions is the usage of a different injection by `import`.
+Again, an important difference with other examples is the usage of a different injection by `import`.
 
 `@main def parallelFibonacci` uses injection by `import` of `reactive` `given` implementations.
 
-See [reactiveProgram](https://psbp-library.github.io#reactiveprogram), [reactiveParallel](https://psbp-library.github.io#reactiveParallel) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
+See [reactiveProgram](https://psbp-library.github.io#reactiveprogram), [reactiveParallel](https://psbp-library.github.io#reactiveparallel) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
 
 # Library development
 
@@ -1660,13 +1705,13 @@ enum ||[+Z, +Y]:
         `y=>x`(y)  
 ```
 
-`foldSum` hides the `enum` representation of the sum type.
-
 `Condition` specifies that *programs can deconstruct sum based composite data to perform conditional logic*.
 
 The member `||` is an extension that can be used as infix operator.
 
 The types of the arguments of `conditionally` are call-by-name ones.
+
+`foldSum` hides the `enum` representation of the sum type.
 
 ### `Program`
 
@@ -1694,14 +1739,16 @@ trait Program[>-->[- _, + _]]
     extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
       (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
-    extension [Z, Y] (program: Z >--> Y) def toMain(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
-      producer >--> {
-        Let { 
-          program
-        } In { 
-          consumer 
-        }
-      }
+    extension [Z, Y] (program: Z >--> Y) def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
+      producer 
+        >--> 
+          {
+            Let { 
+              program
+            } In { 
+              consumer 
+            }
+          }
     
     // defined
     
@@ -1856,7 +1903,7 @@ at level `1.1`, `toMain` looks like
     producer
 ```
 
-A local value `z`, which equals `producer()` is constructed, a produced result of type `Z` which is a to be transformed argument of `program`.
+A result value `z` of type `Z`, which equals `producer()`, a by `producer` produced value of type `Z`, is constructed, which is a to be transformed argument of `program`.
 
 At level `1.2`, `toMain` looks like
 
@@ -1875,7 +1922,7 @@ At level `2.1`, `toMain` looks like
           program
 ```
 
-a local value `y`, which equals `program(z)` is constructed, a transformed value of type `Y` which is a to be consumed argument of `consumer`, available as the second component of a product value `(z, y)`.
+a local value `y` of type `Y`, which equals `program(z)`, a by `program` transformed value of type `Y`, which is a to be consumed argument of `consumer`, available as the second component of a product value `(z, y)`.
 
 At level `2.2`, `toMain` looks like
 
@@ -1885,7 +1932,7 @@ At level `2.2`, `toMain` looks like
 
 The result is `consumer(z, y)`.
 
-So `consumer` can consume both `z`, which equals `producer()` the local value produced by `producer` and `y`, which equals `program(z)` the local value transformed by `program.`
+So `consumer` can consume both `z`, which equals `producer()` the result value produced by `producer` and `y`, which equals `program(z)` the local result value transformed by `program.`
 
 ### About power of expression of `&&&` and `Let {} In {}`
 
@@ -2043,6 +2090,10 @@ def `(y||x)=>x`[Y, X]: (Y || X) => X =
 are function utilities.
 
 `|||` and `If() {} Else {}` have the same power of expression as `conditionally` and `||`.
+
+### Curry-Howard-Lambek correspondence
+
+For those who are inclined: the programs above can be seen as instances of *constructive proofs* in the sense of the *Curry-Howard-Lambek correspondence*.
 
 ### `Materialization`
 
@@ -2386,9 +2437,9 @@ The `join` member somehow specifies *computation nesting*.
 
 Compare this with *expression nesting*.
 
-The member `>=` is an`extension` that can be used as infix operator.
+The member `>=` is an `extension` that can be used as infix operator.
 
-The member `joined` is an`extension` that can be used as postfix operator.
+The member `joined` is an `extension` that can be used as postfix operator.
 
 ### `Computation`
 
@@ -2414,7 +2465,9 @@ private[psbp] trait ~>[F[+ _], T[+ _]]:
   private[psbp] def apply[Z]: F[Z] => T[Z] 
 ```
 
-A *natural transformation* of type `F ~> T` is similar to a generic function of type `F[Z] => T[Z]`, but, instead of *transforming at type level* it *transforms at unary type constructor level*.
+A *natural transformation* of type `F ~> T` is similar to a generic function of type `F[Z] => T[Z]`.
+
+Instead of *transforming at type level* it *transforms at unary type constructor level*.
 
 ### `Transformation`
 
@@ -2430,7 +2483,7 @@ private[psbp] trait Transformation[F[+ _], T[+ _]]:
   private[psbp] val `f~>t`: F ~> T
 ```
 
-A *transformation* has a natural transformation member `` `f~>t` `` it can delegate the transformation work to.
+A *transformation* has a natural transformation member `` `f~>t` `` it can delegate its transformation work to.
 
 ### `CoResulting`
 
@@ -2450,7 +2503,7 @@ It turns out to be useful for reactive materialization.
 
 See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactivetransformedmaterialization) for more details.
 
-## One important specification level implementaton `given`
+## The most important specification level implementaton `given`
 
 ### `programFromComputation`
 
@@ -2509,9 +2562,18 @@ Using injection by `import` of `programFromComputation`, a specification level `
 
 Program implementations are limited to functions of type `Z => C[Y]` transforming an argument of type `Z` to a result that is a computation of type `C[Y]`.
 
-Formulated somewhat informally, programs, generalized functions, maybe performing side effects along the way of transforming their argument to a result, are limited to functions transforming an argument to a result that is a computation, a generalized evaluation of an expression, maybe performing side effects along the way.
+Formulated somewhat informally, programs, generalized functions, maybe performing side effects along the way of transforming their an to a result, are limited to functions transforming an argument to a result that is a computation, a generalized evaluation of an expression, maybe performing side effects along the way.
 
-*Although such programs can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*
+Compare this with function definitions using expressions like the one below
+
+```scala
+def function[Z, Y]: Z => Y = 
+  z =>
+    val y = expression(z)
+    y
+```
+
+*Although programs of type* ``Z => C[Y]`` *can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*
 
 ## Internal specification level implementation `given`'s
 
@@ -2560,7 +2622,7 @@ private[psbp] given resultingFromTransformation[
     `z=>fz` andThen `fz=>tz`
 ```
 
-Using a natural transformation to define `result` of the `T[+ _]` computation in terms of `result` of the `F[+ _]` computation.
+The `result` member of the `T[+ _]` computation is defined in terms of the `result` member of the `F[+ _]` computation and the `apply` member of the natural transformation `` `f~>t` ``.
 
 Using injection by `import` of `resultingFromTransformation`, a specification level `given` implementation of `Resulting`, only `given` implementations of `Binding` need to be injected by `import`.
 
@@ -2627,9 +2689,11 @@ There is really only one meaningful way to define the `` `f~>t` `` and `bind` me
 
 This is a recurring theme in pure functional programming and, as a generalization, in program specification based programming.
 
-Often an almost trivial choice for a functional component, resp. programming component does the trick to get the types right.
+Often an almost trivial choice for a function component, resp. programming component does the trick to get the types right.
 
-For `` `f~>t` `` the trivial choice for a functional component is the `Function` member `apply`. 
+For `` `f~>t` `` the trivial choice for a function component is the `Function` member `apply`. 
+
+For `bind` the trivial choice for a programming component is a combination of the member `result` and `bind` of `F[+ _]`. 
 
 ### `reactiveTransformedMaterialization`
 
@@ -2668,7 +2732,7 @@ Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization
 
 Again, there is really only one meaningful way to define the `materialize` member in a way to get the types right.
 
-For `materialize` the trivial choice for a programming component is the co-resulting member `coResult`. 
+For `materialize` the trivial choice for a programming component is the member `coResult` of `CoResulting[F]`. 
 
 ### `FreeTransformed`
 
@@ -2786,11 +2850,15 @@ private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): 
 // ...  
 ```
 
-`foldFree` *folds* a computation ADT of type `T[Z]`, which is an unfolded computation of type `C[Z]`, back to computation of type `C[Z]`.
+`foldFree` *folds* a computation ADT of type `T[Z]`, which is an unfolded computation of type `F[Z]`, back to computation of type `F[Z]`.
 
-Although `foldFree` is not fully tail recursive, the `Scala` compiler performs tail recursive optimization for those cases where it is tail recursive.
+Although `foldFree` is not fully tail recursive, the `Scala` compiler performs tail recursive optimization for those cases where it is tail recursive (how cool is that!).
 
-The one but last `case` in `foldFree` corresponds to the *associativity of binding*.
+The one but last `case` in `foldFree` corresponds to the *associativity law of binding*.
+
+Only one law is used to perform generic tail recursive optimization.
+
+Performing specific tail recursive optimization involves using one or more laws.
 
 ### `freeTransformedMaterialization`
 
@@ -2829,7 +2897,11 @@ Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization
 
 Again, there is really only one meaningful way to define the `materialize` member in a way to get the types right.
 
-For `materialize` the trivial choice for a programming component is `foldFree`. 
+For `materialize` the trivial choice for a programming component is a combination of `foldFree` and the `materialize` member of `F[+ _]`. 
+
+`freeTransformedMaterialization` is defined in a completely different way as `reactiveTransformedMaterialization`. 
+
+`reactiveTransformedMaterialization` does not make use of the materialization ingredients of `F[+ _]` at all.
 
 ### `freeTransformedCoResulting`
 
@@ -2869,7 +2941,7 @@ private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]
 
 A state transformed computation is a *computation state handler* of type `S => C[(S, Z)]` handling *computation state* of type `S` while computing.
 
-### `stateTransformedBinding` and `stateTransformedState`
+### `stateTransformedBinding`
 
 ```scala
 package psbp.internal.implementation.computation.transformation
@@ -2907,7 +2979,7 @@ private[psbp] given stateTransformedBinding[
       bindF(tz(s), (s, z) => `z=>ty`(z)(s)) 
 ```
 
-and
+### `stateTransformedState`
 
 ```scala
 package psbp.internal.implementation.computation.transformation
@@ -2995,11 +3067,11 @@ Transforming materialization of `[Z, Y] =>> Z => C[Y], Z, Y`, to materialization
 
 Again, there is really only one meaningful way to define the `materialize` member in a way to get the types right.
 
-For `materialize` the trivial choice for a programming component is `materializeF`. 
+For `materialize` the trivial choice for a programming component is a combination of the `result`, `bind` and `materialize` members of `F[+ _]`. 
 
-`stateTransformedMaterialization` is defined in a completely different way as `freeTransformedMaterialization` and `reactiveTransformedMaterialization`. 
+`stateTransformedMaterialization` is defined in a completely different way as `reactiveTransformedMaterialization`. 
 
-`freeTransformedMaterialization` and `reactiveTransformedMaterialization` do not make use of the materialization ingredients of `F[+ _]` at all.
+`reactiveTransformedMaterialization` does not make use of the materialization ingredients of `F[+ _]` at all.
 
 ### `reactiveTransformedParallel`
 
@@ -3194,7 +3266,7 @@ Implementing parallelism makes use of an akka actors and logback logging.
 
 Actor `leftActor` and actor `rightActor` act together in parallel sending their results to actor `reactor` to react to.
 
-Some `logging` has been added in to illustrate how `leftActor` and `rightActor` act, resp. `reactor` reacts.
+Some `logging` has been added to illustrate how `leftActor` and `rightActor` act, resp. `reactor` reacts.
 
 ## Specific implementation `given`'s
 
@@ -3208,8 +3280,6 @@ import psbp.specification.program.Program
 import psbp.internal.specification.computation.Resulting
 
 import psbp.internal.specification.computation.Binding
-
-import psbp.internal.specification.computation.Computation
 
 import psbp.internal.specification.computation.programFromComputation
 
@@ -3268,11 +3338,11 @@ Think of active programming as *pure functional programming*.
 
 Of course, using `Scala`, it is possible to write functions that perform side effects along the way of transforming their argument to a result.
 
-For example, *inside* of the active materialized implementation of `mainFactorial`, `intProducer` and`factorialConsumer` perform side effects.
-
-The intention is to push them to the *outside*.
+For example, *inside* of the active materialized implementation of `mainFactorial` , `intProducer` and `factorialConsumer` perform side effects.
 
 See [mainFactorial](https://psbp-library.github.io#mainfactorial) for more details.
+
+The intention is to replace those side effects by effects and to push them to the outside border.
 
 ### `activeCoResulting`
 
@@ -3328,7 +3398,7 @@ type Reactive = [Y] =>> ReactiveTransformed[Active][Y]
 type `=>R` = [Z, Y] =>> Z => Reactive[Y]
 ```
 
-Transforming from active programming with `` `=>A` `` to reactive programming with `` `=>R` `` is done by using a combination of `programFromComputation`,`reactiveTransformedBinding`, and friends `computationFromResultingAndBinding` and `resultingFromTransformation`.
+Transforming from `active` programming with `` `=>A` `` to `reactive` programming with `` `=>R` `` is done by using a combination of `programFromComputation`, `reactiveTransformedBinding`, and friends `computationFromResultingAndBinding` and `resultingFromTransformation`.
 
 See [programFromComputation](https://psbp-library.github.io#programfromcomputation), [reactiveTransformedBinding](https://psbp-library.github.io#reactivetransformedbinding), [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) and [resultingFromTransformation](https://psbp-library.github.io#resultingfromtransformation) for more details.
 
@@ -3351,9 +3421,9 @@ given reactiveMaterialization: Materialization[`=>R`, Unit, Unit] =
   reactiveTransformedMaterialization[Active, Unit, Unit]
 ```
 
-Transforming from active materialization of `` `=>A` `` to reactive materialization of `` `=>R` `` is done by using `reactiveTransformedMaterialization` and friend `computationFromResultingAndBinding`.
+Transforming from `active` materialization of `` `=>A` `` to `reactive` materialization of `` `=>R` `` is done by using `reactiveTransformedMaterialization` and friend `computationFromResultingAndBinding`.
 
-See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactiveTransformedmaterialization) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
+See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactivetransformedmaterialization) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
 
 ### `freeActiveProgram`
 
@@ -3389,7 +3459,7 @@ type FreeActive = [Y] =>> FreeTransformed[Active][Y]
 type `=>FA`= [Z, Y] =>> Z => FreeActive[Y]
 ```
 
-Transforming from active programming with `` `=>A` `` to free active programming with `` `=>FA` `` is done by using a combination of `programFromComputation` and `freeTransformedComputation`.
+Transforming from `active` programming with `` `=>A` `` to `freeActive` programming with `` `=>FA` `` is done by using a combination of `programFromComputation` and `freeTransformedComputation`.
 
 See [programFromComputation](https://psbp-library.github.io#programfromcomputation) and [freeTransformedComputation](https://psbp-library.github.io#freetransformedcomputation) for more details.
 
@@ -3412,11 +3482,11 @@ given freeActiveMaterialization: Materialization[`=>FA`, Unit, Unit] =
   freeTransformedMaterialization[Active, Unit, Unit]
 ```
 
-Transforming from active materialization of `` `=>A` `` to free active materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization` and friend `computationFromResultingAndBinding`.
+Transforming from `active` materialization of `` `=>A` `` to `freeActive` materialization of `` `=>FA` `` is done by using `freeTransformedMaterialization` and friend `computationFromResultingAndBinding`.
 
 See [freeTransformedMaterialization](https://psbp-library.github.io#freetransformedmaterialization) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
 
-### `stateActiveProgram` and `stateActiveState`
+### `stateActiveProgram`
 
 ```scala
 package psbp.implementation.stateActive
@@ -3442,7 +3512,21 @@ given stateActiveBinding[S]: Binding[StateActive[S]] = stateTransformedBinding[S
 given stateActiveProgram[S]: Program[`=>SA`[S]] = programFromComputation[StateActive[S]]
 ```
 
-and
+where
+
+```scala
+package psbp.implementation.stateActive
+
+import psbp.internal.implementation.computation.transformation.StateTransformed
+
+import psbp.implementation.active.Active
+
+type StateActive[S] = [Y] =>> StateTransformed[S, Active][Y] 
+
+type `=>SA`[S] = [Z, Y] =>> Z => StateActive[S][Y]
+```
+
+### `stateActiveState`
 
 ```scala
 package psbp.implementation.stateActive
@@ -3459,22 +3543,7 @@ import psbp.implementation.active.{ activeResulting, activeBinding }
 
 given stateActiveState[S]: State[S, `=>SA`[S]] = stateTransformedState[S, Active]
 ```
-
-where
-
-```scala
-package psbp.implementation.stateActive
-
-import psbp.internal.implementation.computation.transformation.StateTransformed
-
-import psbp.implementation.active.Active
-
-type StateActive[S] = [Y] =>> StateTransformed[S, Active][Y] 
-
-type `=>SA`[S] = [Z, Y] =>> Z => StateActive[S][Y]
-```
-
-Transforming from active programming with `` `=>A` `` to active with state programming with `` `=>SA[S]` `` is done by using a combination of `programFromComputation`, `stateTransformedBinding`, `stateTransformedState`, and friends `computationFromResultingAndBinding` and `resultingFromTransformation`.
+Transforming from `active` programming with `` `=>A` `` to `active` programming with state `` `=>SA[S]` `` is done by using a combination of `programFromComputation`, `stateTransformedBinding`, `stateTransformedState`, and friends `computationFromResultingAndBinding` and `resultingFromTransformation`.
 
 See [programFromComputation](https://psbp-library.github.io#programfromcomputation), [stateTransformedBinding](https://psbp-library.github.io#statetransformedbinding), [stateTransformedState](https://psbp-library.github.io#statetransformedstate), [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) and [resultingFromTransformation](https://psbp-library.github.io#resultingfromtransformation) for more details.
 
@@ -3499,7 +3568,7 @@ given stateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, U
   stateTransformedMaterialization[S, Active, Unit, Unit]
 ```
 
-Transforming from active materialization of `` `=>A` `` to active with state materialization of `` `=>R` `` `` `=>SA`[S] `` is done by using `stateTransformedMaterialization` and friend `computationFromResultingAndBinding`.
+Transforming from `active` materialization of `` `=>A` `` to `active` materialization with state of `` `=>SA`[S] `` is done by using `stateTransformedMaterialization` and friend `computationFromResultingAndBinding`.
 
 See [stateTransformedMaterialization](https://psbp-library.github.io#stateTransformedmaterialization) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
 
@@ -3521,7 +3590,7 @@ import psbp.implementation.active.{ activeResulting, activeBinding }
 given reactiveParallel: Parallel[`=>R`] = reactiveTransformedParallel[Active]
 ```
 
-Transforming from active programming with `` `=>A` `` to reactive programming with parallelism with `` `=>R` `` is done by using `reactiveTransformedParallel` and friend `computationFromResultingAndBinding`.
+Transforming from `active` programming with `` `=>A` `` to `active` programming with parallelism  of`` `=>R` `` is done by using `reactiveTransformedParallel` and friend `computationFromResultingAndBinding`.
 
 [reactiveTransformedParallel](https://psbp-library.github.io#reactivetransformedparallel) and [computationFromResultingAndBinding](https://psbp-library.github.io#computationfromresultingandbinding) for more details.
 

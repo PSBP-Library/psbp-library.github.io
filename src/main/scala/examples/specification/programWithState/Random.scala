@@ -38,4 +38,7 @@ def random[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]
 
   val readModifiedSeed = readStateModifiedWith(seedModifier)   
 
-  readModifiedSeed >--> seed2randomBigInt >--> negateIfNegative >--> moduloSomeLong 
+  readModifiedSeed >--> 
+    seed2randomBigInt >--> 
+      negateIfNegative >--> 
+        moduloSomeLong 

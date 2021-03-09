@@ -22,13 +22,15 @@ trait Program[>-->[- _, + _]]
       (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
     extension [Z, Y] (program: Z >--> Y) def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
-      producer >--> {
-        Let { 
-          program
-        } In { 
-          consumer 
-        }
-      }
+      producer 
+        >--> 
+          {
+            Let { 
+              program
+            } In { 
+              consumer 
+            }
+          }
     
     // defined
     

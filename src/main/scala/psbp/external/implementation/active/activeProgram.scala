@@ -6,8 +6,6 @@ import psbp.internal.specification.computation.Resulting
 
 import psbp.internal.specification.computation.Binding
 
-import psbp.internal.specification.computation.Computation
-
 import psbp.internal.specification.computation.programFromComputation
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
