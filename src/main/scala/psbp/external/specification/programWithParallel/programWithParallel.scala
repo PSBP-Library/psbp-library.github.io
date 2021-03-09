@@ -1,10 +1,8 @@
-package psbp.implementation
+package psbp.specification.programWithParallel
 
 import psbp.specification.program.Program
 
 import psbp.specification.program.parallel.Parallel
-
-import psbp.specification.programWithParallel.ProgramWithParallel
 
 given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParallel[>-->] with
  

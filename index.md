@@ -1476,7 +1476,7 @@ Instead, state manifests itself, internally, in the function type `Z => (S => [(
 ```scala
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.implementation.programWithParallel
+import psbp.specification.programWithParallel.given
 
 import psbp.implementation.reactive.given
 
@@ -2289,15 +2289,15 @@ The member `|&&|` is an extension that can be used as infix operator.
 ### `programWithState`
 
 ```scala
-package psbp.implementation
+package psbp.specification.programWithState
 
 import psbp.specification.program.Program
 
 import psbp.specification.program.state.State
 
-import psbp.specification.programWithState.ProgramWithState
-
-given programWithState[S, >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
+given programWithState[
+  S, 
+  >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
  
   private val program: Program[>-->] = summon[Program[>-->]]
 
@@ -2317,13 +2317,11 @@ Using injection by `import` of `programWithState`, a specification level `given`
 ### `programWithParallel`
 
 ```scala
-package psbp.implementation
+package psbp.specification.programWithParallel
 
 import psbp.specification.program.Program
 
 import psbp.specification.program.parallel.Parallel
-
-import psbp.specification.programWithParallel.ProgramWithParallel
 
 given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParallel[>-->] with
  
@@ -3311,9 +3309,9 @@ import psbp.implementation.active.Active
 
 import psbp.implementation.active.{ activeResulting, activeBinding }
 
-given Binding[Reactive] = reactiveTransformedBinding[Active]
+given reactiveBinding: Binding[Reactive] = reactiveTransformedBinding[Active]
 
-given Program[`=>R`] = programFromComputation[Reactive]
+given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
 ```
 
 where
@@ -3372,9 +3370,9 @@ import psbp.internal.implementation.computation.transformation.freeTransformedCo
 
 import psbp.implementation.active.Active
 
-given Computation[FreeActive] = freeTransformedComputation[Active]
+given freeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
 
-given Program[`=>FA`] = programFromComputation[FreeActive]
+given freeActiveProgram: Program[`=>FA`] = programFromComputation[FreeActive]
 ```
 
 where

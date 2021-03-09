@@ -4,9 +4,9 @@ import psbp.specification.program.Program
 
 import psbp.specification.program.state.State
 
-// import psbp.specification.programWithState.ProgramWithState
-
-given programWithState[S, >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
+given programWithState[
+  S, 
+  >-->[- _, + _]: Program: [>-->[- _, + _]] =>> State[S, >-->]]: ProgramWithState[S, >-->] with
  
   private val program: Program[>-->] = summon[Program[>-->]]
 

@@ -10,6 +10,6 @@ import psbp.internal.implementation.computation.transformation.freeTransformedCo
 
 import psbp.implementation.active.Active
 
-given Computation[FreeActive] = freeTransformedComputation[Active]
+given freeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
 
-given Program[`=>FA`] = programFromComputation[FreeActive]
+given freeActiveProgram: Program[`=>FA`] = programFromComputation[FreeActive]

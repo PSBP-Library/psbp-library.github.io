@@ -16,6 +16,6 @@ import psbp.implementation.active.Active
 
 import psbp.implementation.active.{ activeResulting, activeBinding }
 
-given Binding[Reactive] = reactiveTransformedBinding[Active]
+given reactiveBinding: Binding[Reactive] = reactiveTransformedBinding[Active]
 
-given Program[`=>R`] = programFromComputation[Reactive]
+given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
