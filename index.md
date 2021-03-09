@@ -260,9 +260,9 @@ are function utilities.
 See 
 
 - [Functional](https://psbp-library.github.io#functional)
-- [Composition](https://psbp-library.github.io#program)
-- [Construction](https://psbp-library.github.io#program)
-- [Condition](https://psbp-library.github.io#program) 
+- [Composition](https://psbp-library.github.io#composition)
+- [Construction](https://psbp-library.github.io#construction)
+- [Condition](https://psbp-library.github.io#condition) 
 
 and 
 
