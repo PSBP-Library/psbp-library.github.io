@@ -83,6 +83,18 @@ Programs, just like functions, can be a given meaningful name.
 
 The last three programming ingredients are *pointfree*, they only involve programs.
 
+### Functional programming
+
+The first programming ingredient of [Programs](https://psbp-library.github.io#programs) also involves functions.
+
+Programming with functions is referred to as *functional programming*.
+
+Functional programming is, essentially, pointfree.
+
+Agreed, *function application* is, almost by definition, a *pointful* function ingredient.
+
+*This pointful ingredient of the world of functions is, deliberately, not exposed to the pointfree world of programs*.
+
 ### Computations
 
 The internal specification part of the `PSBP` library models *computing*.
@@ -108,23 +120,40 @@ Computations, just like evaluations of expressions, cannot be given a meaningful
 
 Computation ingredients are *pointful*, they do not only involve computations but also the results they yield.
 
-### Effects
+### Remark
 
-Side effect specifications are referred to as *effects*.
-
-### Functional programming and function application
-
-The first programming ingredient of [Programs](https://psbp-library.github.io#programs) also involve functions.
-
-Programming with functions, is also referred to as *functional programming*.
-
-Functional programming is, essentially, pointfree.
-
-Agreed, *function application* is, almost by definition, a pointful functional programming ingredient.
+A function application is an expression.
 
 Function application connects the denotational pointfree world of functions to the operational pointful world of evaluation of expressions.
 
-*This pointful ingredient of the world of functions is, deliberately, not exposed to the pointfree world of programs*.
+### FunctionApplication lifting
+
+```scala
+def functionApplication[Z, Y]: ((Z => Y) && Z) => Y =
+  (`z=>y`, z) =>
+    `z=>y` apply z
+```
+
+The definition of function application above uses
+
+- a value (`z`)
+- a function (`` `z=>y` ``)
+- a product (`` (`z=>y`, z) ``)
+- application (`` `z=>y` apply z ``)
+
+The product `` (`z=>y`, z) `` is a specific version of a generic one `` (z, y) `` so, essentially the definition of function application above uses
+
+- a value 
+- a product
+- application
+
+where both the product and application involve
+
+- a function
+
+The internal specification part of the `PSBP` library also models *lifting* values, products, application and, as a consequence, also functions to the level of computations.
+
+### Aggregation
 
 ### Main programs
 
@@ -171,10 +200,9 @@ Library level development is in terms of
 2. specification level implementation `given`'s that define programming ingredients
 3. internal specification `trait`'s that declare computing ingredients
 4. important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
-5. important internal specification level implementation `given` that defines lifting ingredients in terms of computation ingredients
-6. internal specification level implementation `given`'s that define computing ingredients
-7. internal implementation level implementation `given`'s that define computing ingredients
-8. specific implementation level implementation `given`'s that define programming ingredients for specific types
+5. internal specification level implementation `given`'s that define computing ingredients
+6. internal implementation level implementation `given`'s that define computing ingredients
+7. specific implementation level implementation `given`'s that define programming ingredients for specific types
 
 That's a whole mouth full of words, but things will become clear when reading the document.
 
@@ -1825,8 +1853,6 @@ def `y>-->(z||y)`[>-->[- _, + _]: Functional, Z, Y]: Y >--> (Z || Y) =
   
 def `(z&&b)>-->(z||z)`[>-->[- _, + _]: Functional, Z]: (Z && Boolean) >--> (Z || Z) =
   `(z&&b)=>(z||z)` asProgram 
-
-// ...  
 ```
 
 are program utilities,
@@ -1871,9 +1897,7 @@ def `(z&&b)=>(z||z)`[Z]: (Z && Boolean) => (Z || Z) =
     (z, b) match {
       case (_, true) => Left(z)
       case (_, false) => Right(z) 
-    } 
-    
-// ...    
+    }    
 ```
 
 are function utilities.
@@ -1982,7 +2006,7 @@ def `z>-->(z&&z)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Z) =
   `z=>(z&&z)` asProgram  
 
 def `(z&&y&&x)>-->(y&&x)`[>-->[- _, + _]: Functional, Z, Y, X]: (Z && Y && X) >--> (Y && X) =
-  `(z&&y&&x)=>(y&&x)` asProgram
+  `(z&&y&&x)=>(y&&x)` asProgram 
 ```
 
 are program utilities,
@@ -2004,7 +2028,7 @@ def `z=>(z&&z)`[Z]: Z => (Z && Z) =
     
 def `(z&&y&&x)=>(y&&x)`[Z, Y, X]: (Z && Y && X) => (Y && X) =
   case ((_, y), x) =>
-    (y, x) 
+    (y, x)    
 ```
 
 are function utilities.
@@ -2289,7 +2313,7 @@ import scala.language.postfixOps
 // ...  
 
 def `u>-->u`[>-->[- _, + _]: Functional]: Unit >--> Unit =
-  `u=>u` asProgram
+  `u=>u` asProgram 
 
 // construction
 
@@ -2299,9 +2323,7 @@ def `z>-->(z&&u)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Unit) =
   `z=>(z&&u)` asProgram
 
 def `(y&&u)>-->y`[>-->[- _, + _]: Functional, Y]: (Y && Unit) >--> Y =
-  `(y&&u)=>y` asProgram 
-
-// ...
+  `(y&&u)=>y` asProgram
 ```
 
 are program utilities
@@ -2328,9 +2350,7 @@ def `z=>(z&&u)`[Z]: Z => (Z && Unit) =
 
 def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
   (y, _) => 
-    y       
-
-// ...
+    y
 ```
 
 are function utilities.
@@ -2509,6 +2529,222 @@ It turns out to be useful for reactive materialization.
 
 See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactivetransformedmaterialization) for more details.
 
+
+### `ValueLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+private[psbp] trait ValueLifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def liftValue[Z]: Z => C[Z]
+```
+
+`liftValue` specifies that *values can be lifted to the level of computations*.
+
+### `ProductLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+import psbp.specification.function.{ `(z=>y)=>((z&&x)=>(y&&x)))` }
+
+private[psbp] trait ProductLifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def liftProduct2[Z, Y]: (C[Z] && C[Y]) => C[Z && Y]
+
+  // defined
+  
+  private[psbp] def liftProduct3[Z, Y, X, W]: (C[Z] && C[Y] && C[X]) => (C[Z && Y && X]) = 
+    `(z=>y)=>((z&&x)=>(y&&x)))`(liftProduct2) andThen liftProduct2
+
+  // liftProduct4, ...  
+```
+
+where
+
+```scala
+package psbp.specification.function
+
+// ...
+
+// construction
+
+// ...
+
+def `(z=>y)=>((z&&x)=>(y&&x)))`[Z, Y, X]: (Z => Y) => ((Z && X) => (Y && X)) =
+  `z=>y` => 
+    (z, x) =>
+      (`z=>y`(z), x)
+```
+
+is a function utility.
+
+`liftProduct2`, `liftProduct3`, ... specify that *products can be lifted to the level of computations*.
+
+### `ApplicationLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+private[psbp] trait ApplicationLifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def liftApply[Z, Y]: (C[Z => Y] && C[Z]) => C[Y]
+```
+
+`liftApply` specifies that *application can be lifted to the level of computations*.
+
+
+### `FunctionApplicationLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+private[psbp] trait FunctionApplicationLifting[C[+ _]] 
+  extends ValueLifting[C] 
+  with ProductLifting[C] 
+  with ApplicationLifting[C]
+```
+
+`FunctionApplicationLifting` is simply a combination of `ValueLifting`, `ProductLifting` and `ApplicationLifting`.
+
+### `Function0Lifting`
+
+```scala
+package psbp.internal.specification.computation
+
+private[psbp] trait Function0Lifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def lift0[Z]: Z => C[Z]
+```
+
+`lift0` specifies that *functions with* `0` *arguments can be lifted to the level of computations*.
+
+### `Function1Lifting`
+
+```scala
+package psbp.internal.specification.computation
+
+private[psbp] trait Function1Lifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def lift1[Z, Y]: (Z => Y) => C[Z] => C[Y]
+```
+
+`lift1` specifies that *functions with* `1` *argument can be lifted to the level of computations*.
+
+### `Function2Lifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+private[psbp] trait Function2Lifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def lift2[Z, Y, X]: ((Z && Y) => X) => (C[Z] && C[Y]) => C[X]
+```
+
+`lift2` specifies that *functions with* `2` *arguments can be lifted to the level of computations*.
+
+### `Function3Lifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+private[psbp] trait Function3Lifting[C[+ _]]:
+
+  // declared
+
+  private[psbp] def lift3[Z, Y, X, W]: ((Z && Y && X) => W) => (C[Z] && C[Y] && C[X]) => C[W] 
+```
+
+`lift3` specifies that *functions with* `3` *arguments can be lifted to the level of computations*.
+
+### `FunctionLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.{ &&, || }
+
+import psbp.specification.function.{ `(z&&y)=>(z&&y)`, foldSum, `z=>(z||y)`, `y=>(z||y)`, and, or }
+
+private[psbp] trait FunctionLifting[C[+ _]] 
+  extends Function0Lifting[C] 
+  with Function1Lifting[C] 
+  with Function2Lifting[C] 
+  with Function3Lifting[C]: // ...
+
+  // defined
+  
+  private[psbp] def liftProduct[Z, Y]: (C[Z] && C[Y]) => C[Z && Y] =
+    lift2(`(z&&y)=>(z&&y)`)
+
+  private[psbp] def liftSum[Z, Y]: (C[Z] || C[Y]) => C[Z || Y] =
+    foldSum(lift1(`z=>(z||y)`), lift1(`y=>(z||y)`)) 
+
+  private[psbp] def liftAnd[Z, Y, X, W]: ((Z => C[X]) && (Y => C[W])) => ((Z && Y) => C[X && W]) =
+      (`z=>cx`, `y=>cw`) =>
+        and(`z=>cx`, `y=>cw`) andThen liftProduct    
+
+  private[psbp] def liftOr[Z, Y, X, W]: ((Z => C[X]) && (Y => C[W])) => ((Z || Y) => C[X || W]) =
+    (`z=>cx`, `y=>cw`) =>
+      or(`z=>cx`, `y=>cw`) andThen liftSum 
+```
+
+where
+
+```scala
+package psbp.specification.function
+
+//
+
+// construction
+
+// ...
+
+def `(z&&y)=>(z&&y)`[Z, Y]: (Z && Y) => (Z && Y) =
+  identity     
+    
+def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
+  z =>
+    (`z=>y`(z), `z=>x`(z))
+
+def and[Z, Y, X, W]: ((Z => X) && (Y => W)) => (Z && Y) => (X && W) =
+  (`z=>x`, `y=>w`) =>
+    unfoldProduct(`(z&&y)=>z` andThen `z=>x`, `(z&&y)=>y` andThen `y=>w`)
+
+// condition
+
+// ...
+
+def or[Z, Y, X, W]: ((X => Z) && (W => Y)) => (X || W) => (Z || Y) =
+  (`x=>z`, `w=>y`) =>
+    foldSum(`x=>z` andThen `z=>(z||y)`, `w=>y` andThen `y=>(z||y)`) 
+```
+
+`FunctionLifting` is simply a combination of `Function0Lifting`, `Function1Lifting`, `Function2Lifting`, `Function3Lifting` and ... , where some extra members have been added to.
+
 ## Important specification level implementaton `given`
 
 ### `programFromComputation`
@@ -2583,10 +2819,6 @@ def function[Z, Y]: Z => Y =
 
 *Although programs of type* ``Z => C[Y]`` *can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*
 
-## Important internal specification level implementaton `given`
-
-TODO
-
 ## Internal specification level implementation `given`'s
 
 ### `computationFromResultingAndBinding`
@@ -2637,6 +2869,63 @@ private[psbp] given resultingFromTransformation[
 The `result` member of the `T[+ _]` computation is defined in terms of the `result` member of the `F[+ _]` computation and the `apply` member of the natural transformation `` `f~>t` ``.
 
 Using injection by `import` of `resultingFromTransformation`, a specification level `given` implementation of `Resulting`, only `given` implementations of `Binding` need to be injected by `import`.
+
+### `functionApplicationLiftingFromValueProductAndApplicationLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+given functionApplicationLiftingFromValueProductAndApplicationLifting[
+  C[+ _]: ValueLifting: ProductLifting: ApplicationLifting]: FunctionApplicationLifting[C] with
+
+  private val valueLifting: ValueLifting[C] = summon[ValueLifting[C]]
+
+  private val productLifting: ProductLifting[C] = summon[ProductLifting[C]]
+
+  private val applicationLifting: ApplicationLifting[C] = summon[ApplicationLifting[C]]
+
+  export valueLifting.liftValue
+  export productLifting.liftProduct2 
+  export applicationLifting.liftApply
+```
+
+Using injection by `import` of `functionApplicationLiftingFromValueProductAndApplicationLifting`, a specification level `given` implementation of `FunctionApplicationLifting`, only `given` implementations of `ValueLifting`, `ProductLifting` and `ApplicationLifting` need to be injected by `import`.
+
+### `functionLiftingFromFunctionApplicationLifting`
+
+```scala
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+given functionLiftingFromFunctionApplicationLifting[C[+ _]: FunctionApplicationLifting]: FunctionLifting[C] with
+
+  private val functionApplicationLifting: FunctionApplicationLifting[C] = summon[FunctionApplicationLifting[C]]
+  import functionApplicationLifting.{ liftValue, liftProduct2, liftProduct3, liftApply }
+  
+  override private[psbp] def lift0[Z]: Z => C[Z] =
+    z =>
+      liftValue(z)
+
+  override private[psbp] def lift1[Z, Y]: (Z => Y) => C[Z] => C[Y] =
+    `z=>y` => 
+      cz =>
+        liftApply(liftValue(`z=>y`), cz)  
+
+  override private[psbp] def lift2[Z, Y, X]: ((Z && Y) => X) => (C[Z] && C[Y]) => C[X] =
+    `(z&&y)=>x` =>
+      `cz&&cy` =>
+        liftApply(liftValue(`(z&&y)=>x`), liftProduct2(`cz&&cy`))      
+
+  override private[psbp] def lift3[Z, Y, X, W]: ((Z && Y && X) => W) => (C[Z] && C[Y] && C[X]) => C[W] =
+    (`((z&&y)&&x)=>w`: ((Z && Y && X) => W)) =>
+      (`cz&&cy&&cx`: (C[Z] && C[Y] && C[X])) =>
+        liftApply(liftValue(`((z&&y)&&x)=>w`), liftProduct3(`cz&&cy&&cx`))   
+
+  // ...
+```
+
+Using injection by `import` of `functionLiftingFromFunctionApplicationLifting`, a specification level `given` implementation of `FunctionLifting`, only a `given` implementation of `FunctionApplicationLifting` needs to be injected by `import`.
 
 ## Internal implementation level implementation `given`'s
 

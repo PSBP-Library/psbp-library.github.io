@@ -41,37 +41,22 @@ def `(y&&u)=>y`[Y]: (Y && Unit) => Y =
   (y, _) => 
     y       
 
-// new 
-
-def `((z=>y)&&z)=>y`[Z, Y]: ((Z => Y) && Z) => Y =
-  (z2y, z) =>
-    z2y(z)
-
-// new
-
-def `(z&&y)=>(z&&y)`[Z, Y]: (Z && Y) => (Z && Y) =
-  z2y =>
-    z2y
-
-// new
-
-def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
-  z =>
-    (`z=>y`(z), `z=>x`(z))
-
-// new
-
-def and[Z, Y, X, W]: ((Z => X) && (Y => W)) => (Z && Y) => (X && W) =
-  (`z=>x`, `y=>w`) =>
-    unfoldProduct(`(z&&y)=>z` andThen `z=>x`, `(z&&y)=>y` andThen `y=>w`)
-
-// new
-
 def `(z=>y)=>((z&&x)=>(y&&x)))`[Z, Y, X]: (Z => Y) => ((Z && X) => (Y && X)) =
   `z=>y` => 
     (z, x) =>
       (`z=>y`(z), x)
 
+def `(z&&y)=>(z&&y)`[Z, Y]: (Z && Y) => (Z && Y) =
+  identity     
+    
+def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
+  z =>
+    (`z=>y`(z), `z=>x`(z))
+
+def and[Z, Y, X, W]: ((Z => X) && (Y => W)) => (Z && Y) => (X && W) =
+  (`z=>x`, `y=>w`) =>
+    unfoldProduct(`(z&&y)=>z` andThen `z=>x`, `(z&&y)=>y` andThen `y=>w`)
+    
 // condition
 
 import ||.{ Left, Right }
@@ -98,8 +83,6 @@ def `(y||x)=>y`[Y, X]: (Y || X) => Y =
 
 def `(y||x)=>x`[Y, X]: (Y || X) => X =
   foldSum(_ => ???, x => x) 
-
-// new
 
 def or[Z, Y, X, W]: ((X => Z) && (W => Y)) => (X || W) => (Z || Y) =
   (`x=>z`, `w=>y`) =>
