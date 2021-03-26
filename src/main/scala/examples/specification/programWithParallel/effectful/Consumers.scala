@@ -2,46 +2,50 @@ package examples.specification.programWithParallel.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
-
-import psbp.specification.program.Program 
-
 import akka.actor.typed.{ ActorSystem, Behavior }
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
   
 import Behaviors.{ receive, stopped }
   
-import ch.qos.logback.classic.{Level, Logger, LoggerContext}
-import Level.{ INFO, ERROR}
+import ch.qos.logback.classic.{ Level, Logger, LoggerContext }
+import Level.{ INFO, ERROR }
   
 import org.slf4j.LoggerFactory
 
+import psbp.external.specifcation.types.&&
+
+import psbp.external.specifcation.program.Program 
+
 val packageName = "examples.specification.programWithParallel.effectful"
   
-val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
-val logger: Logger = loggerContext.getLogger(packageName)
+val loggerContext: LoggerContext = 
+  LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
+val logger: Logger = 
+  loggerContext.getLogger(packageName)
   
-def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
-  logger.setLevel(INFO);
+def logInfo[Z](actorContext: ActorContext[Z])(message: String): Unit =
+  logger.setLevel(INFO)
   actorContext.log.info(message)
-  logger.setLevel(ERROR);  
-}
+  logger.setLevel(ERROR)
   
-def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
+def parallelFibonacciConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
     
   object Consumer {
 
     case class Consume(i: BigInt, j: BigInt)
 
-    def apply(): Behavior[Consume] = receive { (context, message) =>
-      message match {
-        case Consume(i, j) =>
-          val logging = log(context)
-          logging(s"applying parallel fibonacci to argument $i yields result $j")
-          stopped
+    def apply(): Behavior[Consume] = 
+      receive { (context, message) =>
+        message match {
+          case Consume(i, j) =>
+            val info = logInfo(context)
+            info(s"applying parallel fibonacci to argument $i yields result $j")
+            stopped
+        }
       }
-    }
 
   }
 
@@ -49,11 +53,11 @@ def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> 
    
   import Consumer.Consume
 
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
+  val sendConsumeToConsumer: (BigInt && BigInt) => Unit =
+    (i, j) =>
       consumer ! Consume(i, j)
-  } asProgram  
+
+  sendConsumeToConsumer asProgram 
+
 
 

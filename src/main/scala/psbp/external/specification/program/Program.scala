@@ -1,8 +1,8 @@
-package psbp.specification.program
+package psbp.external.specifcation.program
 
-import psbp.specification.types.{ &&, || }
+import psbp.external.specifcation.types.{ &&, || }
 
-import psbp.specification.functional.{ 
+import psbp.external.specifcation.functional.{ 
   `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
 
 trait Program[>-->[- _, + _]]

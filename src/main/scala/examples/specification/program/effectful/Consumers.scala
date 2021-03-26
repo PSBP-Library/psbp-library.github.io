@@ -2,23 +2,26 @@ package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program 
+import psbp.external.specifcation.program.Program 
 
-def factorialConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
-      println(s"applying factorial to the integer argument $i yields result $j")
-  } asProgram
+val effectfulFactorialConsumer: (BigInt && BigInt) => Unit =
+  (i, j) =>
+    println(s"applying factorial to the integer argument $i yields result $j")
 
-def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
-      println(s"applying fibonacci to the integer argument $i yields result $j")
-  } asProgram
+def factorialConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
+  effectfulFactorialConsumer asProgram
 
+val effectfulFibonacciConsumer: (BigInt && BigInt) => Unit =
+  (i, j) =>
+    println(s"applying fibonacci to the integer argument $i yields result $j")
+
+def fibonacciConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
+  effectfulFibonacciConsumer asProgram
+
+  

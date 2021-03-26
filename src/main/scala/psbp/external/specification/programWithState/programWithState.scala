@@ -1,8 +1,8 @@
-package psbp.specification.programWithState
+package psbp.external.specifcation.programWithState
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.program.state.State
+import psbp.external.specifcation.program.state.State
 
 given programWithState[
   S, 

@@ -13,7 +13,16 @@ h6:before { counter-increment: h6counter; content: counter(h2counter) "." counte
 
 # Program Specification Based Programming
 
-This document describes `PSBP`, a `Scala` library for *Program Specification Based Programming*.
+This document describes `PSBP`, a `Scala 3` library for *Program Specification Based Programming*.
+
+See [Scala 3](https://dotty.epfl.ch/).
+
+`Scala 3` is the next generation `Scala`.
+
+See [Scala](https://www.scala-lang.org/).
+
+In what follows, to keep things simple, we also refer to `Scala 3` as `Scala`.
+
 
 ```scala
 //          ________    ________     __         _______
@@ -30,130 +39,191 @@ This document describes `PSBP`, a `Scala` library for *Program Specification Bas
 
 [source code](https://github.com/PSBP-Library/psbp-library.github.io)
 
+
 ## Warning
 
-This document uses vocabulary that you may not be used to.
+Both this document and the code that it documents are ongoing work, so, expect frequent additions and occasional changes.
 
-Hopefully you can relate the vocabulary to the one you are used to.
+## Vocabulary usage
 
-Excpect frequent additions to this document.
+This document uses *programmer friendly vocabulary* that differs from the *scientific vocabulary*.
 
-Also expect changes to this document.
+So, please, think of words, written in *italics* when described, as denoting concepts belonging to the world of programming rather than belonging to the world of mathematics or computer science.
+
+## Writing an introduction
+
+When writing an introduction there is a tradeof between, on the one hand, *soundness* and *completeness*, and, on the other hand, *simplicity*.
+
+We go for simplicity, giving up a bit of soundness and a lot of completeness. 
 
 ## Introduction
 
-The `PSBP` library strictly separates *specifications* from *implementations*.
+### Values, functions and expressions
 
-Specifications *declare* members. 
+Most programming languages have some notion of *values*, *functions* and *expressions*.
 
-Implementations *define* members.
+Values are expressions.
 
-The `PSBP` library also strictly separates *external* specifications and corresponding implementations from *internal* specifications and corresponding implementations.
+Functions are applied to expressions.
 
-Specifications, both internal and external, are defined as `trait`'s that declare members for *binary type constructors* and *unary type constructors* in order to belong to *type constructor classes*. 
-
-Implementations, both internal and external, are defined as `given`'s that define members for binary type constructors and unary type constructors such that they belong to type constructor classes. 
-
-In what follows, external specifications resp. external implementations are simply referred to as specifications resp. implementations.
-
-### Programs
-
-The specification part of the `PSBP` library models *programming*.
-
-Think about it as explaining to `Scala` what the *essense of programming* is all about.
-
-Members of *specification* `trait`*'s* are referred to as *programming ingredients*.
-
-A `val` that is defined in terms of programming ingredients is referred to as a *program*. 
-
-Think of a program of type `Z >--> Y` as *specifying* some generalization of a *function* of type `Z => Y`, *transforming* an *argument* of type `Z` to a *result* of type `Y` and, maybe, *performing side effects* along the way.
-
-A program, just like a function, is a *denotational* artifact.
-
-Formulated somewhat informally, the basic denotational programming ingredients are
-
-- *functions can be used as programs*
-- *programs can be composed sequentially*
-- *programs can construct product based composite data*
-- *programs can perform sum based conditional logic*
-
-A program specifies *what* generalized functions *do* : somehow transforming an argument of type to a result.
-
-Programs, just like functions, can be a given meaningful name.
-
-The last three programming ingredients are *pointfree*, they only involve programs.
+Function applications are expression.
 
 ### Functional programming
 
-The first programming ingredient of [Programs](https://psbp-library.github.io#programs) also involves functions.
+Programming languages where functions are values enable what is referred to as *functional programming*.
 
-Programming with functions is referred to as *functional programming*.
+Functional programming can be done in a *pointfree* or *pointful* way.
 
-Functional programming is, essentially, pointfree.
+Pointfree functional programming is referred to as *function-level programming*.
 
-Agreed, *function application* is, almost by definition, a *pointful* function ingredient.
+Function-level programming only uses function values.
 
-*This pointful ingredient of the world of functions is, deliberately, not exposed to the pointfree world of programs*.
+### `PSBP` library
 
-### Computations
+The `PSBP` library separates *specifications* from *implementations*.
 
-The internal specification part of the `PSBP` library models *computing*.
+Specifications are defined as `trait`’s, referred to as *specification* `trait`*'s*.
+
+Implementations are defined as `given`’s, referred to as *implementation* `given`*'s*.
+
+Specification `trait`´s have a list of *type or type constructor parameters* and a set of *declared members*.
+
+Corresponding implementation `given`´s have a corresponding list of *type or type constructor arguments* and a corresponding set of *defined members*.
+
+All `PSBP` type constructors are *unary* or *binary*.
+
+A specification `trait` defines a *set* of *lists of types or type constructors*.
+
+A corresponding implementation `given` defines an *element* of a set of lists of types or type constructors.
+
+The library also strictly separates *external* specifications and implementations from *internal* specifications and implementations. 
+
+The external specification `trait`'s define an *application developer API*.
+
+### Programming
+
+The external specification part of the `PSBP` library models *programming*.
+
+Think about it as explaining to `Scala` what the *essense of programming* is all about.
+
+Members of the external specification `trait`'s are referred to as *programming ingredients*.
+
+A `val` that is defined in terms of them is referred to as a *program*. 
+
+Think of a program of type `Z >--> Y` as a *specification* of an *abstraction* of a *function* of type `Z => Y`.
+
+This allows for more program implementations than just functions.
+
+A function of type `Z => Y` *transforms* an *argument* of type `Z` to a *result* of type `Y`.
+
+A program of type `Z => Y` specifies transforming an argument of type `Z` to a result of type `Y`, but also *performing side effects* along the way.
+
+It is instructive to think of functions and programs as *development time denotational artifacts*. 
+
+Programs are about *algorithms* and *data structures*.
+
+See [Algorithms + Data Structures = Programs](https://en.wikipedia.org/wiki/Algorithms_%2B_Data_Structures_%3D_Programs) for the origin of this statement.
+
+Formulated somewhat informally, the basic programming ingredients of the `PSBP` library are
+
+- *functions can be used as programs*
+
+The library enable functional programming, but, functions that are used as programs do not benefit from the full power and flexibility of the library.
+
+- *programs can be composed sequentially*
+- *programs support sum based conditional algorithms*, or, equivalently *programs support if-then-else logic*
+
+The programming ingredients above are pointfree and algorithm related.
+
+- *programs support product based composite data structure construction*, or, equivalently *programs support local value definition*
+- *programs support polynomial data structure aggregation*
+
+The programming ingredients above are pointfree and data structure related.
+
+Two special cases of aggregation are *traversal* and *reduction*.
+
+### `PSBP` versus `FP`
+
+The programming ingredients above are similar to the ones of the function-level programming language `FP`.
+
+See [FP](https://en.wikipedia.org/wiki/FP_(programming_language)).
+
+Compared to the programming language `FP`, the programming library `PSBP` has the following benefits
+
+- the `PSBP` library specifications can have many implementations, for example 
+  - simple ones for testing purposes  
+- the `PSBP` library can be extended, for example, to handle
+  - state
+  - latency
+  - failure
+  - control 
+  - ...
+
+### Computing
+
+The internal specification part of the `PSBP` library models is *computing*.
 
 Think about it as explaining to `Scala` what the *essense of computing* is all about.
 
-Members of *internal specification* `trait`*'s* are referred to as *computing ingredients*.
+Members of internal specification `trait`'s are referred to as computing ingredients.
 
-A `val` that is defined in terms of computing ingredients is referred to as a *computation*. 
+A `val` that is defined in terms of them is referred to as a *computation*. 
 
-Think of a computation of type `C[Y]` as *specifying* some generalization of the *evaluation of an expression* of type `Y` *yielding* a *result* of type `Y` and, maybe, *performing side effects* along the way.
+Think of a computation of type `C[Y]` as a *specification* of an *abstraction* of an *expression* of type `Y`.
 
-A computation, just like the evaluation of an expression, is an *operational* artifact.
+This allows for more computation implementations than just expressions.
 
-Formulated somewhat informally, the basic operational computing ingredients are
+An expression of type `Y` *evaluates* to a *result* of type `Y`.
 
-- *a computation yields a result*
-- *the result yielded by an inner computation can be the argument of a continuation function transforming it to a result that is an outer computation*
+A computation of type `C[Y]` specifies evaluating an expression to a result of type `Y`, but also performing side effects along the way.
 
-A computation specifies *how* generalized evaluation of expressions *is done*.
+It is instructive to think of expressions and computations as *runtime operational artifacts*. 
 
-Computations, just like evaluations of expressions, cannot be given a meaningful name.
+Formulated somewhat informally, and replacing evaluating by executing, the basic computing ingredients of the `PSBP` library are
 
-Computation ingredients are *pointful*, they do not only involve computations but also the results they yield.
+- *values can be used as computations*
 
-### Remark
+A value trivially evaluates to itself as a result .
 
-A function application is an expression.
+- *computations can be nested*
 
-Function application connects the denotational pointfree world of functions to the operational pointful world of evaluation of expressions.
+The result of executing an inner computation can be used as an argument of a *continuation function* transforming it to a result that is an outer computation.
 
-### FunctionApplication lifting
+Computation ingredients are pointful, they do not only involve computations but also results of executing them.
 
-```scala
-def functionApplication[Z, Y]: ((Z => Y) && Z) => Y =
-  (`z=>y`, z) =>
-    `z=>y` apply z
-```
+### Setting the scene
 
-The definition of function application above uses
+All programs of the `PSBP` library are implemented as functions of type `Z => C[Y]` that transform an argument of type `Z` to a *computation result* of type `C[Y]`.
 
-- a value (`z`)
-- a function (`` `z=>y` ``)
-- a product (`` (`z=>y`, z) ``)
-- application (`` `z=>y` apply z ``)
+See [programFormComputation](https://psbp-library.github.io#programformcomputation) for more details.
 
-The product `` (`z=>y`, z) `` is a specific version of a generic one `` (z, y) `` so, essentially the definition of function application above uses
+Compare this with transforming an argument of type `Z` to an *expression result* of type `Y` in the functional programming world.
 
-- a value 
-- a product
-- application
+*Although programs of type* `Z => C[Y]` *can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*.
 
-where both the product and application involve
+### Side effects
 
-- a function
+Side effects can be *external* or *internal*.
 
-The internal specification part of the `PSBP` library also models *lifting* values, products, application and, as a consequence, also functions to the level of computations.
+External side effects interact with the external world.
 
-### Aggregation
+Internal side effects manifest themselves in the function types of program implementations.
+
+### Lifting
+
+The internal specification part of the `PSBP` library also models *lifting*.
+
+See [liftingFormComputation](https://psbp-library.github.io#liftingformcomputation) for more details.
+
+The idea behind lifting is that value-level ingredients are lifted to computation-level ingredients.
+
+For example, `n`-ary value-level functions (for `n = 0, 1, 2, 3, ... `) are lifted to `n`-ary computation-level functions, referred to as *function lifting*.
+
+Many more value-level ingredients can be lifted.
+
+*Reducer lifting* is essential for lifting function-level reduction to computation-level reduction.
+
+Computation-level reduction is essential for program-level aggregation for programs of type `Z => C[Y]`.
 
 ### Main programs
 
@@ -163,48 +233,11 @@ A program of type `Z >--> Y` is, somehow, combined with a *producer* of type `Un
 
 Main programs of type `Unit >--> Unit` are *materialized* to functions of type `Z => Y`.
 
-Materialized main program implementations are used in *main* `Scala` *programs* where they, somehow, behave as follows
+Materialized main programs are used in `@main` code.
 
-- the producer produces an argument from an *input source*, possibly performing side effects along the way, 
-- the program transforms the being produced argument to a to be consumed result, possibly performing side effects along the way,
-- the consumer consumes *both the argument and the result* to an *output sink*, possibly performing side effects along the way.
+How programs transform their argument to a result, how they perform side effects along the way, and how the main program they are part is done using *dependency injection* of `given` implementations by `import` in that `@main` code.
 
-### Side effects
-
-Let's face it: side effects are unavoidable. 
-
-The intention is to push them to the *outside border* of materialized main program implementations to allow for maximum flexibility.
-
-Side effects can be *external* or *internal*.
-
-External side effects interact with the external world.
-
-Internal side effects manifest themselves in the function types of program implementations.
-
-### Application development
-
-The program level specification `trait`'s define an *application developer API*.
-
-Application level development is in terms of *program examples* that are
-
-1. defined using programming ingredients of specification `trait`'s
-2. run as part of materialized main program implementations, used in a main `Scala` programs that use *injection* by `import` of implementation `given`'s
-
-### Library development
-
-The computation level internal specification `trait`'s define a *library developer API*. 
-
-Library level development is in terms of 
-
-1. specification `trait`'s that declare programming ingredients
-2. specification level implementation `given`'s that define programming ingredients
-3. internal specification `trait`'s that declare computing ingredients
-4. important specification level implementation `given` that defines programming ingredients in terms of computation ingredients
-5. internal specification level implementation `given`'s that define computing ingredients
-6. internal implementation level implementation `given`'s that define computing ingredients
-7. specific implementation level implementation `given`'s that define programming ingredients for specific types
-
-That's a whole mouth full of words, but things will become clear when reading the document.
+All this allows for maximum flexibility.
 
 # Application development
 
@@ -215,14 +248,25 @@ That's a whole mouth full of words, but things will become clear when reading th
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import examples.specification.functional.{ isZero, one, subtractOne, multiply }
+import examples.specification.functional.{ 
+  isZero
+  , one
+  , subtractOne
+  , multiply 
+  }
 
-def factorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+def factorial[
+  >-->[- _, + _]: Program
+  ]: BigInt >--> BigInt =
 
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.{ Let, If }
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
+  import program.{
+    Let
+    , If 
+    }
 
   If(isZero) {
     one
@@ -242,35 +286,44 @@ package examples.specification.functional
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Functional
+import psbp.external.specifcation.program.Functional
 
 import examples.specification.function
 
-def isZero[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+def isZero[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> Boolean =  
   function.isZero asProgram
 
-def one[>-->[- _, + _]: Functional, Z]: Z >--> BigInt =
+def one[
+  >-->[- _, + _]: Functional
+  , Z
+  ]: Z >--> BigInt =
   function.one asProgram
 
-def subtractOne[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+def subtractOne[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> BigInt =
   function.subtractOne asProgram
 
-def multiply[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =  
+def multiply[
+  >-->[- _, + _]: Functional
+  ]: (BigInt && BigInt) >--> BigInt =  
   function.multiply asProgram
 
 // ...
 ```
 
-are program utilities,
+are functional utilities,
 
 where
 
 ```scala
 package examples.specification.function
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
 val isZero: BigInt => Boolean =
   n =>
@@ -293,11 +346,11 @@ val multiply: BigInt && BigInt => BigInt =
 
 are function utilities.
 
-`factorial` is a program that makes use of programming ingredients 
+`factorial` is a program that makes use of the following programming ingredients 
 
 - `asProgram` (from `Functional`)
 - `>-->` (from `Composition`)
-- `Let {} In {}` (local values, equivalent to `&&` from `Construction`)
+- `Let {} In {}` (local value definition, equivalent to `&&` from `Construction`)
 - `If() {} Else {}` (if-then-else logic, equivalent to `||` from `Condition`)
 
 See 
@@ -315,13 +368,9 @@ for more details.
 
 ### Complexity versus abstraction
 
-`factorial` could also have been 
-
-defined as
+`factorial` could also have been defined as
 
 ```scala
-package examples
-
 val factorial: BigInt => BigInt =
   i =>
     if(i == 0) {
@@ -337,10 +386,6 @@ val factorial: BigInt => BigInt =
 and `mainFactorial` below
 
 ```scala
-package examples
-
-// ...
-
 @main def mainFactorial(args: String*): Unit =
   println("Please type an integer")
   val i: BigInt = BigInt(scala.io.StdIn.readInt)
@@ -350,14 +395,13 @@ package examples
 could have been run as
 
 ```scala
-[info] running examples.mainFactorial 
 Please type an integer
 10
 applying factorial to the integer argument 10 yields result 3628800
 [success] 
 ```
 
-The pointfree definition of `factorial` 
+ Let's compare the pointfree definition
 
 ```scala
   If(isZero) {
@@ -371,25 +415,9 @@ The pointfree definition of `factorial`
   }
 ```
 
-has, agreed, at the price of some auxiliary *functional* definitions and *library* level `Let {} In {}` syntax instead of *language* level `val z = e` syntax, left out some details of the pointful definition of `factorial`
+with the pointful definition
 
 ```scala
-  i =>
-    if(i == 0) {
-      1
-    } else { 
-      val j = factorial(i - 1)
-      i * j
-    }
-```
-
-which could also have been defined as 
-
-```scala
-package examples
-
-import examples.specification.function.{ isZero, one, subtractOne, multiply }
-
 val factorial: BigInt => BigInt =
   i =>
     if(isZero(i)) {
@@ -400,7 +428,13 @@ val factorial: BigInt => BigInt =
     }
 ```
 
-using the auxiliary function definitions used by the auxiliary functional definitions.
+The pointfree definition
+
+1. does not make use of parameter `i`.
+2. makes use *library-level syntax* `Let {} In {}` instead of *language-level syntax* `val j = ...` for local value definition.
+3. makes use *library-level syntax* `If() {} Else {}` instead of *language-level `if() {} else {}` syntax* `val z = e` for if-then-else logic.
+
+The pointfree definition is more *abstract* than the pointful one.
 
 On the one hand using abstraction is an *advantage* because it simplifies *complexity*.
 
@@ -412,13 +446,13 @@ Abstraction needs to be *understood*, which is difficult for some human beings.
 
 But here is the thing: many *different* definitions have *similar* complexity.
 
-Handling the complexity of different definitions happens *over and over again*.
+Handling the complexity of different definitions with similar complexity has to be done *over and over again*.
 
 Understanding the abstraction of similar complexity of different definitions needs to be done *only once*.
 
 ### Explaining pointfree `factorial` in a pointful way
 
-Let's explain the pointfree definition of `factorial`, thinking of programs as functions, in a pointful way using an argument `i`.
+Let's explain the pointfree definition of `factorial`, thinking of programs as functions, in a pointful way using a parameter `i`.
 
 At level `1`, `factorial` looks like
 
@@ -458,7 +492,7 @@ At level `3.1`, `factorial` looks like
       subtractOne >--> factorial
 ```
 
-a local value `j`, which equals `(subtractOne >--> factorial)(i)`, which equals `factorial(subtractOne(i))`, which equals `factorial(i - 1)` is constructed, which is available as the second component of a product value `(i, j)`.
+a local value `j`, which equals `(subtractOne >--> factorial)(i)`, which equals `factorial(subtractOne(i))`, which equals `factorial(i - 1)` is defined, which is available as the second component of a product value `(i, j)`.
 
 At level `3.2`, `factorial` looks like
 
@@ -473,14 +507,27 @@ The result is `multiply(i, j)`, which equals `multiply(i, factorial(i - 1))`, wh
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
+import examples.specification.functional.{ 
+  isZero
+  , zero
+  , isOne
+  , one
+  , subtractOne
+  , subtractTwo
+  , add 
+  }
 
-def fibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+def fibonacci
+  [>-->[- _, + _]: Program
+  ]: BigInt >--> BigInt =
 
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.If
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
+  import program.{
+    If
+  }
 
   If(isZero) {
     zero
@@ -502,18 +549,30 @@ package examples.specification.functional
 
 // ..
 
-def isOne[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
+def zero[
+  >-->[- _, + _]: Functional
+  , Z
+  ]: Z >--> BigInt =
+  function.zero asProgram  
+
+def isOne[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> Boolean =  
   function.isOne asProgram  
 
-def subtractTwo[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
+def subtractTwo[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> BigInt =
   function.subtractTwo asProgram  
 
-def add[>-->[- _, + _]: Functional]: (BigInt && BigInt) >--> BigInt =  
+def add[
+  >-->[- _, + _]: Functional
+  ]: (BigInt && BigInt) >--> BigInt =  
   function.add asProgram 
 
 // ...
 ```
-are program utilities,
+are functional utilities,
 
 where
 
@@ -543,7 +602,7 @@ val add: BigInt && BigInt => BigInt =
 
 are function utilities.
 
-`fibonacci` is a program that makes use of programming ingredients 
+`fibonacci` is a program that makes use of the following programming ingredients 
 
 - `asProgram` (from `Functional`)
 - `>-->` (from `Composition`)
@@ -565,7 +624,7 @@ for more details.
 
 ### Explaining pointfree `fibonacci` in a pointful way
 
-Let's explain the pointfree definition of `fibonacci`, thinking of programs as functions, in a pointful way using an argument `i`.
+Let's explain the pointfree definition of `fibonacci`, thinking of programs as functions, in a pointful way using a parameter `i`.
 
 At level `1`, `fibonacci` looks like
 
@@ -619,19 +678,13 @@ at level `3.2`, `fibonacci` looks like
         /* level 4.3 */ 
 ```
 
-```scala
-      (subtractOne && subtractTwo) >-->
-        (fibonacci &&& fibonacci) >-->
-        add
-```
-
 At level `4.1` `fibonacci` looks like
 
 ```scala
       subtractOne && subtractTwo
 ```
 
-A first product value `(subtractOne && subtractTwo)(i)`, which equals `(i - 1, i - 2)`, is constructed.
+A first product value `(subtractOne && subtractTwo)(i)`, which equals `(subtractOne(i), subtractTwo(i))`, which equals `(i - 1, i - 2)`, is constructed.
 
 At level `4.2` `fibonacci` looks like
 
@@ -654,12 +707,14 @@ The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(
 ```scala
 package examples.specification.program.effectful
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
 import examples.specification.program.factorial
 
-def mainFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
-  factorial toMain (
+def mainFactorial[
+  >-->[- _, + _]: Program
+  ]: Unit >--> Unit =
+  factorial toMainWith (
     producer = intProducer,
     consumer = factorialConsumer
   )
@@ -667,19 +722,24 @@ def mainFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
 
 where
 
-
 ```scala
 package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-def intProducer[>-->[- _, + _]: Program]: Unit >--> BigInt = 
-  { (_: Unit) =>
-      println("Please type an integer")
-      BigInt(scala.io.StdIn.readInt)
-  } asProgram
+val effectfulIntProducer: Unit => BigInt =
+  _ =>
+    println("Please type an integer")
+    BigInt(scala.io.StdIn.readInt)
+
+def intProducer[
+  >-->[- _, + _]: Program
+  ]: Unit >--> BigInt = 
+    effectfulIntProducer asProgram
+
+// ...    
 ```
 
 and where
@@ -689,17 +749,20 @@ package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program 
+import psbp.external.specifcation.program.Program 
 
-def factorialConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
-      println(s"applying factorial to the integer argument $i yields result $j")
-  } asProgram
+val effectfulFactorialConsumer: (BigInt && BigInt) => Unit =
+  (i, j) =>
+    println(s"applying factorial to the integer argument $i yields result $j")
+
+def factorialConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
+  effectfulFactorialConsumer asProgram
+
+// ...  
 ```
 
 `mainFactorial` is a main program that, for now, makes use of an *effectful* producer and an *effectful* consumer.
@@ -713,12 +776,14 @@ See [Program](https://psbp-library.github.io#program) for more details.
 ```scala
 package examples.specification.program.effectful
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
 import examples.specification.program.fibonacci
 
-def mainFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
-  fibonacci toMain (
+def mainFibonacci[
+  >-->[- _, + _]: Program
+  ]: Unit >--> Unit =
+  fibonacci toMainWith (
     producer = intProducer,
     consumer = fibonacciConsumer
   )
@@ -731,13 +796,16 @@ package examples.specification.program.effectful
 
 // ...
 
-def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
-      println(s"applying fibonacci to the integer argument $i yields result $j")
-  } asProgram
+val effectfulFibonacciConsumer: (BigInt && BigInt) => Unit =
+  (i, j) =>
+    println(s"applying fibonacci to the integer argument $i yields result $j")
+
+def fibonacciConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
+  effectfulFibonacciConsumer asProgram
+
+// ...  
 ```
 
 `mainFibonacci` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
@@ -747,25 +815,33 @@ def fibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
 ```scala
 package examples.specification.program
   
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.functional.{ `(z&&y)>-->z`, `(z&&y)>-->y` }
+import psbp.external.specifcation.functional.{
+  `(z&&y)>-->z` => argument
+  , `(z&&y)>-->y` => accumulator
+  }
 
-// accumulator based optimization
+def optimize[
+  >-->[- _, + _]: Program
+  , A
+  , Z
+  , Y
+  ](
+    accumulatorInitializer: Z >--> A,
+    argumentPredicate: Z >--> Boolean,
+    updater: (Z && A) >--> (Z && A),
+    resultExtractor: A >--> Y
+    ): Z >--> Y =
 
-def optimize[>-->[- _, + _]: Program, A, Z, Y](
-  accumulatorInitializer: Z >--> A,
-  argumentPredicate: Z >--> Boolean,
-  updater: (Z && A) >--> (Z && A),
-  resultExtractor: A >--> Y): Z >--> Y =
-
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.{ Let, If }
-
-  val argument: (Z && A) >--> Z = `(z&&y)>-->z`
-  val accumulator: (Z && A) >--> A = `(z&&y)>-->y`
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
+  import program.{ 
+    Let
+    , If
+    }
 
   lazy val recursiveAccumulatorUpdater: (Z && A) >--> A =
     If(argument >--> argumentPredicate) {
@@ -779,26 +855,40 @@ def optimize[>-->[- _, + _]: Program, A, Z, Y](
   } In {
     recursiveAccumulatorUpdater >--> resultExtractor
   }
-  
-// ...  
 ```
 
-Recursive programs like `factorial` (see [factorial](https://psbp-library.github.io#factorial)) and `fibonacci` (see [fibonacci](https://psbp-library.github.io#fibonacci)) can be optimized using an *accumulator* as `optimizedFactorial` (see [optimizedFactorial](https://psbp-library.github.io#optimizedfactorial)) and `optimizedFibonacci` (see [optimizedFibonacci](https://psbp-library.github.io#optimizedfibonacci)). Especially for `fibonacci` this is a relevant optimization.
+Recursive programs like `factorial` (see [factorial](https://psbp-library.github.io#factorial)) and `fibonacci` (see [fibonacci](https://psbp-library.github.io#fibonacci)) can be optimized using an *accumulator* as `optimizedFactorial` (see [optimizedFactorial](https://psbp-library.github.io#optimizedfactorial)) and `optimizedFibonacci` (see [optimizedFibonacci](https://psbp-library.github.io#optimizedfibonacci)). 
+
+Especially for `fibonacci` this is a relevant optimization.
+
+The projection programs with typeful names, `` `(z&&y)>-->z` `` and `` `(z&&y)>-->y` ``, are `Functional`, `Construction` related utilities that are given meaningful names.
+
+See [Program](https://psbp-library.github.io#program) for more details.
 
 ### `optimizedFactorial`
 
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.functional.{ `(z&&y)>-->z` => argument, `z>-->z` => accumulator }
+import psbp.external.specifcation.functional.{ 
+  `(z&&y)>-->z` => argument
+  , `z>-->z` => accumulator 
+  }
 
-import examples.specification.functional.{ isZero, one, subtractOne, multiply }
+import examples.specification.functional.{ 
+  isZero
+  , one
+  , subtractOne
+  , multiply 
+  }
 
 import examples.specification.program.optimize
 
-def optimizedFactorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+def optimizedFactorial[
+  >-->[- _, + _]: Program]
+  : BigInt >--> BigInt =
   optimize(
     accumulatorInitializer = one, 
     argumentPredicate = isZero, 
@@ -820,15 +910,28 @@ This is not really an enormous optimization.
 ```scala
 package examples.specification.program
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.functional.{ `(z&&y)>-->z` => firstAccumulator, `(z&&y)>-->y` => secondAccumulator }
+import psbp.external.specifcation.functional.{ 
+  `(z&&y)>-->z` => firstAccumulator
+  , `(z&&y)>-->y` => secondAccumulator
+  }
 
-import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
+import examples.specification.functional.{ 
+  isZero
+  , zero
+  , isOne
+  , one
+  , subtractOne
+  , subtractTwo
+  , add 
+  }
 
 import examples.specification.program.optimize
 
-def optimizedFibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+def optimizedFibonacci[
+  >-->[- _, + _]: Program
+  ]: BigInt >--> BigInt =
   optimize(
     accumulatorInitializer = one && one, 
     argumentPredicate = isZero, 
@@ -836,6 +939,7 @@ def optimizedFibonacci[>-->[- _, + _]: Program]: BigInt >--> BigInt =
     resultExtractor = firstAccumulator
   )
 ```
+See [optimize](https://psbp-library.github.io#optimize) for more details.
 
 For `optimizedFibonacci` the accumulator type is `BigInt && BigInt`.
 
@@ -848,12 +952,14 @@ This is really an enormous optimization.
 ```scala
 package examples.specification.program.effectful
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
 import examples.specification.program.optimizedFactorial
 
-def mainOptimizedFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
-  optimizedFactorial toMain (
+def mainOptimizedFactorial[
+  >-->[- _, + _]: Program
+  ]: Unit >--> Unit =
+  optimizedFactorial toMainWith (
     producer = intProducer,
     consumer = factorialConsumer
   )
@@ -864,12 +970,14 @@ def mainOptimizedFactorial[>-->[- _, + _]: Program]: Unit >--> Unit =
 ```scala
 package examples.specification.program.effectful
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
 import examples.specification.program.optimizedFibonacci
 
-def mainOptimizedFibonacci[>-->[- _, + _]: Program]: Unit >--> Unit =
-  optimizedFibonacci toMain (
+def mainOptimizedFibonacci[
+  >-->[- _, + _]: Program
+  ]: Unit >--> Unit =
+  optimizedFibonacci toMainWith (
     producer = intProducer,
     consumer = fibonacciConsumer
   )
@@ -882,72 +990,65 @@ package examples.specification.programWithState
 
 import scala.language.postfixOps
 
-import psbp.specification.programWithState.ProgramWithState
+import psbp.external.specifcation.functional.identity
 
-import examples.specification.program.negateIfNegative
+import psbp.external.specifcation.programWithState.ProgramWithState
+
+import examples.specification.functional.{ 
+  isNegative
+  , negate 
+  }
 
 type Seed = Long
 
-def random[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Z >--> BigInt =
+def random[
+  >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]
+  , Z]: Z >--> BigInt =
 
-  val programWithSeedState: ProgramWithState[Seed, >-->] = summon[ProgramWithState[Seed, >-->]]
-  import programWithSeedState.readStateModifiedWith
-  
+  val programWithSeedState: ProgramWithState[Seed, >-->] =
+    summon[ProgramWithState[Seed, >-->]]
+  import programWithSeedState.{
+    If
+    , readStateModifiedWith
+    }
+
   object function {
+
     val seedModifier: Seed => Seed = 
       seed =>
         (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
   
     val seed2randomBigInt: Seed => BigInt = 
       seed =>
-        BigInt((seed >>> 16).toInt)
+        BigInt((seed >>> 16).toInt) 
         
-    val moduloSomeLong: BigInt => BigInt =
+    val moduloSomeBigInt: BigInt => BigInt =
       n =>
-        n % 9876543210L     
-  }
- 
-  val seedModifier: Seed >--> Seed =
-    function.seedModifier asProgram
+        n % BigInt("9876543210")
 
-  val seed2randomBigInt =
+  }    
+
+  val readModifiedSeed: Z >--> Seed = 
+    readStateModifiedWith(function.seedModifier asProgram)  
+
+  val seed2randomBigInt: Seed >--> BigInt =
     function.seed2randomBigInt asProgram
 
-  val moduloSomeLong =
-    function.moduloSomeLong asProgram
-
-  val readModifiedSeed = readStateModifiedWith(seedModifier)   
+  val negateIfNegative: BigInt >--> BigInt =
+    If(isNegative) {
+      negate
+    } Else {
+      identity
+    } 
+  
+  val moduloSomeBigInt: BigInt >--> BigInt =
+    function.moduloSomeBigInt asProgram 
 
   readModifiedSeed >--> 
     seed2randomBigInt >--> 
       negateIfNegative >--> 
-        moduloSomeLong 
+        moduloSomeBigInt
 ```
-
-where
-
-```scala
-package examples.specification.program
-  
-import psbp.specification.program.Program  
-
-import psbp.specification.functional.identity
-
-import examples.specification.functional.{ isNotNegative, negate }
-
-def negateIfNegative[>-->[- _, + _]: Program]: BigInt >--> BigInt =
-
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.If
-
-  If(isNotNegative) {
-    identity
-  } Else {
-    negate
-  }
-```
-
-is a program utility,
 
 where
 
@@ -956,14 +1057,20 @@ package examples.specification.functional
 
 // ...
 
-def isNotNegative[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
-  function.isNotNegative asProgram 
+def isNegative[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> Boolean =  
+  function.isNegative asProgram 
 
-def negate[>-->[- _, + _]: Functional]: BigInt >--> BigInt =
-  function.negate asProgram   
+def negate[
+  >-->[- _, + _]: Functional
+  ]: BigInt >--> BigInt =
+  function.negate asProgram  
+
+// ...  
 ```
 
-are program utilities,
+are functional utilities,
 
 where
 
@@ -972,22 +1079,24 @@ package examples.specification.function
 
 // ...
 
-val isNotNegative: BigInt => Boolean =
+val isNegative: BigInt => Boolean =
   n =>
-   n >= 0
+   n < 0
 
 val negate: BigInt => BigInt =
   n =>
-    -n  
+    -n
+
+// ...    
 ```
 
 are function utilities
 
-The implementation details are not important (in fact it not really a good random number generation program at all).
+While, somehow, transforming its argument to a result, `random` internally modifies a seed computation state along the way.
 
-While, somehow , transforming any argument to a random number result, `random` internally modifies a seed computation state along the way.
+The implementation details are not important (in fact, `random` is not really a good random number generation program at all).
 
-`random` is a program that makes use of programming ingredients 
+`random` is a program that makes use of the following programming ingredients 
 
 - `asProgram` (from `Functional`)
 - `>-->` (from `Composition`)
@@ -1009,28 +1118,31 @@ for more details.
 ```scala
 package examples.specification.programWithState
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.programWithState.ProgramWithState
+import psbp.external.specifcation.programWithState.ProgramWithState
 
-def twoRandoms[Z, >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Z >--> (BigInt && BigInt) =
+def twoRandoms[
+  >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]
+  , Z
+  ]: Z >--> (BigInt && BigInt) =
   random && random
 ```
 
-Illustrating statefulness can be done by using `twoRandoms`, somehow , transforming any argument to two random number results (they should be *different*).
+Illustrating statefulness can be done using `twoRandoms`, transforming its argument to two *different* random number results.
 
 ### `mainTwoRandoms`
 
 ```scala
 package examples.specification.programWithState.effectful
 
-import psbp.specification.types.&&
-
-import psbp.specification.programWithState.ProgramWithState
+import psbp.external.specifcation.programWithState.ProgramWithState
 
 import examples.specification.programWithState.{ Seed, twoRandoms }  
 
-def mainTwoRandoms[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]]: Unit >--> Unit =
+def mainTwoRandoms[
+  >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]
+  ]: Unit >--> Unit =
   twoRandoms toMainWith (
     producer = unitProducer,
     consumer = twoRandomsConsumer
@@ -1044,12 +1156,14 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
+
+val effectlessUnitProducer: Unit => Unit = 
+  _ =>
+    ()
 
 def unitProducer[>-->[- _, + _]: Program]: Unit >--> Unit = 
-  { (_: Unit) =>
-      ()
-  } asProgram 
+  effectlessUnitProducer asProgram 
 ```
 
 and where
@@ -1059,16 +1173,18 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >--> Unit =
-  {
-    (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
-      val `i&&j` = `u&&(i&&j)`._2
-      println(s"generating two random numbers yields result ${`i&&j`}")
-  } asProgram
+val effectfulTwoRandomsConsumer: (Unit && (BigInt && BigInt)) => Unit =
+  case (_, (i, j)) =>
+    println(s"generating two random numbers yields result ${(i, j)}")
+
+def twoRandomsConsumer[
+  >-->[- _, + _]: Program
+  ]: (Unit && (BigInt && BigInt)) >--> Unit =
+  effectfulTwoRandomsConsumer asProgram
 ```
 
 `mainTwoRandoms` is a main program that, makes use of a trivial producer and, for now, makes use of an effectful consumer.
@@ -1078,14 +1194,27 @@ def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >-
 ```scala
 package examples.specification.programWithParallel
 
-import psbp.specification.programWithParallel.ProgramWithParallel
+import psbp.external.specifcation.programWithParallel.ProgramWithParallel
 
-import examples.specification.functional.{ isZero, zero, isOne, one, subtractOne, subtractTwo, add }
+import examples.specification.functional.{ 
+  isZero
+  , zero
+  , isOne
+  , one
+  , subtractOne
+  , subtractTwo
+  , add 
+  }
 
-def parallelFibonacci[>-->[- _, + _]: ProgramWithParallel]: BigInt >--> BigInt =
+def parallelFibonacci[
+  >-->[- _, + _]: ProgramWithParallel]
+  : BigInt >--> BigInt =
 
-  val programWithParallel: ProgramWithParallel[>-->] = summon[ProgramWithParallel[>-->]]
-  import programWithParallel.If
+  val programWithParallel: ProgramWithParallel[>-->] =
+    summon[ProgramWithParallel[>-->]]
+  import programWithParallel.{
+    If
+  }
 
   If(isZero) {
     zero
@@ -1114,15 +1243,15 @@ for more details.
 ```scala
 package examples.specification.programWithParallel.effectful
 
-import psbp.specification.types.&&
-
-import psbp.specification.programWithParallel.ProgramWithParallel
+import psbp.external.specifcation.programWithParallel.ProgramWithParallel
 
 import examples.specification.programWithParallel.parallelFibonacci 
 
 import examples.specification.program.effectful.intProducer
 
-def mainParallelFibonacci[>-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithParallel[>-->]]: Unit >--> Unit =
+def mainParallelFibonacci[
+  >-->[- _, + _]: ProgramWithParallel
+  ]: Unit >--> Unit =
   parallelFibonacci toMainWith (
     producer = intProducer,
     consumer = parallelFibonacciConsumer
@@ -1136,46 +1265,50 @@ package examples.specification.programWithParallel.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
-
-import psbp.specification.program.Program 
-
 import akka.actor.typed.{ ActorSystem, Behavior }
 
 import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
   
 import Behaviors.{ receive, stopped }
   
-import ch.qos.logback.classic.{Level, Logger, LoggerContext}
-import Level.{ INFO, ERROR}
+import ch.qos.logback.classic.{ Level, Logger, LoggerContext }
+import Level.{ INFO, ERROR }
   
 import org.slf4j.LoggerFactory
 
+import psbp.external.specifcation.types.&&
+
+import psbp.external.specifcation.program.Program 
+
 val packageName = "examples.specification.programWithParallel.effectful"
   
-val loggerContext:  LoggerContext = LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
-val logger: Logger = loggerContext.getLogger(packageName)
+val loggerContext: LoggerContext = 
+  LoggerFactory.getILoggerFactory().asInstanceOf[LoggerContext]
+val logger: Logger = 
+  loggerContext.getLogger(packageName)
   
-def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
-  logger.setLevel(INFO);
+def logInfo[Z](actorContext: ActorContext[Z])(message: String): Unit =
+  logger.setLevel(INFO)
   actorContext.log.info(message)
-  logger.setLevel(ERROR);  
-}
+  logger.setLevel(ERROR)
   
-def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> Unit =
+def parallelFibonacciConsumer[
+  >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) >--> Unit =
     
   object Consumer {
 
     case class Consume(i: BigInt, j: BigInt)
 
-    def apply(): Behavior[Consume] = receive { (context, message) =>
-      message match {
-        case Consume(i, j) =>
-          val logging = log(context)
-          logging(s"applying parallel fibonacci to argument $i yields result $j")
-          stopped
+    def apply(): Behavior[Consume] = 
+      receive { (context, message) =>
+        message match {
+          case Consume(i, j) =>
+            val info = logInfo(context)
+            info(s"applying parallel fibonacci to argument $i yields result $j")
+            stopped
+        }
       }
-    }
 
   }
 
@@ -1183,19 +1316,18 @@ def parallelFibonacciConsumer[>-->[- _, + _]: Program]: (BigInt && BigInt) >--> 
    
   import Consumer.Consume
 
-  {
-    (`i&&j`: BigInt && BigInt) =>
-      val i = `i&&j`._1
-      val j = `i&&j`._2
+  val sendConsumeToConsumer: (BigInt && BigInt) => Unit =
+    (i, j) =>
       consumer ! Consume(i, j)
-  } asProgram 
+
+  sendConsumeToConsumer asProgram 
 
 // ...  
 ```
 
 `mainParallelFibonacci` is a main program that, for now, makes use of the same effectful producer as `fibonacci` and makes use of an *akka actor* and *logback logging* based effectful consumer.
 
-Actor `consumer` is sent a message `Consume(i, j)` which causes `logging` to do its work.
+Actor `consumer` is sent a message `Consume(i, j)` which causes `info` to do its logging work.
 
 ## Running program examples
 
@@ -1855,7 +1987,7 @@ def `(z&&b)>-->(z||z)`[>-->[- _, + _]: Functional, Z]: (Z && Boolean) >--> (Z ||
   `(z&&b)=>(z||z)` asProgram 
 ```
 
-are program utilities,
+are functional utilities,
 
 where
 
@@ -2009,7 +2141,7 @@ def `(z&&y&&x)>-->(y&&x)`[>-->[- _, + _]: Functional, Z, Y, X]: (Z && Y && X) >-
   `(z&&y&&x)=>(y&&x)` asProgram 
 ```
 
-are program utilities,
+are functional utilities,
 
 where
 
@@ -2086,7 +2218,7 @@ def `(y||x)>-->x`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> X =
 // ...
 ```
 
-are program utilities,
+are functional utilities,
 
 where
 
@@ -2217,7 +2349,7 @@ def `z>-->u`[>-->[- _, + _]: Functional, Z]: Z >--> Unit =
 
 // ...  
 ```
-is a program utility
+is a functional utility
 
 where
 
@@ -2359,7 +2491,99 @@ are function utilities.
 
 The member `|&&|` is an extension that can be used as infix operator.
 
+### `Traversable`
 
+```scala
+package psbp.specification.aggregatable
+
+trait Traversable[A[+ _], >-->[- _, + _]]:
+
+  // defined
+
+  private[psbp] type Traverser[-Z, +Y] = Z >--> Y
+
+  // declared
+
+  def traverse[Z, Y]: Traverser[Z, Y] => A[Z] >--> A[Y]
+
+  private[psbp] def initialTraverser[Y]: Traverser[Y, Y]
+```
+
+`Traversable` specifies that, *data constructed using a unary type constructor can be traversed to using a traverser.
+
+`Traverser[-Z, +Y]` is a type member, defined in terms of the `Traversable`  type parameter `>-->`.
+
+More precisely, `traverse` is a function that transforms a *traverser* argument of type `Traverser[Z, Y]` to an *traversal* result of type `A[Z] >--> A[Y]`.
+
+Also a member `initialTraverser` is declared.
+
+Traversers are also known as *mappers*.
+
+### `Reducible`
+
+```scala
+package psbp.specification.aggregatable
+
+private[psbp] trait ReducerType:
+
+  // declared
+
+  private[psbp] type Reducer[Y, X]
+
+trait Reducible[A[+ _], >-->[- _, + _]] extends ReducerType:
+
+  // declared
+  
+  def reduce[Y, X]: Reducer[Y, X] => A[Y] >--> X
+
+  private[psbp] def initialReducer[Y]: Reducer[Y, A[Y]]
+```
+
+`Reducer[Y, X]` is a declared type member of `ReducerType`.
+
+`Reducible` specifies that, *data constructed using a unary type constructor can be reduced to using a reducer.
+
+More precisely, `reduce` is a function that transforms a *reducer* argument of type `Reducer[Y, X]` to a *reduction* result of type `A[Z] >--> A[Y]`.
+
+Also a member `initialReducer` is declared.
+
+### `Aggregatable`
+
+```scala
+package psbp.specification.aggregatable
+
+import psbp.specification.types.&&
+
+trait Aggregatable[A[+ _], >-->[- _, + _]] extends Traversable[A, >-->] with Reducible[A, >-->]: 
+
+  // defined
+
+  private[psbp] type Aggregator[Z, Y, X] = Traverser[Z, Y] && Reducer[Y, X]
+
+  // declared
+
+  def aggregate[Z, Y, X]: Aggregator[Z, Y, X] => A[Z] >--> X
+
+  // defined
+
+  def traverse[Z, Y]: Traverser[Z, Y] => A[Z] >--> A[Y] =
+    aggregate(_, initialReducer)
+
+  def reduce[Y, X]: Reducer[Y, X] => A[Y] >--> X = 
+    aggregate(initialTraverser, _)
+```
+
+`Aggregatable` specifies that, *data constructed using a unary type constructor can be aggregated to result data using a both a traverser and a reducer*.
+
+`Aggregator[Z, Y, X]` is a type member defined as `Traverser[Z, Y] && Reducer[Y, X]`.
+
+More precisely, `aggregate` is a function that transforms a *aggregator* argument of type `Aggregator[Z, Y, X]` to an *aggregation* result of type `A[Z] >--> X `.
+
+`traverse` is defined as a simplified version of `aggregate` that only uses a traverser.
+
+`reduce` is defined as a simplified version of `aggregate` that only uses a reducer.
+
+`aggregation` is also known as `map-reduce`.
 
 ## Specification level implementation `given`'s
 
@@ -2529,11 +2753,36 @@ It turns out to be useful for reactive materialization.
 
 See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactivetransformedmaterialization) for more details.
 
+### Function application
+
+```scala
+def functionApplication[Z, Y]: ((Z => Y) && Z) => Y =
+  (`z=>y`, z) =>
+    `z=>y` apply z
+```
+
+The definition of function application above uses
+
+- a value (`z`)
+- a function (`` `z=>y` ``)
+- a product (`` (`z=>y`, z) ``)
+- application (`` `z=>y` apply z ``)
+
+The product `` (`z=>y`, z) `` is a specific version of a generic one `` (z, y) `` so, essentially the definition of function application above uses
+
+- a value 
+- a product
+- application
+
+where both the product and application involve
+
+- a function
+
 
 ### `ValueLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 private[psbp] trait ValueLifting[C[+ _]]:
 
@@ -2547,7 +2796,7 @@ private[psbp] trait ValueLifting[C[+ _]]:
 ### `ProductLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
@@ -2591,7 +2840,7 @@ is a function utility.
 ### `ApplicationLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
@@ -2608,7 +2857,7 @@ private[psbp] trait ApplicationLifting[C[+ _]]:
 ### `FunctionApplicationLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
@@ -2623,7 +2872,7 @@ private[psbp] trait FunctionApplicationLifting[C[+ _]]
 ### `Function0Lifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 private[psbp] trait Function0Lifting[C[+ _]]:
 
@@ -2637,7 +2886,7 @@ private[psbp] trait Function0Lifting[C[+ _]]:
 ### `Function1Lifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 private[psbp] trait Function1Lifting[C[+ _]]:
 
@@ -2651,7 +2900,7 @@ private[psbp] trait Function1Lifting[C[+ _]]:
 ### `Function2Lifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
@@ -2667,7 +2916,7 @@ private[psbp] trait Function2Lifting[C[+ _]]:
 ### `Function3Lifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
@@ -2683,7 +2932,7 @@ private[psbp] trait Function3Lifting[C[+ _]]:
 ### `FunctionLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.{ &&, || }
 
@@ -2745,7 +2994,259 @@ def or[Z, Y, X, W]: ((X => Z) && (W => Y)) => (X || W) => (Z || Y) =
 
 `FunctionLifting` is simply a combination of `Function0Lifting`, `Function1Lifting`, `Function2Lifting`, `Function3Lifting` and ... , where some extra members have been added to.
 
-## Important specification level implementaton `given`
+### `FunctionLevelFusing`
+
+```scala
+package psbp.internal.specification.aggregatable
+
+import psbp.specification.types.&&
+
+import psbp.specification.aggregatable.ReducerType
+
+private[psbp] trait FunctionLevelFusing extends ReducerType:
+
+  // defined
+
+  private[psbp] type FunctionLevelAggregator[Z, Y, X] = (Z => Y) && Reducer[Y, X]
+
+  // declared
+
+  private[psbp] def functionLevelFuse[Z, Y, X]: FunctionLevelAggregator[Z, Y, X] => Reducer[Z, X]
+```
+
+### `ReducerLifting`
+
+```scala
+package psbp.internal.specification.aggregatable
+
+import psbp.specification.aggregatable.ReducerType
+
+private[psbp] trait ReducerLifting[C[+ _]] extends ReducerType:
+    
+  // declared
+
+  private[psbp] def liftReducer[Y, X]: Reducer[Y, X] => Reducer[C[Y], C[X]]
+```
+
+`liftReducer` is declared for a declared type `Reducer`.
+
+### `FunctionLevelReducible`
+
+```scala
+package psbp.internal.specification.aggregatable
+
+import psbp.specification.aggregatable.Aggregatable
+
+private[psbp] trait FunctionLevelReducible[A[+ _], C[+ _]] 
+  extends FunctionLevelFusing
+  with ReducerLifting[C]
+  with Aggregatable[A, [Z, Y] =>> Z => C[Y]]:
+
+  private type `=>C` = [Z, Y] =>> Z => C[Y]    
+
+  // declared
+  
+  private[psbp] def functionLevelReduce[Y, X]: Reducer[Y, X] => A[Y] => X
+
+  // defined
+
+  def aggregate[Z, Y, X]: Aggregator[Z, Y, X] => A[Z] `=>C` X =
+    (`z=>cy`, reducer) =>
+      functionLevelReduce(functionLevelFuse(`z=>cy`, liftReducer(reducer)))
+```
+
+Together with `FunctionLevelFusing` and `ReducerLifting`, `FunctionLevelReducible` can be used to define the `aggregate` member of `Aggregatable`, for programs of type `[Z, Y] =>> Z => C[Y]`.
+
+### `Rec`
+
+```scala
+package psbp.internal.specification.aggregatable.rec
+
+import psbp.internal.specification.application.Function1Lifting
+
+private[psbp] case class Rec[+A[+ _]: Function1Lifting](`a[rec[a]]`: A[Rec[A]]):
+
+  private val function1Lifting = summon[Function1Lifting[A]]
+  import function1Lifting.lift1
+
+  private[psbp] def rec[X]: (A[X] => X) => X =
+    `a[x]=>x` =>
+      (lift1((_: Rec[A]).rec(`a[x]=>x`)) andThen `a[x]=>x`)(`a[rec[a]]`)
+
+private[psbp] def rec[A[+ _]: Function1Lifting, X]: (A[X] => X) => Rec[A] => X =
+  `a[x]=>x` =>
+    _.rec(`a[x]=>x`)
+```
+
+Before defining a `given` for aggregation of recursive polynomial data some machinery is needed. 
+
+To start with, `Rec` specifies *recursive data* defined in terms of a unary type constructor `A[+ _]`.
+
+`rec` is a first step towards aggregation.
+
+`rec` transforms a function of type `A[X] => X`, to a function of type `Rec[A] => X` that aggregates a `Rec[A]` instance.
+
+`Rec[A]` is a type instead of a type constructor, so some more bynary type cnstructor machinery is needed.
+
+### `Function1LiftingAtLeft`
+
+```scala
+package psbp.internal.specification.application
+
+private[psbp] trait Function1LiftingAtLeft[A[+ _, + _]]:
+
+  private[psbp] def leftFunction1Lifting[X]: 
+    Function1Lifting[[Y] =>> A[Y, X]]
+```
+
+### `Function1LiftingAtLeft`
+
+```scala
+package psbp.internal.specification.application
+
+private[psbp] trait Function1LiftingAtRight[A[+ _, + _]]:
+
+  private[psbp] def rightFunction1Lifting[Y]: 
+    Function1Lifting[[X] =>> A[Y, X]] 
+```
+
+Both `Function1LiftingAtLeft` and `Function1LiftingAtRight` use a binary type constructor.
+
+### `RecReducerType`
+
+```scala
+package psbp.internal.specification.aggregatable.rec
+
+import psbp.specification.aggregatable.ReducerType
+
+private[psbp] trait RecReducerType[A[+ _, + _]] extends ReducerType:
+
+  override type Reducer[Y, X] = A[Y, X] => X
+```
+
+Using a binary type constructor `A[+ _, + _]`, the function of type `A[X] => X` from [Rec](https://psbp-library.github.io#rec) now becomes a reducer of type `A[Y, X] => X`.
+
+### `Swapping`
+
+```scala
+package psbp.internal.specification.aggregatable.rec
+
+import psbp.internal.specification.application.Function1Lifting
+
+import psbp.internal.specification.aggregatable.ReducerLifting
+
+private[psbp] trait Swapping[A[+ _, + _], C[+ _]: Function1Lifting] extends RecReducerType[A] with ReducerLifting[C]:
+
+  // declared
+
+  private[psbp] def swap[Y, X]: A[C[Y], C[X]] => C[A[Y, X]]
+
+  // defined
+
+  private val function1Lifting = summon[Function1Lifting[C]]
+  import function1Lifting.lift1
+  
+  override private[psbp] def liftReducer[Y, X]: Reducer[Y, X] => Reducer[C[Y], C[X]] =
+    
+    reducer =>
+      swap andThen lift1(reducer)
+```
+
+`swap` swaps the binary type constructor `A[+ _, + _]` with the unary type constructor `C[+ _]`.
+
+`liftReducer` can be defined in terms of `swap` and `lift1` from `Function1Lifting`.
+
+### `reducerLiftingFromSwapping`
+
+```scala
+package psbp.internal.specification.aggregatable.rec
+
+import psbp.internal.specification.application.Function1Lifting
+
+import psbp.internal.specification.aggregatable.ReducerLifting
+
+private[psbp] given reducerLiftingFromSwapping[A[+ _, + _]: RecReducerType: [A[+ _, + _]] =>> Swapping[A, C], C[+ _]: Function1Lifting]: RecReducerType[A] with ReducerLifting[C] with
+
+  private val function1Lifting: Function1Lifting[C] = summon[Function1Lifting[C]]
+  import function1Lifting.lift1
+
+  private val recReducerType: RecReducerType[A] = summon[RecReducerType[A]]
+
+  private val swapping: Swapping[A, C] = summon[Swapping[A, C]]
+  import swapping.swap
+
+  override private[psbp] def liftReducer[Y, X]: recReducerType.Reducer[Y, X] => recReducerType.Reducer[C[Y], C[X]] =
+    reducer =>
+      swap andThen lift1(reducer)
+```
+
+### `RecAggregatable`
+
+```scala
+
+package psbp.internal.specification.aggregatable.rec
+
+import psbp.specification.types.&&
+
+import psbp.specification.aggregatable.{ InitialTraverser, InitialReducer, Aggregatable }
+
+import psbp.internal.specification.application.{ Function0Lifting, Function1Lifting, Function1LiftingAtRight , Function1LiftingAtLeft }
+
+import psbp.internal.specification.application.function1LiftingFromFunction1LiftingAtRight
+
+import psbp.internal.specification.application.function1LiftingFromFunction1LiftingAtLeft
+
+import psbp.internal.specification.aggregatable.{ FunctionLevelFusing, FunctionLevelReducible }
+
+import psbp.internal.specification.aggregatable.rec.reducerLiftingFromSwapping
+
+private[psbp] trait RecInitialTraverser[C[+ _]: Function0Lifting] 
+  extends InitialTraverser[[Z, Y] =>> Z => C[Y]]:
+
+  private val function0Lifting = summon[Function0Lifting[C]]
+  import function0Lifting.lift0
+
+  override private[psbp] def initialTraverser[Y]: Y => C[Y] = lift0
+
+private[psbp] trait RecInitialReducer[A[+ _, + _]: Function1LiftingAtRight] 
+  extends RecReducerType[A]
+  with InitialReducer[[Y] =>> Rec[[X] =>> A[Y, X]]]:
+
+  override private[psbp] def initialReducer[Y]: Reducer[Y, Rec[[X] =>> A[Y, X]]] = 
+    Rec(_)
+
+private[psbp] trait RecFunctionLevelFusing[A[+ _, + _]: Function1LiftingAtLeft] 
+  extends RecReducerType[A]
+  with FunctionLevelFusing:
+
+  override private[psbp] def functionLevelFuse[Z, Y, X]: ((Z => Y) && (A[Y, X] => X)) => A[Z, X] => X =
+    case (z2y, reducer) =>
+      function1LiftingFromFunction1LiftingAtLeft.lift1(z2y) andThen reducer 
+
+private[psbp] trait RecAggregatable[A[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, C[+ _]: Function0Lifting: Function1Lifting]
+  extends RecInitialTraverser[C]
+  with RecInitialReducer[A]
+  with RecFunctionLevelFusing[A]
+  with Swapping[A, C]
+  with FunctionLevelReducible[[Z] =>> Rec[[X] =>> A[Z, X]], C]
+  with Aggregatable[[Z] =>> Rec[[X] =>> A[Z, X]], [Z, Y] =>> Z => C[Y]]:
+
+  override private[psbp] def functionLevelReduce[Z, X]: Reducer[Z, X] => Rec[[X] =>> A[Z, X]] => X = 
+    rec
+```
+
+`RecAggregatable` defines, up to `private[psbp] def swap[Y, X]: A[C[Y], C[X]] => C[A[Y, X]]` all members of `Aggregatable[[Z] =>> Rec[[X] =>> A[Z, X]], [Z, Y] =>> Z => C[Y]]`.
+
+`A[+ _, + _]` needs to belong to the `Function1LiftingAtLeft` and `Function1LiftingAtRight` type classes.
+
+
+`C[+ _]` needs to belong to the `Function0Lifting` and `Function1Lifting` type classes.
+
+For this it suffices that `C[+ _]` belongs to the `Computation` type class.
+
+See [functionApplicationLiftingFromComputation](https://psbp-library.github.io#functionapplicationliftingfromcomputation).
+
+## Important specification level implementaton `given`'s
 
 ### `programFromComputation`
 
@@ -2800,24 +3301,46 @@ Compare this with defining functions in terms of expressions.
 
 Using injection by `import` of `programFromComputation`, a specification level `given` implementation of `Program`, only `given` implementations of `Computation` need to be injected by `import`.
 
-### Setting the scene
-
-*Program implementation types are limited to types* `[Z, Y] =>> Z => C[Y]` *defined in terms of computation types* `[Y] =>> C[Y]`.
-
-Program implementations are limited to functions of type `Z => C[Y]` transforming an argument of type `Z` to a result that is a computation of type `C[Y]`.
-
-Formulated somewhat informally, programs, generalized functions, maybe performing side effects along the way of transforming their an to a result, are limited to functions transforming an argument to a result that is a computation, a generalized evaluation of an expression, maybe performing side effects along the way.
-
-Compare this with function definitions using expressions like the one below
+### `functionApplicationLiftingFromComputationFromComputation`
 
 ```scala
-def function[Z, Y]: Z => Y = 
-  z =>
-    val y = expression(z)
-    y
+package psbp.internal.specification.computation
+
+import psbp.specification.types.&&
+
+import psbp.internal.specification.computation.Computation
+
+import psbp.internal.specification.application.FunctionApplicationLifting
+
+private[psbp] given functionApplicationLiftingFromComputation[C[+ _]: Computation]: FunctionApplicationLifting[C] with
+
+  private val computation: Computation[C] = summon[Computation[C]]
+  import computation. { result, bind }
+
+  // defined
+
+  private[psbp] def liftValue[Z]: Z => C[Z] = 
+    z => 
+      result(z)
+
+  private[psbp] def liftProduct2[Z, Y]: (C[Z] && C[Y]) => C[Z && Y] =
+    (cz, cy) =>
+      bind(cz, { z => 
+        bind(cy, { y => 
+          result(z, y) }) })
+
+  private[psbp] def liftApply[Z, Y]: (C[Z => Y] && C[Z]) => C[Y] =
+    (cz2y, cz) =>
+      bind(cz2y, { z2y => 
+        bind(cz, { z => 
+          result(z2y(z)) }) })
 ```
 
-*Although programs of type* ``Z => C[Y]`` *can be used in a pointful way, the application developer API does not allow doing so, forcing application developers to think in a pointfree way.*
+`functionApplicationLiftingFromComputation` is a `given` that defines the basic function application lifting ingredients in terms of the basic computing ingredients.
+
+Compare this with function application being an expressions.
+
+Using injection by `import` of `functionApplicationLiftingFromComputation`, a specification level `given` implementation of `FunctionApplicationLifting`, only `given` implementations of `Computation` need to be injected by `import`.
 
 ## Internal specification level implementation `given`'s
 
@@ -2873,9 +3396,9 @@ Using injection by `import` of `resultingFromTransformation`, a specification le
 ### `functionApplicationLiftingFromValueProductAndApplicationLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
-given functionApplicationLiftingFromValueProductAndApplicationLifting[
+private[psbp] given functionApplicationLiftingFromValueProductAndApplicationLifting[
   C[+ _]: ValueLifting: ProductLifting: ApplicationLifting]: FunctionApplicationLifting[C] with
 
   private val valueLifting: ValueLifting[C] = summon[ValueLifting[C]]
@@ -2894,15 +3417,17 @@ Using injection by `import` of `functionApplicationLiftingFromValueProductAndApp
 ### `functionLiftingFromFunctionApplicationLifting`
 
 ```scala
-package psbp.internal.specification.computation
+package psbp.internal.specification.application
 
 import psbp.specification.types.&&
 
-given functionLiftingFromFunctionApplicationLifting[C[+ _]: FunctionApplicationLifting]: FunctionLifting[C] with
+private[psbp] given functionLiftingFromFunctionApplicationLifting[C[+ _]: FunctionApplicationLifting]: FunctionLifting[C] with
 
   private val functionApplicationLifting: FunctionApplicationLifting[C] = summon[FunctionApplicationLifting[C]]
   import functionApplicationLifting.{ liftValue, liftProduct2, liftProduct3, liftApply }
   
+  // defined
+
   override private[psbp] def lift0[Z]: Z => C[Z] =
     z =>
       liftValue(z)
@@ -2926,6 +3451,58 @@ given functionLiftingFromFunctionApplicationLifting[C[+ _]: FunctionApplicationL
 ```
 
 Using injection by `import` of `functionLiftingFromFunctionApplicationLifting`, a specification level `given` implementation of `FunctionLifting`, only a `given` implementation of `FunctionApplicationLifting` needs to be injected by `import`.
+
+### `function1LiftingFromFunction1LiftingAtLeft`
+
+```scala
+package psbp.internal.specification.application
+
+given function1LiftingFromFunction1LiftingAtLeft[X, A[+ _, + _]: Function1LiftingAtLeft]: Function1Lifting[[Z] =>> A[Z, X]] with
+
+  private val function1LiftingAtLeft: Function1LiftingAtLeft[A] = summon[Function1LiftingAtLeft[A]]
+  import function1LiftingAtLeft.leftFunction1Lifting
+  
+  private[psbp] def lift1[Z, Y]: (Z => Y) => A[Z, X] => A[Y, X] =
+    leftFunction1Lifting.lift1
+```
+
+Using injection by `import` of `function1LiftingFromFunction1LiftingAtLeft`, a specification level `given` implementation of `Function1Lifting`, only a `given` implementation of `Function1LiftingAtLeft` needs to be injected by `import`.
+
+### `function1LiftingFromFunction1LiftingAtRight`
+
+```scala
+package psbp.internal.specification.application
+
+given function1LiftingFromFunction1LiftingAtRight[X, A[+ _, + _]: Function1LiftingAtRight]: Function1Lifting[[Z] =>> A[X, Z]] with
+
+  private val function1LiftingAtRight: Function1LiftingAtRight[A] = summon[Function1LiftingAtRight[A]]
+  import function1LiftingAtRight.rightFunction1Lifting
+  
+  private[psbp] def lift1[Z, Y]: (Z => Y) => A[X, Z] => A[X, Y] =
+    rightFunction1Lifting.lift1 
+```
+
+Using injection by `import` of `function1LiftingFromFunction1LiftingAtRight`, a specification level `given` implementation of `Function1Lifting`, only a `given` implementation of `Function1LiftingAtRight` needs to be injected by `import`.
+
+### `reducerLiftingFromSwapping`
+
+```scala
+package psbp.internal.specification.aggregatable
+
+import psbp.internal.specification.application.Function1Lifting
+
+private[psbp] given reducerLiftingFromSwapping[A[+ _, + _]: [A[+ _, + _]] =>> Swapping[A, C], C[+ _]: Function1Lifting]: ReducerLifting[[Y, X] =>> A[Y, X] => X, C] with
+
+  private val function1Lifting: Function1Lifting[C] = summon[Function1Lifting[C]]
+  import function1Lifting.lift1
+
+  private val swapping: Swapping[A, C] = summon[Swapping[A, C]]
+  import swapping.swap
+
+  override private[psbp] def liftReducer[Y, X]: (A[Y, X] => X) => A[C[Y], C[X]] => C[X] =
+    `ayx=>x` =>
+      swap andThen lift1(`ayx=>x`)
+```
 
 ## Internal implementation level implementation `given`'s
 
@@ -3568,6 +4145,9 @@ Implementing parallelism makes use of an akka actors and logback logging.
 Actor `leftActor` and actor `rightActor` act together in parallel sending their results to actor `reactor` to react to.
 
 Some `logging` has been added to illustrate how `leftActor` and `rightActor` act, resp. `reactor` reacts.
+
+### Recursion on recursive unary type constructors
+
 
 ## Specific implementation `given`'s
 

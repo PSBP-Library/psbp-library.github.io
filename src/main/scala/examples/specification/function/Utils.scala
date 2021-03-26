@@ -1,8 +1,9 @@
 package examples.specification.function
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-val isZero: BigInt => Boolean =
+val isZero
+  : BigInt => Boolean =
   n =>
    n == 0
   
@@ -34,10 +35,40 @@ val add: BigInt && BigInt => BigInt =
   (n, m) =>
     n + m
 
-val isNotNegative: BigInt => Boolean =
+val isNegative: BigInt => Boolean =
   n =>
-   n >= 0
+   n < 0
 
 val negate: BigInt => BigInt =
   n =>
-    -n   
+    -n
+        
+def constantTrue[Z]: Z => Boolean = { _ =>
+  true
+} 
+
+def and: (Boolean && Boolean) => Boolean = { (b, a) =>
+  b && a
+}   
+
+val isPositive: BigInt => Boolean =
+  n =>
+   n > 0
+  
+// introduction 
+
+// import examples.specification.function.{ isZero, one, subtractOne, multiply }
+
+val factorial: BigInt => BigInt =
+  i =>
+    if(isZero(i)) {
+      one(i)
+    } else { 
+      val j = factorial(subtractOne(i))
+      multiply(i, j)
+    }
+
+@main def mainFactorial(args: String*): Unit =
+  println("Please type an integer")
+  val i: BigInt = BigInt(scala.io.StdIn.readInt)
+  println(s"applying factorial to the integer argument ${i} yields result ${factorial(i)}")

@@ -1,4 +1,4 @@
-package psbp.specification.materialization
+package psbp.external.specifcation.materialization
 
 trait Materialization[>-->[- _, + _], -Z, +Y]:
 

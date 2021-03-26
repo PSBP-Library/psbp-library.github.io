@@ -1,12 +1,12 @@
-package psbp.specification.programWithParallel
+package psbp.external.specifcation.programWithParallel
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specifcation.program.parallel.Parallel
 
-import psbp.specification.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
+import psbp.external.specifcation.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
 
 trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-->]:
 

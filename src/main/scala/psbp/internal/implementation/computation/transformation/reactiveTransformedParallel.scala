@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory.getILoggerFactory
 
 import language.implicitConversions
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specifcation.program.parallel.Parallel
 
 import psbp.internal.specification.computation.Computation
 

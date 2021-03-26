@@ -1,10 +1,10 @@
 package psbp.implementation.stateActive
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.state.Initial
+import psbp.external.specifcation.program.state.Initial
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specifcation.materialization.Materialization
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 

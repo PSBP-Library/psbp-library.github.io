@@ -1,13 +1,24 @@
 package examples.specification.program
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import examples.specification.functional.{ isZero, one, subtractOne, multiply }
+import examples.specification.functional.{ 
+  isZero
+  , one
+  , subtractOne
+  , multiply 
+  }
 
-def factorial[>-->[- _, + _]: Program]: BigInt >--> BigInt =
+def factorial[
+  >-->[- _, + _]: Program
+  ]: BigInt >--> BigInt =
 
-  val program: Program[>-->] = summon[Program[>-->]]
-  import program.{ Let, If }
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
+  import program.{
+    Let
+    , If 
+    }
 
   If(isZero) {
     one

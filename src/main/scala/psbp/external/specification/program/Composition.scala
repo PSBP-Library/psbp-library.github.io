@@ -1,4 +1,4 @@
-package psbp.specification.program
+package psbp.external.specifcation.program
 
 trait Composition[>-->[- _, + _]]:
 

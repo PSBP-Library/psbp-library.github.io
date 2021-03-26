@@ -2,10 +2,16 @@ package examples.specification.program.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-def intProducer[>-->[- _, + _]: Program]: Unit >--> BigInt = 
-  { (_: Unit) =>
-      println("Please type an integer")
-      BigInt(scala.io.StdIn.readInt)
-  } asProgram
+val effectfulIntProducer: Unit => BigInt =
+  _ =>
+    println("Please type an integer")
+    BigInt(scala.io.StdIn.readInt)
+
+def intProducer[
+  >-->[- _, + _]: Program
+  ]: Unit >--> BigInt = 
+    effectfulIntProducer asProgram
+  
+  

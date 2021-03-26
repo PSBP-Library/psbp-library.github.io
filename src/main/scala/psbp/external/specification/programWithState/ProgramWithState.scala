@@ -1,10 +1,10 @@
-package psbp.specification.programWithState
+package psbp.external.specifcation.programWithState
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-import psbp.specification.program.state.State
+import psbp.external.specifcation.program.state.State
 
-import psbp.specification.functional.`z>-->u`
+import psbp.external.specifcation.functional.`z>-->u`
 
 trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-->]:
 

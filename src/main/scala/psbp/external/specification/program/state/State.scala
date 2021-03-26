@@ -1,4 +1,4 @@
-package psbp.specification.program.state
+package psbp.external.specifcation.program.state
 
 trait State[S, >-->[- _, + _]]:
 

@@ -2,14 +2,16 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.specification.types.&&
+import psbp.external.specifcation.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
-def twoRandomsConsumer[>-->[- _, + _]: Program]: (Unit && (BigInt && BigInt)) >--> Unit =
-  {
-    (`u&&(i&&j)`: Unit && (BigInt && BigInt)) =>
-      val `i&&j` = `u&&(i&&j)`._2
-      println(s"generating two random numbers yields result ${`i&&j`}")
-  } asProgram
+val effectfulTwoRandomsConsumer: (Unit && (BigInt && BigInt)) => Unit =
+  case (_, (i, j)) =>
+    println(s"generating two random numbers yields result ${(i, j)}")
+
+def twoRandomsConsumer[
+  >-->[- _, + _]: Program
+  ]: (Unit && (BigInt && BigInt)) >--> Unit =
+  effectfulTwoRandomsConsumer asProgram
 

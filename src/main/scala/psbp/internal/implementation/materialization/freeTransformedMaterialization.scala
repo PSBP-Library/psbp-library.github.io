@@ -1,6 +1,6 @@
 package psbp.internal.implementation.materialization
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specifcation.materialization.Materialization
 
 import psbp.internal.specification.computation.Computation
 

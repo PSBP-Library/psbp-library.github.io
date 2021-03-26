@@ -2,7 +2,7 @@ package psbp.internal.implementation.computation.transformation
 
 import psbp.internal.specification.computation.Computation
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specifcation.materialization.Materialization
 
 import psbp.internal.specification.computation.CoResulting
 

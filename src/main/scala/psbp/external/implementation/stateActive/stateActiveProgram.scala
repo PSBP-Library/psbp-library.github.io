@@ -1,6 +1,6 @@
 package psbp.implementation.stateActive
 
-import psbp.specification.program.Program
+import psbp.external.specifcation.program.Program
 
 import psbp.internal.specification.computation.Binding
 

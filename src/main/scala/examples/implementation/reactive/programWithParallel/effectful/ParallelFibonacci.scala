@@ -1,6 +1,6 @@
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.specification.programWithParallel.given
+import psbp.external.specifcation.programWithParallel.given
 
 import psbp.implementation.reactive.given
 

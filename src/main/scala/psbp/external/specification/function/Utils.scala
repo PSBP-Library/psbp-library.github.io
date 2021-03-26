@@ -1,6 +1,6 @@
-package psbp.specification.function
+package psbp.external.specifcation.function
 
-import psbp.specification.types.{ &&, || }
+import psbp.external.specifcation.types.{ &&, || }
 
 // functional
 
@@ -49,9 +49,14 @@ def `(z=>y)=>((z&&x)=>(y&&x)))`[Z, Y, X]: (Z => Y) => ((Z && X) => (Y && X)) =
 def `(z&&y)=>(z&&y)`[Z, Y]: (Z && Y) => (Z && Y) =
   identity     
     
-def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
-  z =>
-    (`z=>y`(z), `z=>x`(z))
+// def unfoldProduct[Z, Y, X](`z=>y`: Z => Y, `z=>x`: => Z => X): Z => (Y && X) =
+//   z =>
+//     (`z=>y`(z), `z=>x`(z))
+
+def unfoldProduct[Z, Y, X]: ((Z => Y) && (Z => X)) => (Z => (Y && X)) =
+  (`z=>y`, `z=>x`) => 
+    z =>
+      (`z=>y`(z), `z=>x`(z))
 
 def and[Z, Y, X, W]: ((Z => X) && (Y => W)) => (Z && Y) => (X && W) =
   (`z=>x`, `y=>w`) =>
@@ -69,8 +74,12 @@ def `y=>(z||y)`[Z, Y]: Y => (Z || Y) =
   y =>
     Right(y)   
 
-def foldSum[Z, Y, X](`y=>z`: => Y => Z, `x=>z`: => X => Z): (Y || X) => Z =
-  _.foldSum(`y=>z`, `x=>z`)
+// def foldSum[Z, Y, X](`y=>z`: => Y => Z, `x=>z`: => X => Z): (Y || X) => Z =
+//   _.foldSum(`y=>z`, `x=>z`)
+
+def foldSum[Z, Y, X]: ((Y => Z) && (X => Z)) => (Y || X) => Z =
+  (`y=>z`, `x=>z`) =>
+    _.foldSum(`y=>z`, `x=>z`)
 
 def `(z||z)=>z`[Z]: (Z || Z) => Z =
   foldSum(z => z, z => z)  
