@@ -3,7 +3,7 @@ package psbp.internal.specification.aggregatable.rec
 
 import psbp.external.specifcation.types.&&
 
-import psbp.external.specifcation.types.{ Rec, LeftRec }
+import psbp.external.specifcation.types.{ Rec, RightRec }
 
 import psbp.external.specifcation.aggregatable.rec.RecReducerType
 
@@ -30,11 +30,11 @@ private[psbp] trait RecInitialTraverser[C[+ _]: Function0Lifting]
 private[psbp] trait RecInitialReducer[A[+ _, + _]: Function1LiftingAtRight] 
   extends RecReducerType[A]
   // with InitialReducer[[Y] =>> Rec[[X] =>> A[Y, X]]]:
-  with InitialReducer[LeftRec[A]]:
+  with InitialReducer[RightRec[A]]:
 
   // override private[psbp] def initialReducer[Y]: Reducer[Y, Rec[Left[A][Y]]] = 
-  override private[psbp] def initialReducer[Y]: Reducer[Y, LeftRec[A][Y]] = 
-      Rec(_)
+  override private[psbp] def initialReducer[Y]: Reducer[Y, RightRec[A][Y]] = 
+    Rec(_)
 
 private[psbp] trait RecFunctionLevelFusing[A[+ _, + _]: Function1LiftingAtLeft] 
   extends RecReducerType[A]
@@ -42,16 +42,17 @@ private[psbp] trait RecFunctionLevelFusing[A[+ _, + _]: Function1LiftingAtLeft]
 
   override private[psbp] def functionLevelFuse[Z, Y, X]: ((Z => Y) && Reducer[Y, X]) => Reducer[Z, X] =
     case (z2y, reducer) =>
+      val foo: A[Z, X] => A[Y, X] = function1LiftingFromFunction1LiftingAtLeft.lift1(z2y)
       function1LiftingFromFunction1LiftingAtLeft.lift1(z2y) andThen reducer 
 
-private[psbp] type `=>`[C[+ _]] = [Z, Y] =>> Z => C[Y]
+// private[psbp] type `=>`[C[+ _]] = [Z, Y] =>> Z => C[Y]
 
 private[psbp] trait RecAggregatable[A[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, C[+ _]: Function0Lifting: Function1Lifting]
   extends RecInitialTraverser[C]
   with RecInitialReducer[A]
   with RecFunctionLevelFusing[A]
-  with FunctionLevelReducible[LeftRec[A], C]
-  with Aggregatable[LeftRec[A], `=>`[C]]:
+  with FunctionLevelReducible[RightRec[A], C]
+  with Aggregatable[RightRec[A], [Z, Y] =>> Z => C[Y]]:
   
-  override private[psbp] def functionLevelReduce[Z, X]: Reducer[Z, X] => LeftRec[A][Z] => X = 
+  override private[psbp] def functionLevelReduce[Y, X]: Reducer[Y, X] => RightRec[A][Y] => X = 
     rec

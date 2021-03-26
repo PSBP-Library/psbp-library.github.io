@@ -2,8 +2,6 @@ package psbp.internal.specification.aggregatable.rec
 
 import psbp.external.specifcation.aggregatable.rec.RecReducerType
 
-// import psbp.internal.specification.aggregatable.rec.RecReducerType
-
 import psbp.internal.specification.lifting.Function1Lifting
 
 import psbp.internal.specification.aggregatable.ReducerLifting

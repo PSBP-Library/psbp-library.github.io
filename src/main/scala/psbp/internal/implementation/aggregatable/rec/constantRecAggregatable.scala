@@ -36,11 +36,20 @@ given constantFunction1LiftingAtRight: Function1LiftingAtRight[Constant] with
         identity
     }
    
+// import psbp.external.specifcation.aggregatable.rec.RecStructureToRecReducer
+
 given constantRecAggregatable[C[+ _]: Function0Lifting: Function1Lifting]: RecAggregatable[Constant, C] 
+  // with RecStructureToRecReducer[Constant]
   with RecReducerLifting[Constant, C]
   with RecInitialTraverser[C] 
   with RecInitialReducer[Constant] 
   with RecFunctionLevelFusing[Constant] with
+
+  // override private[psbp] type Structure[Y, X] = ConstantStructure[Y, X]
+  // override type Structure[Y, X] = Reducer[Y, X] // ConstantStructure[Y, X]
+
+  // override def structureToReducer[Y, X]: Structure[Y, X] => Reducer[Y, X] =
+  //   identity
 
   override private[psbp] def swap[Y, X]: Constant[C[Y], C[X]] => C[Constant[Y, X]] =
     identity

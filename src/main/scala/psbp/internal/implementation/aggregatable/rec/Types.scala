@@ -30,19 +30,34 @@ private[psbp] type Sum[L[+ _, + _], R[+ _, + _]] = [Y, X] =>> L[Y, X] || R[Y, X]
 
 private[psbp] type Cons[+Y, +X] = Product[Constant, Identity][Y, X]
 
+
+// private[psbp] type NoneStructure[Y, X] = None[Y, X] => X
+
+// private[psbp] type ConstantStructure[Y, X] = Constant[Y, X] => X
+
+// private[psbp] type IdentityStructure[Y, X] = Identity[Y, X] => X
+
+// private[psbp] type ProductStructure[L[+ _, + _], R[+ _, + _]] = [Y, X] =>> Product[L, R][Y, X] => X // (L[Y, X] && R[Y, X]) => X
+
+// private[psbp] type SumStructure[L[+ _, + _], R[+ _, + _]] = [Y, X] =>> (L[Y, X] => X) && (R[Y, X] => X)
+
+// private[psbp] type SumStructure[LS[_, _], RS[_, _]] = [Y, X] =>> LS[Y, X] && RS[Y, X] 
+
+// private[psbp] type ConsStructure[Y, X] = ProductStructure[Constant, Identity][Y, X]
+
 // private[psbp] type List[+Y, +X] = Sum[None, Cons][Y, X]
 
 
-private[psbp] type NoneStructure[Y, X] = None[X, Y] => X
+// private[psbp] type NoneStructure[Y, X] = None[X, Y] => X
 
-private[psbp] type ConstantStructure[Y, X] = Constant[X, Y] => X  
+// private[psbp] type ConstantStructure[Y, X] = Constant[X, Y] => Unit
 
-private[psbp] type IdentityStructure[Y, X] = Identity[X, Y] => X
+// private[psbp] type IdentityStructure[Y, X] = Identity[X, Y] => X
 
-private[psbp] type ProductStructure[L[+ _, + _], R[+ _, + _]] = [Y, X] =>> (L[Y, X] && R[Y, X]) => X
+// private[psbp] type ProductStructure[L[+ _, + _], R[+ _, + _]] = [Y, X] =>> (L[Y, X] && R[Y, X]) => X
 
-private[psbp] type SumStructure[LS[_, _], RS[_, _]] = [Y, X] =>> LS[Y, X] && RS[Y, X] 
+// private[psbp] type SumStructure[LS[_, _], RS[_, _]] = [Y, X] =>> LS[Y, X] && RS[Y, X] 
 
-private[psbp] type ConsStructure[Y, X] = ProductStructure[Constant, Identity][Y, X]
+// private[psbp] type ConsStructure[Y, X] = ProductStructure[Constant, Identity][Y, X]
 
 // private[psbp] type ListStructure[Y, X] = SumStructure[NoneStructure, ConsStructure][Y, X]

@@ -22,8 +22,13 @@ enum ||[+Z, +Y]:
 
 private[psbp] case class Rec[+A[+ _]](`a[rec[a]]`: A[Rec[A]])
 
-private[psbp] type Left[A[+ _, + _]] = [Z] =>> [Y] =>> A[Z, Y]
+// private[psbp] type AtLeft[A[+ _, + _]] = [Z] =>> [Y] =>> A[Z, Y]
+
+private[psbp] type WithAtLeft[+Y] = [A[+ _, + _]] =>> [X] =>> A[Y, X]
 
 // private[psbp] type LeftRec[A[+ _, + _]] = [Z] =>> Rec[[Y] =>> A[Z, Y]]
   
-private[psbp] type LeftRec[A[+ _, + _]] = [Z] =>> Rec[Left[A][Z]]
+// private[psbp] type LeftRec[A[+ _, + _]] = [Z] =>> Rec[AtLeft[A][Z]]
+
+private[psbp] type RightRec[A[+ _, + _]] = [Y] =>> Rec[WithAtLeft[Y][A]]
+

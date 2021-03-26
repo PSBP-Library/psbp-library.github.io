@@ -1,18 +1,10 @@
 package psbp.internal.implementation.aggregatable.rec
 
-// import psbp.external.specifcation.aggregatable.Aggregatable
-
 import psbp.internal.specification.lifting.{ Function0Lifting, Function1Lifting, Function1LiftingAtRight , Function1LiftingAtLeft }
 
 import psbp.external.specifcation.types.Rec
 
-// import psbp.internal.specification.rec.Rec
-
 import psbp.internal.specification.aggregatable.rec.{ RecReducerLifting, RecAggregatable, RecInitialTraverser, RecInitialReducer, RecFunctionLevelFusing }
-
-// type None[+Y, +X] = Unit
-
-// def mkNone[Y, X]: None[Y, X] = ()
 
 given noneFunction1LiftingAtLeft: Function1LiftingAtLeft[None] with
 
@@ -32,8 +24,10 @@ given noneFunction1LiftingAtRight: Function1LiftingAtRight[None] with
           identity
     }    
    
+// import psbp.external.specifcation.aggregatable.rec.RecStructureToRecReducer
 
 given noneRecAggregatable[C[+ _]: Function0Lifting: Function1Lifting]: RecAggregatable[None, C] 
+  // with RecStructureToRecReducer[None]
   with RecReducerLifting[None, C]
   with RecInitialTraverser[C] 
   with RecInitialReducer[None] 
@@ -41,6 +35,12 @@ given noneRecAggregatable[C[+ _]: Function0Lifting: Function1Lifting]: RecAggreg
   
   private val function0Lifting = summon[Function0Lifting[C]]
   import function0Lifting.lift0
+
+  // override private[psbp] type Structure[Y, X] = NoneStructure[Y, X]
+  // override type Structure[Y, X] = Reducer[Y, X] // None[Y, X] => X // NoneStructure[Y, X]
+
+  // override def structureToReducer[Y, X]: Structure[Y, X] => Reducer[Y, X] =
+  //   identity
 
   override private[psbp] def swap[Y, X]: None[C[Y], C[X]] => C[None[Y, X]] =
     lift0

@@ -1,13 +1,22 @@
 package psbp.implementation.rec.list
 
-import psbp.external.specifcation.types.{ LeftRec }
+import psbp.external.specifcation.types.{ RightRec }
 
-import psbp.internal.implementation.aggregatable.rec.{ Sum, None, Cons, SumStructure, NoneStructure, ConsStructure }
+import psbp.internal.implementation.aggregatable.rec.{ Sum, None, Cons }
 
-private[psbp] type List[+Z, +Y] = Sum[None, Cons][Z, Y]
+// import psbp.internal.implementation.aggregatable.rec.{ Sum, None, Cons, SumStructure }
 
-private[psbp] type ListStructure[Z, Y] = SumStructure[NoneStructure, ConsStructure][Z, Y]
+// import psbp.internal.implementation.aggregatable.rec.{ Sum, None, Cons, SumStructure, NoneStructure, ConsStructure }
 
-type RecList[+Z] = LeftRec[List][Z]
+// maybe back to private
+type List[+Y, +X] = Sum[None, Cons][Y, X]
+
+// private[psbp] type ListStructure[Y, X] = SumStructure[NoneStructure, ConsStructure][Y, X]
+
+// private[psbp] type ListStructure[Y, X] = SumStructure[None, Cons][Y, X]
+
+// private[psbp] type ListStructure[Y, X] = Sum[None, Cons][Y, X] => X
+
+type RecList[+Z] = RightRec[List][Z]
 
 

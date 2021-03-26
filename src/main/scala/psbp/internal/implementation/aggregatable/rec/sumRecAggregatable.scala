@@ -60,16 +60,35 @@ given sumFunction1LiftingAtRight[
         }
     }
   
+// import psbp.external.specifcation.aggregatable.rec.RecStructureToRecReducer
+  
 given sumRecAggregatable[
-  L[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, 
-  R[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, 
+  L[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, // : RecStructureToRecReducer,
+  R[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight,// : RecStructureToRecReducer,
   C[+ _]: Function0Lifting: Function1Lifting: FunctionLifting
         : [C[+ _]] =>> RecReducerLifting[L, C]
         : [C[+ _]] =>> RecReducerLifting[R, C]]: RecAggregatable[Sum[L, R], C] 
+  // with RecStructureToRecReducer[Sum[L, R]]
   with RecReducerLifting[Sum[L, R], C]
   with RecInitialTraverser[C] 
   with RecInitialReducer[Sum[L, R]] 
   with RecFunctionLevelFusing[Sum[L, R]] with
+
+  // private[psbp] val leftRecStructureToRecReducer = summon[RecStructureToRecReducer[L]]
+  // private[psbp] val rightRecStructureToRecReducer = summon[RecStructureToRecReducer[R]] 
+  
+  // import leftRecStructureToRecReducer.{ Structure => LeftStructure, structureToReducer => leftStructureToReducer }
+  // import rightRecStructureToRecReducer.{ Structure => RightStructure, structureToReducer => rightStructureToReducer }
+
+  // // override private[psbp] type Structure[Y, X] = SumStructure[LeftStructure, RightStructure][Y, X]
+
+  // // override private[psbp] type Structure[Y, X] = SumStructure[L, R][Y, X]
+  // override type Structure[Y, X] = Reducer[Y, X] // (L[Y, X] => X) && (R[Y, X] => X) // LeftStructure[Y, X] && RightStructure[Y, X] // (L[Y, X] => X) && (R[Y, X] => X) // SumStructure[L, R][Y, X]
+
+  // // import psbp.external.specifcation.function.foldSum
+
+  // override def structureToReducer[Y, X]: Structure[Y, X] => Reducer[Y, X] =
+  //   identity
 
   private val functionLifting: FunctionLifting[C] = summon[FunctionLifting[C]]
   import functionLifting.liftOr
@@ -77,14 +96,8 @@ given sumRecAggregatable[
   private val leftSwapping = summon[RecReducerLifting[L, C]]
   private val rightSwapping = summon[RecReducerLifting[R, C]]
 
-  // private val leftRecAggregatable = summon[RecAggregatable[L, C]]
-  // private val rightRecAggregatable = summon[RecAggregatable[R, C]]  
-
   import leftSwapping.{ swap => lSwap }
-  import rightSwapping.{ swap => rSwap }
-
-  // import leftRecAggregatable.{ Structure => lStructure }
-  // import rightRecAggregatable.{ Structure => rStructure }  
+  import rightSwapping.{ swap => rSwap } 
 
   override private[psbp] def swap[Y, X]: Sum[L, R][C[Y], C[X]] => C[Sum[L, R][Y, X]] = 
     liftOr(lSwap, rSwap)  

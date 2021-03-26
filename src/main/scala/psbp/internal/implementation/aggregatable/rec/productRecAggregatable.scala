@@ -4,13 +4,9 @@ import psbp.external.specifcation.types.&&
 
 import psbp.external.specifcation.function.and
 
-// import psbp.external.specifcation.aggregatable.Aggregatable
-
 import psbp.internal.specification.lifting.{ Function0Lifting, Function1Lifting, Function1LiftingAtRight , Function1LiftingAtLeft, FunctionLifting }
 
 import psbp.external.specifcation.types.Rec
-
-// import psbp.internal.specification.rec.Rec
 
 import psbp.internal.specification.aggregatable.rec.{ RecReducerLifting, RecAggregatable, RecInitialTraverser, RecInitialReducer, RecFunctionLevelFusing }
 
@@ -58,31 +54,41 @@ given productFunction1LiftingAtRight[
         }
     }
 
+
+// import psbp.external.specifcation.aggregatable.rec.RecStructureToRecReducer
+
 given productRecAggregatable[
-  L[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, 
-  R[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, 
+  L[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, // : RecStructureToRecReducer,
+  R[+ _, + _]: Function1LiftingAtLeft: Function1LiftingAtRight, // : RecStructureToRecReducer,
   C[+ _]: Function0Lifting: Function1Lifting: FunctionLifting
         : [C[+ _]] =>> RecReducerLifting[L, C]
         : [C[+ _]] =>> RecReducerLifting[R, C]]: RecAggregatable[Product[L, R], C] 
+  // with RecStructureToRecReducer[Product[L, R]]        
   with RecReducerLifting[Product[L, R], C]
   with RecInitialTraverser[C] 
   with RecInitialReducer[Product[L, R]] 
   with RecFunctionLevelFusing[Product[L, R]] with
 
+  // private[psbp] val leftRecStructureToRecReducer = summon[RecStructureToRecReducer[L]]
+  // private[psbp] val rightRecStructureToRecReducer = summon[RecStructureToRecReducer[R]] 
+  
+  // import leftRecStructureToRecReducer.{ Structure => LeftStructure, structureToReducer => leftStructureToReducer }
+  // import rightRecStructureToRecReducer.{ Structure => RightStructure, structureToReducer => rightStructureToReducer }
+
+  // // override private[psbp] type Structure[Y, X] = ProductStructure[L, R][Y, X]
+  // override type Structure[Y, X] = Reducer[Y, X] // ProductStructure[L, R][Y, X]
+
+  // override def structureToReducer[Y, X]: Structure[Y, X] => Reducer[Y, X] =
+  //   identity
+    
   private val functionLifting: FunctionLifting[C] = summon[FunctionLifting[C]]
   import functionLifting.liftAnd
 
   private val leftSwapping = summon[RecReducerLifting[L, C]]
-  private val rightSwapping = summon[RecReducerLifting[R, C]]
-
-  // private val leftRecAggregatable = summon[RecAggregatable[L, C]]
-  // private val rightRecAggregatable = summon[RecAggregatable[R, C]]  
+  private val rightSwapping = summon[RecReducerLifting[R, C]] 
 
   import leftSwapping.{ swap => lSwap }
   import rightSwapping.{ swap => rSwap }
-
-  // import leftRecAggregatable.{ Structure => lStructure }
-  // import rightRecAggregatable.{ Structure => rStructure }  
 
   override private[psbp] def swap[Y, X]: Product[L, R][C[Y], C[X]] => C[Product[L, R][Y, X]] = 
     liftAnd(lSwap, rSwap)     
