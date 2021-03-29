@@ -1,6 +1,8 @@
-package psbp.external.specifcation.aggregatable
+package psbp.external.specification.aggregatable
 
-trait Reducible[A[+ _], >-->[- _, + _]] extends InitialReducer[A]:
+import psbp.external.specification.program.Program
+
+trait Reducible[A[+ _], >-->[- _, + _]: Program] extends ReducerType: // extends InitialReducer[A]:
 
   // declared
   

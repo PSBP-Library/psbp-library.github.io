@@ -2,7 +2,7 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
 val effectlessUnitProducer: Unit => Unit = 
   _ =>

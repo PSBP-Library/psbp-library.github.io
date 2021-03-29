@@ -2,9 +2,9 @@ package examples.specification.programWithState
 
 import scala.language.postfixOps
 
-import psbp.external.specifcation.functional.identity
+import psbp.external.specification.functional.identity
 
-import psbp.external.specifcation.programWithState.ProgramWithState
+import psbp.external.specification.programWithState.ProgramWithState
 
 import examples.specification.functional.{ 
   isNegative

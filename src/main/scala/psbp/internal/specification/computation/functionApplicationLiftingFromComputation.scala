@@ -1,6 +1,6 @@
 package psbp.internal.specification.computation
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
 import psbp.internal.specification.computation.Computation
 

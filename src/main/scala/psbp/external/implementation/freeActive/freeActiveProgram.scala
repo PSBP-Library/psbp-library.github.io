@@ -1,6 +1,6 @@
 package psbp.implementation.freeActive
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 

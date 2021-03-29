@@ -1,12 +1,12 @@
-package psbp.external.specifcation.functional
+package psbp.external.specification.functional
 
 import scala.language.postfixOps
 
-import psbp.external.specifcation.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
-import psbp.external.specifcation.program.Functional
+import psbp.external.specification.program.Functional
 
-import psbp.external.specifcation.function._
+import psbp.external.specification.function._
 
 // functional
 

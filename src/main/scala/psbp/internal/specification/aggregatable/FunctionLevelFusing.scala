@@ -1,15 +1,15 @@
-package psbp.internal.specification.aggregatable
+// package psbp.internal.specification.aggregatable
 
-import psbp.external.specifcation.types.&&
+// import psbp.external.specifcation.types.&&
 
-import psbp.external.specifcation.aggregatable.ReducerType
+// import psbp.external.specifcation.aggregatable.ReducerType
 
-private[psbp] trait FunctionLevelFusing extends ReducerType:
+// private[psbp] trait FunctionLevelFusing extends ReducerType:
 
-  // defined
+//   // defined
 
-  private[psbp] type FunctionLevelAggregator[Z, Y, X] = (Z => Y) && Reducer[Y, X]
+//   private[psbp] type FunctionLevelAggregator[Z, Y, X] = (Z => Y) && Reducer[Y, X]
 
-  // declared
+//   // declared
 
-  private[psbp] def functionLevelFuse[Z, Y, X]: FunctionLevelAggregator[Z, Y, X] => Reducer[Z, X]
+//   private[psbp] def functionLevelFuse[Z, Y, X]: FunctionLevelAggregator[Z, Y, X] => Reducer[Z, X]

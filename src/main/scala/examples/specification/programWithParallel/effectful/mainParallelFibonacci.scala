@@ -1,6 +1,6 @@
 package examples.specification.programWithParallel.effectful
 
-import psbp.external.specifcation.programWithParallel.ProgramWithParallel
+import psbp.external.specification.programWithParallel.ProgramWithParallel
 
 import examples.specification.programWithParallel.parallelFibonacci 
 

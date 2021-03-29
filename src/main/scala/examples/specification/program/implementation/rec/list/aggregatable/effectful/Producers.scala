@@ -1,15 +1,28 @@
 package examples.specification.program.implementation.rec.list.aggregatable.effectful
 
-import scala.collection.immutable
-
 import scala.language.postfixOps
 
-import psbp.external.specifcation.program.Program
+import scala.collection.immutable.Seq
 
-import psbp.implementation.rec.list.{ RecList, fromSeq }
+import psbp.external.specification.program.Program
+
+import psbp.external.implementation.rec.list.{ RecList, emptyRecList, consRecList }
+
+def seqToRecListFunction[Z]: Seq[Z] => RecList[Z] = 
+  _.foldRight(emptyRecList)(consRecList) 
+
+def seqToRecList[
+  Z,
+  >-->[- _, + _]: Program]: Seq[Z] >--> RecList[Z] = 
+  seqToRecListFunction asProgram
   
-def intRecListProducer[>-->[- _, + _]: Program]: Unit >--> RecList[BigInt] =
-  { (_: Unit) =>
+def effectfulIntSeqProducer[>-->[- _, + _]: Program]: Unit => Seq[BigInt] =
+  _ =>
     println("Please type a sequence of integers separated by a blank")
-    fromSeq(immutable.Seq(scala.io.StdIn.readLine.split(" ").map(s => BigInt(s.toInt)).toSeq: _*))
-  } asProgram
+    Seq(scala.io.StdIn.readLine.split(" ").map(s => BigInt(s.toInt)).toSeq: _*)
+
+def intSeqProducer[>-->[- _, + _]: Program]: Unit >--> Seq[BigInt] =
+  effectfulIntSeqProducer asProgram
+
+def intRecListProducer[>-->[- _, + _]: Program]: Unit >--> RecList[BigInt] =
+  intSeqProducer >--> seqToRecList

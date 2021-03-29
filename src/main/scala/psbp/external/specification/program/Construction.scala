@@ -1,6 +1,6 @@
-package psbp.external.specifcation.program
+package psbp.external.specification.program
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
 trait Construction[>-->[- _, + _]]:
 

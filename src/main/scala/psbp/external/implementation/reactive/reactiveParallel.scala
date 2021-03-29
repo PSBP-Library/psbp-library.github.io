@@ -1,6 +1,6 @@
 package psbp.implementation.reactive
 
-import psbp.external.specifcation.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 

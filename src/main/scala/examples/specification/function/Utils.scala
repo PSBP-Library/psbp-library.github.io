@@ -1,6 +1,6 @@
 package examples.specification.function
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
 val isZero
   : BigInt => Boolean =
@@ -54,6 +54,15 @@ def and: (Boolean && Boolean) => Boolean = { (b, a) =>
 val isPositive: BigInt => Boolean =
   n =>
    n > 0
+
+// reducers
+
+import psbp.external.specification.function.foldSum
+
+import psbp.external.specification.types.||
+
+val areAllPositiveReducer: (Unit || (Boolean && Boolean)) => Boolean =
+  foldSum(constantTrue[Unit], and)
   
 // introduction 
 

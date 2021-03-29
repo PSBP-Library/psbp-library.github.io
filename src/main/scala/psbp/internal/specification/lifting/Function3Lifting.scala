@@ -1,6 +1,6 @@
 package psbp.internal.specification.lifting
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] trait Function3Lifting[C[+ _]]:
 

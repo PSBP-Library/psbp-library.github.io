@@ -1,10 +1,10 @@
 package psbp.internal.specification.computation
 
-import psbp.external.specifcation.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
-import psbp.external.specifcation.function.foldSum
+import psbp.external.specification.function.foldSum
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 

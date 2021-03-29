@@ -1,8 +1,10 @@
-package psbp.external.specifcation.aggregatable
+package psbp.external.specification.aggregatable
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-trait Aggregatable[A[+ _], >-->[- _, + _]] 
+import psbp.external.specification.program.Program
+
+trait Aggregatable[A[+ _], >-->[- _, + _]: Program] 
   extends InitialTraverser[>-->]
   with InitialReducer[A]
   with Traversable[A, >-->] 
@@ -10,18 +12,20 @@ trait Aggregatable[A[+ _], >-->[- _, + _]]
 
   // defined
 
-  // private[psbp] type Aggregator[Z, Y, X] = Traverser[Z, Y] && Reducer[Y, X]
-
   private[psbp] type Aggregator[Z, Y, X] = Z >--> Y && Reducer[Y, X]
+
+  private[psbp] def fuse[Z, Y, X]: Aggregator[Z, Y, X] => Reducer[Z, X]
 
   // declared
 
-  def aggregate[Z, Y, X]: Aggregator[Z, Y, X] => A[Z] >--> X
+  def aggregate[Z, Y, X]: Aggregator[Z, Y, X] => A[Z] >--> X =
+    fuse andThen reduce
 
   // defined
 
   override def traverse[Z, Y]: Z >--> Y => A[Z] >--> A[Y] =
     aggregate(_, initialReducer)
 
-  override def reduce[Y, X]: Reducer[Y, X] => A[Y] >--> X = 
-    aggregate(initialTraverser, _)
+  // defined but overridden anyway (can be left out)
+  // override def reduce[Y, X]: Reducer[Y, X] => A[Y] >--> X =
+  //   aggregate(initialTraverser, _)

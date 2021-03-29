@@ -1,6 +1,6 @@
 package examples.specification.programWithState.effectful
 
-import psbp.external.specifcation.programWithState.ProgramWithState
+import psbp.external.specification.programWithState.ProgramWithState
 
 import examples.specification.programWithState.{ Seed, twoRandoms }  
 

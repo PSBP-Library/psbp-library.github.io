@@ -1,6 +1,6 @@
 package psbp.implementation.active
 
-import psbp.external.specifcation.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 given activeMaterialization: Materialization[`=>A`, Unit, Unit] with
 

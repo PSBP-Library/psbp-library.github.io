@@ -1,9 +1,9 @@
-package psbp.internal.specification.aggregatable
+// package psbp.internal.specification.aggregatable
 
-import psbp.external.specifcation.aggregatable.ReducerType
+// import psbp.external.specifcation.aggregatable.ReducerType
 
-private[psbp] trait ReducerLifting[C[+ _]] extends ReducerType:
+// private[psbp] trait ReducerLifting[C[+ _]] extends ReducerType:
     
-  // declared
+//   // declared
 
-  private[psbp] def liftReducer[Y, X]: Reducer[Y, X] => Reducer[C[Y], C[X]]
+//   private[psbp] def liftReducer[Y, X]: Reducer[Y, X] => Reducer[C[Y], C[X]]

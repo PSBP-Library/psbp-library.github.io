@@ -1,4 +1,4 @@
-package psbp.external.specifcation.program
+package psbp.external.specification.program
 
 trait Functional[>-->[- _, + _]]:
 

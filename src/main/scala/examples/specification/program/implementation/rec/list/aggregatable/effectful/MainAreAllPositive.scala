@@ -1,18 +1,20 @@
 package examples.specification.program.implementation.rec.list.aggregatable.effectful
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.implementation.rec.list.{ List }
+import psbp.external.implementation.list.{ List }
 
+import psbp.external.specification.aggregatable.recursive.{ RecursiveAggregatable }
 
-// import psbp.implementation.rec.list.RecListAggregatable
+import psbp.external.implementation.rec.Rec
 
-import psbp.external.specifcation.aggregatable.rec.RecAggregatable
+import psbp.external.implementation.rec.recRecursive
 
-import examples.specification.program.implementation.rec.list.aggregatable.areAllPositive
+import examples.specification.program.implementation.recursive.aggregatable.implementation.list.areAllPositive
 
-// def mainAreAllPositive[>-->[- _, + _]: Program: RecAggregatable[List]]: Unit >--> Unit =
-def mainAreAllPositive[>-->[- _, + _]: Program: [>-->[- _, + _]] =>> RecAggregatable[List, >-->]]: Unit >--> Unit =
+def mainAreAllPositive[
+  >-->[- _, + _]: Program
+                : [>-->[- _, + _]] =>> RecursiveAggregatable[List, Rec, >-->]]: Unit >--> Unit =
   areAllPositive toMainWith (
     producer = intRecListProducer,
     consumer = areAllPositiveConsumer

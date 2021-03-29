@@ -1,6 +1,6 @@
 package examples.specification.program.effectful
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
 import examples.specification.program.factorial
 

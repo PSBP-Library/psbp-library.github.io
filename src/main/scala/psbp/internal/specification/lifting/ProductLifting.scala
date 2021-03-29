@@ -1,8 +1,8 @@
 package psbp.internal.specification.lifting
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.external.specifcation.function.{ `(z=>y)=>((z&&x)=>(y&&x)))` }
+import psbp.external.specification.function.{ `(z=>y)=>((z&&x)=>(y&&x)))` }
 
 private[psbp] trait ProductLifting[C[+ _]]:
 

@@ -1,8 +1,8 @@
 package psbp.internal.specification.lifting
 
-import psbp.external.specifcation.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
-import psbp.external.specifcation.function.{ `(z&&y)=>(z&&y)`, foldSum, `z=>(z||y)`, `y=>(z||y)`, and, or }
+import psbp.external.specification.function.{ `(z&&y)=>(z&&y)`, foldSum, `z=>(z||y)`, `y=>(z||y)`, and, or }
 
 private[psbp] trait FunctionLifting[C[+ _]] 
   extends Function0Lifting[C] 

@@ -1,8 +1,8 @@
-package psbp.external.specifcation.programWithParallel
+package psbp.external.specification.programWithParallel
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.external.specifcation.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
 given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParallel[>-->] with
  

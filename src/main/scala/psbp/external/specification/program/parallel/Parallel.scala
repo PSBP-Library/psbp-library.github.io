@@ -1,6 +1,6 @@
-package psbp.external.specifcation.program.parallel
+package psbp.external.specification.program.parallel
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
 trait Parallel[>-->[- _, + _]]:
   

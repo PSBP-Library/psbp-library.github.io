@@ -2,7 +2,12 @@ package examples.implementation.active.program.implementation.rec.list.aggregata
 
 import psbp.implementation.active.given
 
-import psbp.implementation.rec.list.given
+import psbp.external.implementation.rec.list.given
+
+import psbp.external.implementation.rec.recRecursive
+
+import psbp.external.implementation.list.listRecursiveAggregatable
+
 
 import examples.specification.program.implementation.rec.list.aggregatable.effectful.mainAreAllPositive
 

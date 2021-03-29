@@ -1,6 +1,6 @@
-package psbp.external.specifcation.function
+package psbp.external.specification.function
 
-import psbp.external.specifcation.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
 // functional
 

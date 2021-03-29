@@ -2,9 +2,9 @@ package examples.specification.functional
 
 import scala.language.postfixOps
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.external.specifcation.program.Functional
+import psbp.external.specification.program.Functional
 
 import examples.specification.function
 
@@ -63,4 +63,37 @@ def negate[
 def isPositive[>-->[- _, + _]: Functional]: BigInt >--> Boolean =  
   function.isPositive asProgram 
 
-  
+// recursive reducers
+
+// import psbp.external.specification.function.foldSum
+
+import examples.specification.function.{ areAllPositiveReducer }
+
+import psbp.external.specification.program.Functional
+
+import psbp.external.specification.types.||
+
+import psbp.external.specification.program.Program
+
+def areAllPositiveReducer[>-->[- _, + _]: Program]: (Unit || (Boolean && Boolean)) >--> Boolean =
+  function.areAllPositiveReducer asProgram
+
+
+// import psbp.external.specification.aggregatable.recursive.RecursiveReducerType
+
+// import psbp.implementation.list.{ List }
+
+// def areAllPositiveReducer[
+//   // R[+_[+ _]],
+//   >-->[- _, + _]: Program
+//                 // : [>-->[- _, + _]] =>> Recursive[R, >-->]
+//                 : [>-->[- _, + _]] =>> RecursiveReducerType[List, >-->]
+//   ]: RecursiveList[R, BigInt] >--> Boolean = 
+
+//     val recursiveAggregatable: RecursiveAggregatable[List, R, >-->] = summon[RecursiveAggregatable[List, R, >-->]]
+//     import recursiveAggregatable.aggregate
+
+//     // val traverser: BigInt >--> Boolean = isPositive
+
+//     // val reducer: recursiveAggregatable.Reducer[Boolean, Boolean] = 
+//     //   foldSum(constantTrue[Unit], and) asProgram

@@ -1,10 +1,10 @@
 package examples.specification.program
   
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.external.specifcation.functional.{
+import psbp.external.specification.functional.{
   `(z&&y)>-->z` => argument
   , `(z&&y)>-->y` => accumulator
   }

@@ -1,6 +1,6 @@
 package psbp.implementation.freeActive
 
-import psbp.external.specifcation.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 

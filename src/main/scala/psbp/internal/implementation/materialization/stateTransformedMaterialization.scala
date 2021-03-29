@@ -1,8 +1,8 @@
 package psbp.internal.implementation.materialization
 
-import psbp.external.specifcation.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
-import psbp.external.specifcation.program.state.Initial
+import psbp.external.specification.program.state.Initial
 
 import psbp.internal.specification.computation.Computation
 

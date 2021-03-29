@@ -1,6 +1,6 @@
 package examples.specification.programWithParallel
 
-import psbp.external.specifcation.programWithParallel.ProgramWithParallel
+import psbp.external.specification.programWithParallel.ProgramWithParallel
 
 import examples.specification.functional.{ 
   isZero

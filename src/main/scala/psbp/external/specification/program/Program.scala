@@ -1,17 +1,26 @@
-package psbp.external.specifcation.program
+package psbp.external.specification.program
 
-import psbp.external.specifcation.types.{ &&, || }
+import scala.language.postfixOps
 
-import psbp.external.specifcation.functional.{ 
+import psbp.external.specification.types.{ &&, || }
+
+import psbp.external.specification.functional.{ 
   `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
 
 trait Program[>-->[- _, + _]]
   extends Functional[>-->]
+  with Identity[>-->]
   with Composition[>-->]
   with Construction[>-->]
   with Condition[>-->]:
 
     private implicit val program: Program[>-->] = this
+
+    // defined
+
+    override def identity[Z]: Z >--> Z =
+      val z2z: Z => Z = z => z
+      z2z asProgram
 
     // defined extensions
 

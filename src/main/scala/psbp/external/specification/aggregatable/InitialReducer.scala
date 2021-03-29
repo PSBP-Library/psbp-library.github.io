@@ -1,4 +1,4 @@
-package psbp.external.specifcation.aggregatable
+package psbp.external.specification.aggregatable
 
 private[psbp] trait InitialReducer[A[+ _]] extends ReducerType:
 

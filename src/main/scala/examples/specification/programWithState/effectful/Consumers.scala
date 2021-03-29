@@ -2,9 +2,9 @@ package examples.specification.programWithState.effectful
 
 import scala.language.postfixOps
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.external.specifcation.program.Program
+import psbp.external.specification.program.Program
 
 val effectfulTwoRandomsConsumer: (Unit && (BigInt && BigInt)) => Unit =
   case (_, (i, j)) =>

@@ -13,9 +13,9 @@ import Level.{ INFO, ERROR }
   
 import org.slf4j.LoggerFactory
 
-import psbp.external.specifcation.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.external.specifcation.program.Program 
+import psbp.external.specification.program.Program 
 
 val packageName = "examples.specification.programWithParallel.effectful"
   

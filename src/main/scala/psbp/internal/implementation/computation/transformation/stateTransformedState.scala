@@ -1,6 +1,6 @@
 package psbp.internal.implementation.computation.transformation
 
-import psbp.external.specifcation.program.state.State
+import psbp.external.specification.program.state.State
 
 import psbp.internal.specification.computation.Computation
 
