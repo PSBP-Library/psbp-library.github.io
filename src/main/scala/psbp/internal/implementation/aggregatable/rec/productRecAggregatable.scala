@@ -6,18 +6,18 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.aggregatable.{Traversable}
 
-import psbp.internal.specification.aggregatable.{TraversableAtLeft, TraversableAtRight }
+import psbp.internal.specification.aggregatable.{ BiTraversable }
 
-given productTraversableAtLeft[
-  L[+ _, + _]: [L[+ _, + _]] =>> TraversableAtLeft[L, >-->], 
-  R[+ _, + _]: [R[+ _, + _]] =>> TraversableAtLeft[R, >-->],
-  >-->[- _, + _]: Program]: TraversableAtLeft[Product[L, R], >-->] with
+given productBiTraversable[
+  L[+ _, + _]: [L[+ _, + _]] =>> BiTraversable[L, >-->], 
+  R[+ _, + _]: [R[+ _, + _]] =>> BiTraversable[R, >-->],
+  >-->[- _, + _]: Program]: BiTraversable[Product[L, R], >-->] with
 
-  private val leftTraversableAtLeft = summon[TraversableAtLeft[L, >-->]]
-  private val rightTraversableAtLeft = summon[TraversableAtLeft[R, >-->]]
+  private val leftBiTraversable = summon[BiTraversable[L, >-->]]
+  private val rightBiTraversable = summon[BiTraversable[R, >-->]]
 
-  import leftTraversableAtLeft.{ leftTraversable => leftLeftTraversable }
-  import rightTraversableAtLeft.{ leftTraversable => rightLeftTraversable }
+  import leftBiTraversable.{ leftTraversable => leftLeftTraversable }
+  import rightBiTraversable.{ leftTraversable => rightLeftTraversable }
 
   // todo: also try out with parallelism !!!
 
@@ -29,16 +29,16 @@ given productTraversableAtLeft[
             leftLeftTraversable.traverse(`z>-->y`) &&& rightLeftTraversable.traverse(`z>-->y`)
    }
 
-given productTraversableAtRight[
-  L[+ _, + _]: [L[+ _, + _]] =>> TraversableAtRight[L, >-->], 
-  R[+ _, + _]: [R[+ _, + _]] =>> TraversableAtRight[R, >-->],
-  >-->[- _, + _]: Program]: TraversableAtRight[Product[L, R], >-->] with
+// given productTraversableAtRight[
+//   L[+ _, + _]: [L[+ _, + _]] =>> TraversableAtRight[L, >-->], 
+//   R[+ _, + _]: [R[+ _, + _]] =>> TraversableAtRight[R, >-->],
+//   >-->[- _, + _]: Program]: TraversableAtRight[Product[L, R], >-->] with
 
-  private val leftTraversableAtRight = summon[TraversableAtRight[L, >-->]]
-  private val rightTraversableAtRight = summon[TraversableAtRight[R, >-->]]
+  // private val leftTraversableAtRight = summon[TraversableAtRight[L, >-->]]
+  // private val rightTraversableAtRight = summon[TraversableAtRight[R, >-->]]
 
-  import leftTraversableAtRight.{ rightTraversable => leftRightTraversable }
-  import rightTraversableAtRight.{ rightTraversable => rightRightTraversable }
+  import leftBiTraversable.{ rightTraversable => leftRightTraversable }
+  import rightBiTraversable.{ rightTraversable => rightRightTraversable }
 
   // todo: also try out with parallelism !!!
 

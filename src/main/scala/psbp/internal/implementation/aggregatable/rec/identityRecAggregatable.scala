@@ -6,9 +6,9 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.aggregatable.{ Traversable }
 
-import psbp.internal.specification.aggregatable.{ TraversableAtLeft, TraversableAtRight }
+import psbp.internal.specification.aggregatable.{ BiTraversable }
 
-given identityTraversableAtLeft[>-->[- _, + _]: Program]: TraversableAtLeft[Identity, >-->] with
+given identityBiTraversable[>-->[- _, + _]: Program]: BiTraversable[Identity, >-->] with
 
   override private[psbp] def leftTraversable[X]: Traversable[[Y] =>> Identity[Y, X], >-->] =
     new {
@@ -16,7 +16,7 @@ given identityTraversableAtLeft[>-->[- _, + _]: Program]: TraversableAtLeft[Iden
         identity
     }
    
-given identityTraversableAtRight[>-->[- _, + _]: Program]: TraversableAtRight[Identity, >-->] with
+// given identityTraversableAtRight[>-->[- _, + _]: Program]: TraversableAtRight[Identity, >-->] with
 
   private val program: Program[>-->] = summon[Program[>-->]]
   import program.identity

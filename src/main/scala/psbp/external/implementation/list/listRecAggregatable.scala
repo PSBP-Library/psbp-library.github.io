@@ -30,28 +30,24 @@ package psbp.external.implementation.list
 
 import psbp.external.specification.program.Program
 
-import psbp.internal.specification.aggregatable.{ TraversableAtLeft, TraversableAtRight }
+import psbp.internal.specification.aggregatable.{ BiTraversable }
 
 import psbp.internal.implementation.aggregatable.rec.{ 
   Product, Constant, Identity, Sum, None, 
-  noneTraversableAtLeft, noneTraversableAtRight, 
-  constantTraversableAtLeft, constantTraversableAtRight, 
-  identityTraversableAtLeft, identityTraversableAtRight, 
-  productTraversableAtLeft, productTraversableAtRight, 
-  sumTraversableAtLeft, sumTraversableAtRight 
+  noneBiTraversable, 
+  constantBiTraversable, 
+  identityBiTraversable, 
+  productBiTraversable, 
+  sumBiTraversable 
   }
 
-private[psbp] given consTraversableAtLeft[>-->[- _, + _]: Program]: TraversableAtLeft[Cons, >-->] = productTraversableAtLeft[Identity, Constant, >-->]
+private[psbp] given consBiTraversable[>-->[- _, + _]: Program]: BiTraversable[Cons, >-->] = productBiTraversable[Identity, Constant, >-->]
 
-private[psbp] given consTraversableAtRight[>-->[- _, + _]: Program]: TraversableAtRight[Cons, >-->] = productTraversableAtRight[Identity, Constant, >-->]
-
-private[psbp] given listTraversableAtLeft[>-->[- _, + _]: Program]: TraversableAtLeft[List, >-->] = sumTraversableAtLeft[None, Cons, >-->]
-
-private[psbp] given listTraversableAtRight[>-->[- _, + _]: Program]: TraversableAtRight[List, >-->] = sumTraversableAtRight[None, Cons, >-->]
+private[psbp] given listBiTraversable[>-->[- _, + _]: Program]: BiTraversable[List, >-->] = sumBiTraversable[None, Cons, >-->]
 
 import psbp.external.specification.aggregatable.recursive.{ RecursiveAggregatable }
 
-import psbp.internal.specification.aggregatable.recursive.{ recursiveAggregatableFromTraversableAtLeftAndTraversableAtRight }
+import psbp.internal.specification.aggregatable.recursive.{ recursiveAggregatableFromBiTraversable }
 
 // import psbp.external.specification.aggregatable.rec.RecReducerType
 
@@ -60,4 +56,4 @@ import psbp.external.specification.recursive.{ Recursive }
 given listRecursiveAggregatable[
   R[+_[+ _]]: [R[+_[+ _]]] =>> Recursive[R, >-->], 
   >-->[- _, + _]: Program]: RecursiveAggregatable[List, R, >-->] = 
-    recursiveAggregatableFromTraversableAtLeftAndTraversableAtRight[List, R, >-->]
+    recursiveAggregatableFromBiTraversable[List, R, >-->]

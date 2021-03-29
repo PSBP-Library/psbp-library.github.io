@@ -32,7 +32,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.aggregatable.{ Aggregatable }
 
-import psbp.internal.specification.aggregatable.{ TraversableAtLeft, TraversableAtRight }
+import psbp.internal.specification.aggregatable.{ BiTraversable }
 
 // given recAggregatable[A[+ _, + _]: [A[+ _, + _]] =>> TraversableAtLeft[A, >-->]: [A[+ _, + _]] =>> TraversableAtRight[A, >-->], >-->[- _, + _]: Program]: 
 //   Aggregatable[[Y] =>> Rec[[X] =>> A[Y, X]], >-->]
@@ -64,8 +64,8 @@ import psbp.internal.specification.aggregatable.{ TraversableAtLeft, Traversable
 //   extends Aggregatable[[Y] =>> R[[X] =>> A[Y, X]], >-->]
 //   with RecReducerType[A, >-->]
 
-private[psbp] given recursiveAggregatableFromTraversableAtLeftAndTraversableAtRight[
-  A[+ _, + _]: [A[+ _, + _]] =>> TraversableAtLeft[A, >-->]: [A[+ _, + _]] =>> TraversableAtRight[A, >-->], 
+private[psbp] given recursiveAggregatableFromBiTraversable[
+  A[+ _, + _]: [A[+ _, + _]] =>> BiTraversable[A, >-->], 
   R[+_[+ _]]: [R[+_[+ _]]] =>> Recursive[R, >-->], 
   >-->[- _, + _]: Program]: 
   RecursiveAggregatable[A, R, >-->] with
@@ -84,14 +84,15 @@ private[psbp] given recursiveAggregatableFromTraversableAtLeftAndTraversableAtRi
 
   override private[psbp] def fuse[Z, Y, X]: Aggregator[Z, Y, X] => Reducer[Z, X] =
     (`z>-->y`, `a[y,x]>-->x`) =>
-      val traversableAtLeft: TraversableAtLeft[A, >-->] = summon[TraversableAtLeft[A, >-->]]
-      val `a[z,x]>-->a[y,x]`: A[Z, X] >--> A[Y, X] = traversableAtLeft.leftTraversable.traverse(`z>-->y`) 
+      val biTraversableAtLeft: BiTraversable[A, >-->] = summon[BiTraversable[A, >-->]]
+      val `a[z,x]>-->a[y,x]`: A[Z, X] >--> A[Y, X] = biTraversableAtLeft.leftTraversable.traverse(`z>-->y`) 
       `a[z,x]>-->a[y,x]`>-->`a[y,x]>-->x`
 
   override def reduce[Y, X]: Reducer[Y, X] => R[[X] =>> A[Y, X]] >--> X =
     `a[y,x]>-->x` =>
-      val traversableAtRight: TraversableAtRight[A, >-->] = summon[TraversableAtRight[A, >-->]]
-      val `(a[y,x]>-->x)=>(r[[x]=>>a[y,x]]>-->x)`: (A[Y, X] >--> X) => (R[[X] =>> A[Y, X]] >--> X) = traversableAtRight.rightTraversable.recurse 
+      val biTraversableAtLeft: BiTraversable[A, >-->] = summon[BiTraversable[A, >-->]]
+      val `(a[y,x]>-->x)=>(r[[x]=>>a[y,x]]>-->x)`: (A[Y, X] >--> X) => (R[[X] =>> A[Y, X]] >--> X) = 
+        biTraversableAtLeft.rightTraversable.recurse 
       `(a[y,x]>-->x)=>(r[[x]=>>a[y,x]]>-->x)`apply`a[y,x]>-->x` 
 
 /*
