@@ -10,11 +10,11 @@ import examples.specification.functional.{
   , subtractOne
   , subtractTwo
   , add 
-  }
+}
 
 def parallelFibonacci[
-  >-->[- _, + _]: ProgramWithParallel]
-  : BigInt >--> BigInt =
+  >-->[- _, + _]: ProgramWithParallel
+]: BigInt >--> BigInt =
 
   val programWithParallel: ProgramWithParallel[>-->] =
     summon[ProgramWithParallel[>-->]]

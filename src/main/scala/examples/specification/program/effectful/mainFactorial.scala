@@ -6,7 +6,7 @@ import examples.specification.program.factorial
 
 def mainFactorial[
   >-->[- _, + _]: Program
-  ]: Unit >--> Unit =
+]: Unit >--> Unit =
   factorial toMainWith (
     producer = intProducer,
     consumer = factorialConsumer

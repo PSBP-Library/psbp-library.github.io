@@ -15,7 +15,7 @@ type Seed = Long
 
 def random[
   >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]
-  , Z]: Z >--> BigInt =
+]: Unit >--> BigInt =
 
   val programWithSeedState: ProgramWithState[Seed, >-->] =
     summon[ProgramWithState[Seed, >-->]]
@@ -40,7 +40,7 @@ def random[
 
   }    
 
-  val readModifiedSeed: Z >--> Seed = 
+  val readModifiedSeed: Unit >--> Seed = 
     readStateModifiedWith(function.seedModifier asProgram)  
 
   val seed2randomBigInt: Seed >--> BigInt =

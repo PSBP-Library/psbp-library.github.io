@@ -4,9 +4,15 @@ import scala.language.postfixOps
 
 import psbp.external.specification.program.Program
 
-val effectlessUnitProducer: Unit => Unit = 
-  _ =>
-    ()
+object producerFunction {
 
-def unitProducer[>-->[- _, + _]: Program]: Unit >--> Unit = 
-  effectlessUnitProducer asProgram  
+  val unitProducer: Unit => Unit = 
+    _ =>
+      ()
+
+}
+
+def unitProducer[
+  >-->[- _, + _]: Program
+]: Unit >--> Unit = 
+  producerFunction.unitProducer asProgram  

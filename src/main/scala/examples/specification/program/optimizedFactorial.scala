@@ -5,20 +5,20 @@ import psbp.external.specification.program.Program
 import psbp.external.specification.functional.{ 
   `(z&&y)>-->z` => argument
   , `z>-->z` => accumulator 
-  }
+}
 
 import examples.specification.functional.{ 
   isZero
   , one
   , subtractOne
   , multiply 
-  }
+}
 
 import examples.specification.program.optimize
 
 def optimizedFactorial[
-  >-->[- _, + _]: Program]
-  : BigInt >--> BigInt =
+  >-->[- _, + _]: Program
+]: BigInt >--> BigInt =
   optimize(
     accumulatorInitializer = one, 
     argumentPredicate = isZero, 

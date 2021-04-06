@@ -6,7 +6,7 @@ import examples.specification.program.optimizedFibonacci
 
 def mainOptimizedFibonacci[
   >-->[- _, + _]: Program
-  ]: Unit >--> Unit =
+]: Unit >--> Unit =
   optimizedFibonacci toMainWith (
     producer = intProducer,
     consumer = fibonacciConsumer

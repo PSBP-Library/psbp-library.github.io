@@ -2,14 +2,31 @@ package examples.specification.programWithParallel.effectful
 
 import scala.language.postfixOps
 
-import akka.actor.typed.{ ActorSystem, Behavior }
+import akka.actor.typed.{ 
+  ActorSystem
+  , Behavior
+}
 
-import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.scaladsl.{ 
+  ActorContext
+  , Behaviors 
+}
   
-import Behaviors.{ receive, stopped }
+import Behaviors.{ 
+  receive
+  , stopped
+}
   
-import ch.qos.logback.classic.{ Level, Logger, LoggerContext }
-import Level.{ INFO, ERROR }
+import ch.qos.logback.classic.{ 
+  Logger
+  , LoggerContext
+  , Level 
+}
+
+import Level.{ 
+  INFO
+  , ERROR
+}
   
 import org.slf4j.LoggerFactory
 
@@ -29,35 +46,42 @@ def logInfo[Z](actorContext: ActorContext[Z])(message: String): Unit =
   actorContext.log.info(message)
   logger.setLevel(ERROR)
   
-def parallelFibonacciConsumer[
-  >-->[- _, + _]: Program
-  ]: (BigInt && BigInt) >--> Unit =
-    
-  object Consumer {
+object consumerFunction {
 
-    case class Consume(i: BigInt, j: BigInt)
-
-    def apply(): Behavior[Consume] = 
-      receive { (context, message) =>
-        message match {
-          case Consume(i, j) =>
-            val info = logInfo(context)
-            info(s"applying parallel fibonacci to argument $i yields result $j")
-            stopped
-        }
-      }
-
-  }
-
-  val consumer = ActorSystem(Consumer(), "consumer")  
-   
-  import Consumer.Consume
-
-  val sendConsumeToConsumer: (BigInt && BigInt) => Unit =
+  def parallelFibonacciConsumer[
+    >-->[- _, + _]: Program
+  ]: (BigInt && BigInt) => Unit =
     (i, j) =>
+
+      object Consumer {
+  
+        case class Consume(i: BigInt, j: BigInt)
+    
+        def apply(): Behavior[Consume] = 
+          receive { (context, message) =>
+            message match {
+              case Consume(i, j) =>
+                val info = logInfo(context)
+                info(s"applying parallel fibonacci to argument $i yields result $j")
+                stopped
+            }
+          }
+    
+      }
+    
+      import Consumer.Consume
+
+      val consumer = ActorSystem(Consumer(), "consumer")  
+           
       consumer ! Consume(i, j)
 
-  sendConsumeToConsumer asProgram 
+} 
+
+def parallelFibonacciConsumer[
+  >-->[- _, + _]: Program
+]: (BigInt && BigInt) >--> Unit =
+
+  consumerFunction.parallelFibonacciConsumer asProgram 
 
 
 

@@ -8,7 +8,7 @@ import examples.specification.program.effectful.intProducer
 
 def mainParallelFibonacci[
   >-->[- _, + _]: ProgramWithParallel
-  ]: Unit >--> Unit =
+]: Unit >--> Unit =
   parallelFibonacci toMainWith (
     producer = intProducer,
     consumer = parallelFibonacciConsumer

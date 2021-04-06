@@ -6,19 +6,19 @@ import examples.specification.functional.{
   isZero
   , one
   , subtractOne
-  , multiply 
-  }
+  , multiply
+}
 
 def factorial[
   >-->[- _, + _]: Program
-  ]: BigInt >--> BigInt =
+]: BigInt >--> BigInt =
 
   val program: Program[>-->] = 
     summon[Program[>-->]]
   import program.{
     Let
-    , If 
-    }
+    , If
+  }
 
   If(isZero) {
     one

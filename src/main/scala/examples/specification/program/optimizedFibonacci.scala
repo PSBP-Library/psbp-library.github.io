@@ -5,7 +5,7 @@ import psbp.external.specification.program.Program
 import psbp.external.specification.functional.{ 
   `(z&&y)>-->z` => firstAccumulator
   , `(z&&y)>-->y` => secondAccumulator
-  }
+}
 
 import examples.specification.functional.{ 
   isZero
@@ -15,13 +15,13 @@ import examples.specification.functional.{
   , subtractOne
   , subtractTwo
   , add 
-  }
+}
 
 import examples.specification.program.optimize
 
 def optimizedFibonacci[
   >-->[- _, + _]: Program
-  ]: BigInt >--> BigInt =
+]: BigInt >--> BigInt =
   optimize(
     accumulatorInitializer = one && one, 
     argumentPredicate = isZero, 

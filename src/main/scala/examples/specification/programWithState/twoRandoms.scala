@@ -6,6 +6,5 @@ import psbp.external.specification.programWithState.ProgramWithState
 
 def twoRandoms[
   >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithState[Seed, >-->]
-  , Z
-  ]: Z >--> (BigInt && BigInt) =
+]: Unit >--> (BigInt && BigInt) =  
   random && random

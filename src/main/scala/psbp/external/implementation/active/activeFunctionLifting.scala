@@ -1,7 +1,7 @@
-package psbp.implementation.active
+// package psbp.implementation.active
 
-import psbp.internal.specification.lifting.FunctionLifting
+// import psbp.internal.specification.lifting.FunctionLifting
 
-import psbp.internal.specification.lifting.functionLiftingFromFunctionApplicationLifting
+// import psbp.internal.specification.lifting.functionLiftingFromFunctionApplicationLifting
 
-given activeFunctionLifting: FunctionLifting[Active] = functionLiftingFromFunctionApplicationLifting[Active]
+// given activeFunctionLifting: FunctionLifting[Active] = functionLiftingFromFunctionApplicationLifting[Active]

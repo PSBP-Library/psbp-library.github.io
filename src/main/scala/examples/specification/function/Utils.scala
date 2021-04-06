@@ -1,9 +1,21 @@
 package examples.specification.function
 
-import psbp.external.specification.types.&&
+import psbp.external.specification.types.{
+  &&
+  , ||
+}  
 
-val isZero
-  : BigInt => Boolean =
+import psbp.external.specification.function.foldSum
+
+import psbp.external.specification.function.foldSeq
+
+import psbp.external.implementation.rec.list.{
+  RecursiveList
+  , emptyRecursiveList
+  , consRecursiveList
+} 
+
+val isZero: BigInt => Boolean =
   n =>
    n == 0
   
@@ -53,20 +65,26 @@ def and: (Boolean && Boolean) => Boolean = { (b, a) =>
 
 val isPositive: BigInt => Boolean =
   n =>
-   n > 0
+   n > 0  
+    
+val areAllTrueReducer: (Unit || (Boolean && Boolean)) => Boolean =
+  foldSum(constantTrue, and)
 
-// reducers
+def seqToRecursiveList[Z]: Seq[Z] => RecursiveList[Z] = 
+  foldSeq(emptyRecursiveList, consRecursiveList) 
+  
+def emptySeq[Z]: Unit => Seq[Z] = 
+  _ =>
+    Seq()
 
-import psbp.external.specification.function.foldSum
+def consSeq[Z]: Z && Seq[Z] => Seq[Z] =
+  case (z, zs) => 
+    z +: zs
 
-import psbp.external.specification.types.||
-
-val areAllPositiveReducer: (Unit || (Boolean && Boolean)) => Boolean =
-  foldSum(constantTrue[Unit], and)
+def toSeqReducer[Z]: (Unit || (Z && Seq[Z])) => Seq[Z] = 
+  foldSum(emptySeq, consSeq) 
   
 // introduction 
-
-// import examples.specification.function.{ isZero, one, subtractOne, multiply }
 
 val factorial: BigInt => BigInt =
   i =>

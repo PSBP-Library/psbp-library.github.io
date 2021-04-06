@@ -9,12 +9,12 @@ import examples.specification.functional.{
   , one
   , subtractOne
   , subtractTwo
-  , add 
-  }
+  , add
+}
 
 def fibonacci
   [>-->[- _, + _]: Program
-  ]: BigInt >--> BigInt =
+]: BigInt >--> BigInt =
 
   val program: Program[>-->] = 
     summon[Program[>-->]]

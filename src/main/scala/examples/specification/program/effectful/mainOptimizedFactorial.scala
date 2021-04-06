@@ -6,7 +6,7 @@ import examples.specification.program.optimizedFactorial
 
 def mainOptimizedFactorial[
   >-->[- _, + _]: Program
-  ]: Unit >--> Unit =
+]: Unit >--> Unit =
   optimizedFactorial toMainWith (
     producer = intProducer,
     consumer = factorialConsumer
