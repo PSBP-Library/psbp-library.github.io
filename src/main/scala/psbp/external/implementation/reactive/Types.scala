@@ -1,8 +1,8 @@
-package psbp.implementation.reactive
+package psbp.external.implementation.reactive
 
 import psbp.internal.implementation.computation.transformation.ReactiveTransformed
 
-import psbp.implementation.active.Active
+import psbp.external.implementation.active.Active
 
 type Reactive = [Y] =>> ReactiveTransformed[Active][Y] 
 

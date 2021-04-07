@@ -1,8 +1,8 @@
-package psbp.implementation.freeActive
+package psbp.external.implementation.freeActive
 
 import psbp.internal.implementation.computation.transformation.FreeTransformed
 
-import psbp.implementation.active.Active
+import psbp.external.implementation.active.Active
 
 type FreeActive = [Y] =>> FreeTransformed[Active][Y] 
 

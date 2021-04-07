@@ -3,19 +3,13 @@ package examples.specification.function
 import psbp.external.specification.types.{
   &&
   , ||
-}  
+}
+
+import ||.{Left, Right}
 
 import psbp.external.specification.function.foldSum
 
-import psbp.external.specification.function.foldSeq
-
 import psbp.external.implementation.list.List
-
-import psbp.external.implementation.rec.list.{
-  RecursiveList
-  , emptyRecursiveList
-  , consRecursiveList
-} 
 
 val isZero: BigInt => Boolean =
   n =>
@@ -56,50 +50,35 @@ val isNegative: BigInt => Boolean =
 val negate: BigInt => BigInt =
   n =>
     -n
-        
-def constantTrue[Z]: Z => Boolean = { _ =>
-  true
-} 
-
-def and: (Boolean && Boolean) => Boolean = { (b, a) =>
-  b && a
-}   
-
+     
 val isPositive: BigInt => Boolean =
   n =>
    n > 0  
+
+def constantTrue[Z]: Z => Boolean =
+  _ =>
+    true 
+
+def and: (Boolean && Boolean) => Boolean = 
+  (b, a) =>
+    b && a 
     
-val areAllTrueFolder: (Unit || (Boolean && Boolean)) => Boolean =
+val areAllTrueFolder: List[Boolean, Boolean] => Boolean =
   foldSum(constantTrue, and)
 
-def seqToRecursiveList[Z]: Seq[Z] => RecursiveList[Z] = 
-  foldSeq(emptyRecursiveList, consRecursiveList) 
-
-import  psbp.external.specification.types.||
-
-import ||.{Left, Right}
-
-import psbp.internal.implementation.structure.recursive.{
-  mkNone
-}
-
 def fromSeqUnfolder[Z]: Seq[Z] => List[Z, Seq[Z]] =
+  case Seq() => Left(())
   case z +: zs => Right((z, zs))
-  case _ => Left(mkNone)
-  
-def emptySeq[Z]: Unit => Seq[Z] = 
-  _ =>
-    Seq()
-
-def consSeq[Z]: Z && Seq[Z] => Seq[Z] =
-  case (z, zs) => 
-    z +: zs
-
-// def toSeqFolder[Z]: (Unit || (Z && Seq[Z])) => Seq[Z] = 
-//   foldSum(emptySeq, consSeq) 
 
 def toSeqFolder[Z]: List[Z, Seq[Z]] => Seq[Z] = 
-  foldSum(emptySeq, consSeq) 
+  foldSum({
+    case () =>
+      Seq[Z]()
+      }, { 
+    case (z, zs) => 
+      z +: zs
+      }
+  ) 
   
 // introduction 
 

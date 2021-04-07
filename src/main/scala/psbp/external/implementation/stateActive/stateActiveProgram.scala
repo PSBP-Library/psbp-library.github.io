@@ -1,4 +1,4 @@
-package psbp.implementation.stateActive
+package psbp.external.implementation.stateActive
 
 import psbp.external.specification.program.Program
 
@@ -12,9 +12,9 @@ import psbp.internal.specification.computation.transformation.resultingFromTrans
 
 import psbp.internal.implementation.computation.transformation.stateTransformedBinding
 
-import psbp.implementation.active.Active
+import psbp.external.implementation.active.Active
 
-import psbp.implementation.active.{ activeResulting, activeBinding }
+import psbp.external.implementation.active.{ activeResulting, activeBinding }
 
 given stateActiveBinding[S]: Binding[StateActive[S]] = stateTransformedBinding[S, Active]
 

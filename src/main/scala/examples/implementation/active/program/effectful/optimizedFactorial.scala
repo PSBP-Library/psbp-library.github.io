@@ -1,6 +1,9 @@
-package examples.implementation.reactive.program.effectful
+package examples.implementation.active.program.effectful
 
-import psbp.implementation.reactive.given
+import psbp.external.implementation.active.{ 
+  activeProgram
+  , activeMaterialization
+}
 
 import examples.specification.program.effectful.mainOptimizedFactorial
 

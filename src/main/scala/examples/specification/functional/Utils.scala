@@ -68,9 +68,3 @@ def isPositive[
   >-->[- _, + _]: Functional
 ]: BigInt >--> Boolean =  
   function.isPositive asProgram 
-
-def seqToRecursiveList[
-  Z,
-  >-->[- _, + _]: Functional
-]: Seq[Z] >--> RecursiveList[Z] =
-  function.seqToRecursiveList asProgram

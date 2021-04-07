@@ -11,6 +11,12 @@ h5:before { counter-increment: h5counter; content: counter(h2counter) "." counte
 h6:before { counter-increment: h6counter; content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) "." counter(h6counter) ".\0000a0\0000a0"; } 
 </style>
 
+# WARNING
+
+This development branch is provided for those who want to follow up the development of the library more closely.
+
+Code and documentation may not be in sync, but the code should work.
+
 # Program Specification Based Programming
 
 This document describes `PSBP`, a `Scala 3` library for *Program Specification Based Programming*.
@@ -272,13 +278,13 @@ The programming ingredients above are algorithm related.
 
 The programming ingredient above is algorithm + data structure related.
 
-- *programs can perform data structure aggregation*, two special cases of aggregation being *traversal* and *reduction*.
+- *programs can operate on data structures*, for example, *traverse*, *fold* and *unfold* them .
 
-The programming ingredient above is data structure related.
+The programming ingredients above are algorithm + data structure related.
 
-It is more of a *data structure ingredient* than a programming ingredient, but it turns out that it can be dealt with at the program specification level.
+They are more *data structure ingredients* than a programming ingredients, but they can be operated on at the program specification level.
 
-More precisely, the `PSBP` library deals with aggregation at program specification level for *polynomial recursive data structures*.
+More precisely, the `PSBP` library deals with operating on data structures at program specification level for *polynomial recursive data structures*.
 
 ### `PSBP` versus `FP`
 
@@ -385,9 +391,9 @@ In the `PSBP` library, function application lifting ingredients are defined usin
 
 <!-- See [liftingFormComputation](https://psbp-library.github.io#liftingformcomputation) for more details. -->
 
-Lifting plays an essential role in the pointful functional programming world when specifing effectful aggregation, traversal resp. reduction (aggregating, traversing resp. reducing effectfully).
+Lifting plays an essential role in the pointful functional programming world when operating on data structures.
 
-It turns out that lifting does not play such an essential role in the pointfree program specification based programming world when specifing effectful aggregation, traversal and reduction.
+It turns out that lifting does not play such an essential role in the pointfree program specification based programming world when operating on data structures.
 
 ### Main programs
 
@@ -872,131 +878,6 @@ At level `4.3` `fibonacci` looks like
 
 The result is `add(fibonacci(i - 1), fibonacci(i - 2))` which equals `fibonacci(i - 1) + fibonacci(i - 2)`.
 
-### `mainFactorial`
-
-```scala
-package examples.specification.program.effectful
-
-import psbp.external.specification.program.Program
-
-import examples.specification.program.factorial
-
-def mainFactorial[
-  >-->[- _, + _]: Program
-]: Unit >--> Unit =
-  factorial toMainWith (
-    producer = intProducer,
-    consumer = factorialConsumer
-  )
-```
-
-where
-
-```scala
-package examples.specification.program.effectful
-
-import scala.language.postfixOps
-
-import psbp.external.specification.program.Program
-
-object producerFunction {
-
-  val intProducer: Unit => BigInt =
-    _ =>
-      println("Please type an integer")
-      BigInt(scala.io.StdIn.readInt)
-
-}
-
-def intProducer[
-  >-->[- _, + _]: Program
-]: Unit >--> BigInt =
-  producerFunction.intProducer asProgram
-
-// ...    
-```
-
-and where
-
-```scala
-package examples.specification.program.effectful
-
-import scala.language.postfixOps
-
-import psbp.external.specification.types.&&
-
-import psbp.external.specification.program.Program
-
-object consumerFunction {
-
-  val factorialConsumer: (BigInt && BigInt) => Unit =
-    (i, j) =>
-      println(s"applying factorial to the integer argument $i yields result $j")
-
-  // ...    
-
-}
-
-def factorialConsumer[
-  >-->[- _, + _]: Program
-]: (BigInt && BigInt) >--> Unit =
-  consumerFunction.factorialConsumer asProgram
-
-// ...  
-```
-
-`mainFactorial` is a main program that, for now, makes use of an *effectful* producer and an *effectful* consumer.
-
-`toMain` is an extension of `Program`.
-
-See [Program](https://psbp-library.github.io#program) for more details.
-
-### `mainFibonacci`
-
-```scala
-package examples.specification.program.effectful
-
-import psbp.external.specification.program.Program
-
-import examples.specification.program.fibonacci
-
-def mainFibonacci[
-  >-->[- _, + _]: Program
-]: Unit >--> Unit =
-  fibonacci toMainWith (
-    producer = intProducer,
-    consumer = fibonacciConsumer
-  )
-```
-
-where
-
-```scala
-package examples.specification.program.effectful
-
-// ...
-
-object consumerFunction {
-
-  // ...
-
-  val fibonacciConsumer: (BigInt && BigInt) => Unit =
-    (i, j) =>
-      println(s"applying fibonacci to the integer argument $i yields result $j")
-
-}
-
-// ...
-
-def fibonacciConsumer[
-  >-->[- _, + _]: Program
-]: (BigInt && BigInt) >--> Unit =
-  consumerFunction.fibonacciConsumer asProgram
-
-// ...  
-```
-
-`mainFibonacci` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
 
 ### `optimize`
 
@@ -1167,41 +1048,6 @@ Two `BigInt`'s optimize two recursion occurrences.
 
 This is really an enormous optimization.
 
-### `mainOptimizedFactorial`
-
-```scala
-package examples.specification.program.effectful
-
-import psbp.external.specifcation.program.Program
-
-import examples.specification.program.optimizedFactorial
-
-def mainOptimizedFactorial[
-  >-->[- _, + _]: Program
-]: Unit >--> Unit =
-  optimizedFactorial toMainWith (
-    producer = intProducer,
-    consumer = factorialConsumer
-  )
-```
-
-### `mainOptimizedFibonacci`
-
-```scala
-package examples.specification.program.effectful
-
-import psbp.external.specifcation.program.Program
-
-import examples.specification.program.optimizedFibonacci
-
-def mainOptimizedFibonacci[
-  >-->[- _, + _]: Program
-]: Unit >--> Unit =
-  optimizedFibonacci toMainWith (
-    producer = intProducer,
-    consumer = fibonacciConsumer
-  )
-```
 
 ### `random`
 
@@ -1348,7 +1194,395 @@ def twoRandoms[
   random && random
 ```
 
-Illustrating statefulness can be done using `twoRandoms`, transforming its dummy argument to two *different* random number results.
+Illustrating statefulness can be done using `twoRandoms`, transforming its dummy argument to *two* random number results.
+
+
+### `parallelFibonacci`
+
+```scala
+package examples.specification.programWithParallel
+
+import psbp.external.specification.programWithParallel.ProgramWithParallel
+
+import examples.specification.functional.{ 
+  isZero
+  , zero
+  , isOne
+  , one
+  , subtractOne
+  , subtractTwo
+  , add 
+}
+
+def parallelFibonacci[
+  >-->[- _, + _]: ProgramWithParallel
+]: BigInt >--> BigInt =
+
+  val programWithParallel: ProgramWithParallel[>-->] =
+    summon[ProgramWithParallel[>-->]]
+  import programWithParallel.{
+    If
+  }
+
+  If(isZero) {
+    zero
+  } Else {
+    If(isOne) {
+      one
+    } Else {
+      (subtractOne && subtractTwo) >-->
+        (parallelFibonacci |&&&| parallelFibonacci) >-->
+        add
+    }
+  }
+```
+
+The definition of `parallelFibonacci` differs from the definion of `fibonacci` by its usage of `|&&&|` instead of `&&&`.
+
+See
+
+- [Parallel](https://psbp-library.github.io#parallel)
+- [ProgramWithParallel](https://psbp-library.github.io#programwithparallel) 
+
+for more details.
+
+### `areAllPositive`
+
+```scala
+package examples.specification.program.recursive.structure.implementation.list
+
+import psbp.external.specification.program.Program 
+
+import psbp.external.specification.recursion.Recursion
+
+import psbp.external.specification.structure.recursive.{
+  Recursive
+  , RecursiveStructure
+}
+
+import psbp.external.implementation.list.List
+
+import examples.specification.functional.isPositive
+
+import examples.specification.functional.recursiveFolderType.areAllTrueFolder
+  
+def areAllPositive[
+  R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
+]: Recursive[R][List][BigInt] >--> Boolean = 
+
+  val structure: RecursiveStructure[List, R, >-->] = 
+    summon[RecursiveStructure[List, R, >-->]]
+  import structure.aggregate
+
+  aggregate(isPositive, areAllTrueFolder[>-->]) 
+```
+
+where
+
+```scala
+package examples.specification.functional
+
+// ...
+
+def isPositive[
+  >-->[- _, + _]: Functional
+]: BigInt >--> Boolean =  
+  function.isPositive asProgram 
+
+// ...  
+```
+
+and
+
+```scala
+package examples.specification.functional.recursiveFolderType
+
+import scala.language.postfixOps
+
+import psbp.external.specification.program.Functional
+
+import psbp.external.specification.structure.recursive.RecursiveFolderType
+
+import psbp.external.implementation.list.List
+
+import examples.specification.function
+
+def areAllTrueFolder[
+  >-->[- _, + _]: Functional
+](
+   using recursiveFolderType: RecursiveFolderType[List, >-->]
+ ): recursiveFolderType.Folder[Boolean, Boolean] = 
+
+  function.areAllTrueFolder asProgram 
+```
+
+are functional utilities, 
+
+where 
+
+```scala
+package examples.specification.function
+
+import psbp.external.specification.types.{
+  &&
+  , ||
+}  
+
+import psbp.external.specification.function.foldSum
+
+import psbp.external.implementation.list.List
+
+// ...
+
+val isPositive: BigInt => Boolean =
+  n =>
+   n > 0  
+       
+def constantTrue[Z]: Z => Boolean =
+  _ =>
+    true 
+
+def and: (Boolean && Boolean) => Boolean = 
+  (b, a) =>
+    b && a 
+    
+val areAllTrueFolder: List[Boolean, Boolean] => Boolean =
+  foldSum(constantTrue, and)
+
+// ...  
+```
+
+are function utilities,
+
+where
+
+```scala
+package psbp.external.specification.function
+
+import psbp.external.specification.types.{ 
+  &&
+  , ||
+}
+
+// ...
+    
+// condition
+
+// ...
+
+def foldSum[Z, Y, X]: ((Y => Z) && (X => Z)) => (Y || X) => Z =
+  (`y=>z`, `x=>z`) =>
+    _.foldSum(`y=>z`, `x=>z`)
+
+// ...
+```
+
+is a condition related function utility.
+
+
+`areAllPositive` is a program that makes use of the following programming + recursive data structure ingredient 
+
+- `aggregate` from `RecursiveStructure`
+
+See 
+
+- [RecursiveStructure](https://psbp-library.github.io#recursivestructure)
+
+and 
+
+- [Structure](https://psbp-library.github.io#structure) 
+
+for more details.
+
+Note that recursion is dealt with using parameter `R[+_[+ _]]`.
+
+See
+
+- [Recursion](https://psbp-library.github.io#recursion)
+
+Note that `areAllPositive` is not fully defined at external specification level.
+
+`areAllPositive` makes use of `List` which is defined at external implementation level.
+
+`List` is an example of a *polynomial data structure*.
+
+`List` is used to define the *recursive polynomial data structure* `Recursive[R][List]`
+
+See
+
+- [List](https://psbp-library.github.io#list)
+
+and
+
+- [Recursive](https://psbp-library.github.io#recursive)
+
+for more details.
+
+## Main programs
+
+### `mainFactorial`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.external.specification.program.Program
+
+import examples.specification.program.factorial
+
+def mainFactorial[
+  >-->[- _, + _]: Program
+]: Unit >--> Unit =
+  factorial toMainWith (
+    producer = intProducer,
+    consumer = factorialConsumer
+  )
+```
+
+where
+
+```scala
+package examples.specification.program.effectful
+
+import scala.language.postfixOps
+
+import psbp.external.specification.program.Program
+
+object producerFunction {
+
+  val intProducer: Unit => BigInt =
+    _ =>
+      println("Please type an integer")
+      BigInt(scala.io.StdIn.readInt)
+
+}
+
+def intProducer[
+  >-->[- _, + _]: Program
+]: Unit >--> BigInt =
+  producerFunction.intProducer asProgram
+
+// ...    
+```
+
+and where
+
+```scala
+package examples.specification.program.effectful
+
+import scala.language.postfixOps
+
+import psbp.external.specification.types.&&
+
+import psbp.external.specification.program.Program
+
+object consumerFunction {
+
+  val factorialConsumer: (BigInt && BigInt) => Unit =
+    (i, j) =>
+      println(s"applying factorial to the integer argument $i yields result $j")
+
+  // ...    
+
+}
+
+def factorialConsumer[
+  >-->[- _, + _]: Program
+]: (BigInt && BigInt) >--> Unit =
+  consumerFunction.factorialConsumer asProgram
+
+// ...  
+```
+
+`mainFactorial` is a main program that, for now, makes use of an *effectful* producer and an *effectful* consumer.
+
+`toMain` is an extension of `Program`.
+
+See [Program](https://psbp-library.github.io#program) for more details.
+
+### `mainFibonacci`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.external.specification.program.Program
+
+import examples.specification.program.fibonacci
+
+def mainFibonacci[
+  >-->[- _, + _]: Program
+]: Unit >--> Unit =
+  fibonacci toMainWith (
+    producer = intProducer,
+    consumer = fibonacciConsumer
+  )
+```
+
+where
+
+```scala
+package examples.specification.program.effectful
+
+// ...
+
+object consumerFunction {
+
+  // ...
+
+  val fibonacciConsumer: (BigInt && BigInt) => Unit =
+    (i, j) =>
+      println(s"applying fibonacci to the integer argument $i yields result $j")
+
+}
+
+// ...
+
+def fibonacciConsumer[
+  >-->[- _, + _]: Program
+]: (BigInt && BigInt) >--> Unit =
+  consumerFunction.fibonacciConsumer asProgram
+
+// ...  
+```
+
+`mainFibonacci` is a main program that, for now, makes use of an effectful producer and an effectful consumer.
+
+### `mainOptimizedFactorial`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.external.specifcation.program.Program
+
+import examples.specification.program.optimizedFactorial
+
+def mainOptimizedFactorial[
+  >-->[- _, + _]: Program
+]: Unit >--> Unit =
+  optimizedFactorial toMainWith (
+    producer = intProducer,
+    consumer = factorialConsumer
+  )
+```
+
+### `mainOptimizedFibonacci`
+
+```scala
+package examples.specification.program.effectful
+
+import psbp.external.specifcation.program.Program
+
+import examples.specification.program.optimizedFibonacci
+
+def mainOptimizedFibonacci[
+  >-->[- _, + _]: Program
+]: Unit >--> Unit =
+  optimizedFibonacci toMainWith (
+    producer = intProducer,
+    consumer = fibonacciConsumer
+  )
+```
 
 ### `mainTwoRandoms`
 
@@ -1428,55 +1662,6 @@ def twoRandomsConsumer[
 ```
 
 `mainTwoRandoms` is a main program that, makes use of a trivial producer and, for now, makes use of an effectful consumer.
-
-### `parallelFibonacci`
-
-```scala
-package examples.specification.programWithParallel
-
-import psbp.external.specification.programWithParallel.ProgramWithParallel
-
-import examples.specification.functional.{ 
-  isZero
-  , zero
-  , isOne
-  , one
-  , subtractOne
-  , subtractTwo
-  , add 
-}
-
-def parallelFibonacci[
-  >-->[- _, + _]: ProgramWithParallel
-]: BigInt >--> BigInt =
-
-  val programWithParallel: ProgramWithParallel[>-->] =
-    summon[ProgramWithParallel[>-->]]
-  import programWithParallel.{
-    If
-  }
-
-  If(isZero) {
-    zero
-  } Else {
-    If(isOne) {
-      one
-    } Else {
-      (subtractOne && subtractTwo) >-->
-        (parallelFibonacci |&&&| parallelFibonacci) >-->
-        add
-    }
-  }
-```
-
-The definition of `parallelFibonacci` differs from the definion of `fibonacci` by its usage of `|&&&|` instead of `&&&`.
-
-See
-
-- [Parallel](https://psbp-library.github.io#parallel)
-- [ProgramWithParallel](https://psbp-library.github.io#programwithparallel) 
-
-for more details.
 
 ### `mainParallelFibinacci`
 
@@ -1595,183 +1780,25 @@ def parallelFibonacciConsumer[
 
 Actor `consumer` is sent a message `Consume(i, j)` which causes `info` to do its logging work.
 
-### `areAllPositive`
+### `mainAreAllPositive`
 
 ```scala
-package examples.specification.program.recursive.aggregatable.implementation.list
+package examples.specification.program.recursive.structure.implementation.list.effectful
 
 import psbp.external.specification.program.Program 
 
 import psbp.external.specification.recursion.Recursion
 
-import psbp.external.specification.aggregatable.recursive.{
-  Recursive
-  , RecursivelyAggregatable
-}
+import psbp.external.specification.structure.recursive.RecursiveStructure
 
 import psbp.external.implementation.list.List
 
-import examples.specification.functional.isPositive
-
-import examples.specification.functional.recursiveReducerType.areAllTrueReducer
-  
-def areAllPositive[
-  R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
-  , >-->[- _, + _]: Program
-                  : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, R, >-->]
-]: Recursive[R][List][BigInt] >--> Boolean = 
-
-  val aggregatable: RecursivelyAggregatable[List, R, >-->] = 
-    summon[RecursivelyAggregatable[List, R, >-->]]
-  import aggregatable.aggregate
-
-  aggregate(isPositive, areAllTrueReducer[>-->]) 
-```
-
-where
-
-```scala
-package examples.specification.functional
-
-// ...
-
-def isPositive[
-  >-->[- _, + _]: Functional
-]: BigInt >--> Boolean =  
-  function.isPositive asProgram 
-
-// ...  
-```
-
-and
-
-```scala
-package examples.specification.functional.recursiveReducerType
-
-import scala.language.postfixOps
-
-import psbp.external.specification.program.Functional
-
-import psbp.external.specification.aggregatable.recursive.RecursiveReducerType
-
-import psbp.external.implementation.list.List
-
-import examples.specification.function
-
-def areAllTrueReducer[
-  >-->[- _, + _]: Functional
-](
-   using recursiveReducerType: RecursiveReducerType[List, >-->]
- ): recursiveReducerType.Reducer[Boolean, Boolean] = 
-
-  function.areAllTrueReducer asProgram
-```
-
-are functional utilities, 
-
-where 
-
-```scala
-package examples.specification.function
-
-import psbp.external.specification.types.{
-  &&
-  , ||
-}  
-
-import psbp.external.specification.function.foldSum
-
-// ...
-
-val isPositive: BigInt => Boolean =
-  n =>
-   n > 0
-
-val areAllPositiveReducer: (Unit || (Boolean && Boolean)) => Boolean =
-  foldSum(constantTrue, and)
-
-// ...  
-```
-
-are function utilities,
-
-where
-
-```scala
-package psbp.external.specification.function
-
-import psbp.external.specification.types.{ 
-  &&
-  , ||
-}
-
-// ...
-    
-// condition
-
-// ...
-
-def foldSum[Z, Y, X]: ((Y => Z) && (X => Z)) => (Y || X) => Z =
-  (`y=>z`, `x=>z`) =>
-    _.foldSum(`y=>z`, `x=>z`)
-
-// ...
-```
-
-is a condition related function utility.
-
-
-`areAllPositive` is a program that makes use of the following programming ingredient 
-
-- `aggregate` from `RecursivelyAggregatable`
-
-See 
-
-- [RecursivelyAggregatable](https://psbp-library.github.io#recursivelyaggregatable)
-
-and 
-
-- [Aggregatable](https://psbp-library.github.io#aggregatable) 
-
-for more details.
-
-Note that recursion is dealt with using parameter `R[+_[+ _]]`.
-
-See
-
-- [Recursion](https://psbp-library.github.io#recursion)
-
-Note that `areAllPositive` is not fully defined at external specification level.
-
-`areAllPositive` makes use of `List` which is defined at external implementation level.
-
-See
-
-- [List](https://psbp-library.github.io#list)
-
-### `mainAreAllPositive`
-
-```scala
-package examples.specification.program.recursive.aggregatable.implementation.rec.implementation.list.effectful
-
-import psbp.external.specification.program.Program
-
-import psbp.external.specification.aggregatable.recursive.RecursivelyAggregatable
-
-import psbp.external.implementation.rec.{
-  Rec
-  , recRecursive
-}  
-
-import psbp.external.implementation.list.List
-
-import examples.specification.program.recursive.aggregatable.implementation.list.areAllPositive
-
-import examples.specification.program.implementation.rec.list.aggregatable.effectful.areAllPositiveConsumer
+import examples.specification.program.recursive.structure.implementation.list.areAllPositive
 
 def mainAreAllPositive[
-  >-->[- _, + _]: Program
-                : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, Rec, >-->]
+  R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
 ]: Unit >--> Unit =
   areAllPositive toMainWith (
     producer = recursiveIntListProducer,
@@ -1782,21 +1809,31 @@ def mainAreAllPositive[
 where
 
 ```scala
-package examples.specification.program.recursive.aggregatable.implementation.rec.implementation.list.effectful
+package examples.specification.program.recursive.structure.implementation.list.effectful
 
 import scala.language.postfixOps
 
 import scala.collection.immutable.Seq
 
-import psbp.external.specification.program.Program
+import psbp.external.specification.program.Program 
 
-import psbp.external.implementation.rec.list.RecursiveList
+import psbp.external.specification.recursion.Recursion
 
-import examples.specification.functional.seqToRecursiveList
+import psbp.external.implementation.list.List
+
+import psbp.external.specification.structure.recursive.{ 
+  Recursive
+  , RecursiveStructure 
+}
+
+import examples.specification.program.recursive.structure.implementation.list.seqToRecursiveList
 
 def recursiveIntListProducer[
-  >-->[- _, + _]: Program
-]: Unit >--> RecursiveList[BigInt] =
+  Z
+  , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
+]: Unit >--> Recursive[R][List][BigInt] =
 
   object producerFunction {
 
@@ -1807,7 +1844,7 @@ def recursiveIntListProducer[
 
   }
 
-  val intSeqProducer =
+  val intSeqProducer: Unit >--> Seq[BigInt] =
     producerFunction.intSeqProducer asProgram
 
   intSeqProducer >--> seqToRecursiveList
@@ -1816,7 +1853,7 @@ def recursiveIntListProducer[
 and where
 
 ```scala
-package examples.specification.program.implementation.rec.list.aggregatable.effectful
+package examples.specification.program.recursive.structure.implementation.list.effectful
 
 import scala.language.postfixOps
 
@@ -1865,122 +1902,7 @@ def areAllPositiveConsumer[
 where
 
 ```scala
-package examples.specification.functional
-
-// ...
-
-import scala.collection.immutable.Seq
-
-// ...
-
-import psbp.external.implementation.rec.list.RecursiveList
-
-// ...
-
-import psbp.external.implementation.rec.list.{
-  RecursiveList
-  , emptyRecursiveList
-  , consRecursiveList
-}
-
-// ...
-
-def seqToRecursiveList[
-  Z,
-  >-->[- _, + _]: Functional
-]: Seq[Z] >--> RecursiveList[Z] =
-  function.seqToRecursiveList asProgram
-```
-
-is a functional utility,
-
-where
-
-```scala
-package examples.specification.function
-
-// ...
-
-import psbp.external.specification.function.foldSeq
-
-import psbp.external.implementation.rec.list.{
-  RecursiveList
-  , emptyRecursiveList
-  , consRecursiveList
-} 
-
-// ...
-
-def seqToRecursiveList[Z]: Seq[Z] => RecursiveList[Z] = 
-  foldSeq(emptyRecursiveList, consRecursiveList) 
-```
-
-is a function utility,
-
-where
-
-```scala
-package psbp.external.implementation.rec.list
-
-import psbp.external.specification.function.{ `z=>(z||y)`, `y=>(z||y)` }
-
-import psbp.external.implementation.rec.{
-  Rec
-  , `a[rec[a]]=>rec[a]`
-  }
-
-import psbp.external.specification.aggregatable.recursive.Recursive
-
-import psbp.external.implementation.list.List
-
-type RecursiveList[+Z] = Recursive[Rec][List][Z]
-
-def listToRecursiveList[Z]: List[Z, RecursiveList[Z]] => RecursiveList[Z] = 
-  `a[rec[a]]=>rec[a]`
-
-def emptyRecursiveList[Z]: RecursiveList[Z] =
-  listToRecursiveList[Z](`z=>(z||y)`(()))
-
-import psbp.external.specification.types.&&
-
-def consRecursiveList[Z]: (Z && RecursiveList[Z]) => RecursiveList[Z] =
-  `y=>(z||y)` andThen listToRecursiveList
-```
-
-are `RecursiveList` utilities,
-
-where
-
-```scala
-package psbp.external.implementation.rec
-
-case class Rec[+A[+ _]](`a[rec[a]]`: A[Rec[A]])
-
-private[psbp] def `rec[a]=>a[rec[a]]`[A[+ _]]: Rec[A] => A[Rec[A]] = _.`a[rec[a]]`
-
-private[psbp] def `a[rec[a]]=>rec[a]`[A[+ _]]: A[Rec[A]] => Rec[A] = Rec(_)
-```
-
-where
-
-```scala
-package psbp.external.specification.function
-
-import scala.collection.immutable.Seq
-
-// ...
-
-def foldSeq[Z, Y]: (Y && ((Z && Y) => Y)) => (Seq[Z] => Y) =
-  (y, `(z&&y)=>y`) =>
-    _.foldRight(y){ (z, y) => `(z&&y)=>y`((z, y)) }
-```
-
-is a general function utility,
-
-and where
-
-```scala
-package examples.specification.program.recursive.aggregatable.implementation.list
+package examples.specification.program.recursive.structure.implementation.list
 
 import scala.collection.immutable.Seq
 
@@ -1988,34 +1910,110 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.recursion.Recursion
 
-import psbp.external.specification.aggregatable.recursive.{
+import psbp.external.specification.structure.recursive.{
   Recursive
-  , RecursivelyAggregatable
+  , RecursiveStructure
 }
 
 import psbp.external.implementation.list.List
 
-import examples.specification.functional.recursiveReducerType.toSeqReducer
+import examples.specification.functional.recursiveUnfolderType.fromSeqUnfolder
+  
+def seqToRecursiveList[
+  Z
+  , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
+]: Seq[Z] >--> Recursive[R][List][Z]  = 
+    
+  val structure: RecursiveStructure[List, R, >-->] = summon[RecursiveStructure[List, R, >-->]]
+  import structure.unfold
+
+  unfold(fromSeqUnfolder[Z, >-->]) 
+```
+
+and where
+
+```scala
+package examples.specification.program.recursive.structure.implementation.list
+
+import scala.collection.immutable.Seq
+
+import psbp.external.specification.program.Program 
+
+import psbp.external.specification.recursion.Recursion
+
+import psbp.external.specification.structure.recursive.{
+  Recursive
+  , RecursiveStructure
+}
+
+import psbp.external.implementation.list.List
+
+import examples.specification.functional.recursiveFolderType.toSeqFolder
 
 def recursiveListToSeq[
   Z
   , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
-                  : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, R, >-->]
+                  : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
 ]: Recursive[R][List][Z] >--> Seq[Z] = 
     
-  val aggregatable: RecursivelyAggregatable[List, R, >-->] = summon[RecursivelyAggregatable[List, R, >-->]]
-  import aggregatable.reduce
+  val structure: RecursiveStructure[List, R, >-->] = summon[RecursiveStructure[List, R, >-->]]
+  import structure.fold
 
-  reduce(toSeqReducer[Z, >-->])
+  fold(toSeqFolder[Z, >-->])
 ```
 
-is a recursively aggregatable program utility,
+are utilities that make use of the following programming + recursive data structure ingredients
+
+
+- `unfold` from `RecursiveStructure`
+- `fold` from `RecursiveStructure`
+
+See 
+
+- [RecursiveStructure](https://psbp-library.github.io#recursivestructure)
+
+and 
+
+- [Structure](https://psbp-library.github.io#structure) 
+
+for more details,
 
 where
 
 ```scala
-package examples.specification.functional.recursiveReducerType
+package examples.specification.functional.recursiveUnfolderType
+
+import scala.language.postfixOps
+
+import scala.collection.immutable.Seq
+
+import psbp.external.specification.program.Functional
+
+import psbp.external.specification.structure.recursive.RecursiveUnfolderType
+
+import psbp.external.implementation.list.List
+
+import examples.specification.function 
+
+def fromSeqUnfolder[
+  Z
+  , >-->[- _, + _]: Functional
+  ](
+    using recursiveUnfolderType: RecursiveUnfolderType[List, >-->]
+  ): recursiveUnfolderType.Unfolder[Seq[Z], Z] = 
+
+  function.fromSeqUnfolder asProgram 
+```
+
+is a functional utility, used by `unfold`
+
+and where
+
+```scala
+package examples.specification.functional.recursiveFolderType
 
 // ...
 
@@ -2023,42 +2021,48 @@ import scala.collection.immutable.Seq
 
 // ...
 
-def toSeqReducer[
+def toSeqFolder[
   Z
   , >-->[- _, + _]: Functional
   ](
-    using recursiveReducerType: RecursiveReducerType[List, >-->]
-  ): recursiveReducerType.Reducer[Z, Seq[Z]] = 
+    using recursiveFolderType: RecursiveFolderType[List, >-->]
+  ): recursiveFolderType.Folder[Z, Seq[Z]] = 
 
-  function.toSeqReducer asProgram  
+  function.toSeqFolder asProgram  
 ```
 
-is a functional utility,
+is a functional utility, used by `fold`,
 
 where
 
 ```scala
 package examples.specification.function
 
+import psbp.external.specification.types.{
+  &&
+  , ||
+}
+
+import ||.{Left, Right}
+
 // ...
 
-def emptySeq[Z]: Unit => Seq[Z] = 
-  _ =>
-    Seq()
+def fromSeqUnfolder[Z]: Seq[Z] => List[Z, Seq[Z]] =
+  case Seq() => Left(())
+  case z +: zs => Right((z, zs))
 
-def consSeq[Z]: Z && Seq[Z] => Seq[Z] =
-  case (z, zs) => 
-    z +: zs
-
-def toSeqReducer[Z]: (Unit || (Z && Seq[Z])) => Seq[Z] = 
-  foldSum(emptySeq, consSeq) 
-
-// ...  
+def toSeqFolder[Z]: List[Z, Seq[Z]] => Seq[Z] = 
+  foldSum({
+    case () =>
+      Seq[Z]()
+      }, { 
+    case (z, zs) => 
+      z +: zs
+      }
+  )
 ```
 
-is a function utility
-
-Note that `areAllPositiveConsumer` is defined in a more general way as `recursiveIntListProducer` because `recursiveListToSeq` is defined in a more general way as `seqToRecursiveList`.
+are function utilities.
 
 ## Running programs
 
@@ -2067,7 +2071,10 @@ Note that `areAllPositiveConsumer` is defined in a more general way as `recursiv
 ```scala
 package examples.implementation.active.program.effectful
 
-import psbp.implementation.active.given
+import psbp.external.implementation.active.{ 
+  activeProgram
+  , activeMaterialization
+}
 
 import examples.specification.program.effectful.mainFactorial
 
@@ -2087,19 +2094,25 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-See [mainFactorial](https://psbp-library.github.io#mainfactorial) for more details.
+`@main def factorial` materializes `mainFactorial` and uses dependency injection by `import` of `active` `given` implementations.
 
-`@main def factorial` uses injection by `import` of `active` `given` implementations.
+See 
 
-See [activeProgram](https://psbp-library.github.io#activeprogram) and [activeMaterialization](https://psbp-library.github.io#activematerialization) for more details.
+- [mainFactorial](https://psbp-library.github.io#mainfactorial)
+- [activeProgram](https://psbp-library.github.io#activeprogram)
+- [activeMaterialization](https://psbp-library.github.io#activematerialization) 
+
+for more details.
 
 ### Running `active` `fibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.active.program.effectful
 
-import psbp.implementation.active.given
-
+import psbp.external.implementation.active.{ 
+  activeProgram
+  , activeMaterialization
+}
 import examples.specification.program.effectful.mainFibonacci
 
 @main def fibonacci(args: String*): Unit =
@@ -2127,7 +2140,10 @@ Time for *optimization*!
 ```scala
 package examples.implementation.active.program.effectful
 
-import psbp.implementation.active.given
+import psbp.external.implementation.active.{ 
+  activeProgram
+  , activeMaterialization
+}
 
 import examples.specification.program.effectful.mainOptimizedFactorial
 
@@ -2135,7 +2151,12 @@ import examples.specification.program.effectful.mainOptimizedFactorial
   mainOptimizedFactorial materialized ()
 ```
 
-See [mainOptimizedFactorial](https://psbp-library.github.io#mainoptimizedfactorial) for more details.
+See 
+
+- [mainOptimizedFactorial](https://psbp-library.github.io#mainoptimizedfactorial) 
+- [optimize](https://psbp-library.github.io#optimize) 
+
+for more details.
 
 Let's run it
 
@@ -2154,7 +2175,10 @@ applying factorial to the integer argument 10 yields result 3628800
 ```scala
 package examples.implementation.active.program.effectful
 
-import psbp.implementation.active.given
+import psbp.external.implementation.active.{ 
+  activeProgram
+  , activeMaterialization
+}
 
 import examples.specification.program.effectful.mainOptimizedFibonacci
 
@@ -2173,19 +2197,30 @@ Please type an integer
 applying fibonacci to the integer argument 10 yields result 89
 [success] ...
 ```
+See 
 
-Running `active` `fibonacci` can also be done with `1000` instead of `10`.
+- [mainOptimizedFibonacci](https://psbp-library.github.io#mainoptimizedfibonacci) 
+- [optimize](https://psbp-library.github.io#optimize) 
 
-Running `active` `fibonacci` with `10000` produces a stack overflow.
+for more details.
+
+Running `active` `optimizedFibonacci` can also be done with `1000` instead of `10`.
+
+Running `active` `optimizedFibonacci` with `10000` produces a stack overflow.
 
 Time for *tail recursive optimization*!
+
+But, let's first show how easy it is to go *reactive*!
 
 ### Running `reactive` `factorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
 
-import psbp.implementation.reactive.given
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveMaterialization
+}
 
 import examples.specification.program.effectful.mainFactorial
 
@@ -2205,21 +2240,28 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-The only difference with the `active` version is the usage of a different injection by `import`.
-
-`@main def factorial` uses injection by `import` of `reactive` `given` implementations.
+The only difference with the `active` version is the usage of a different dependency injection by `import`.
 
 This will be a recurring theme when running program examples.
 
-See [reactiveProgram](https://psbp-library.github.io#reactiveprogram) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
+`@main def factorial` uses dependency injection by `import` of `reactive` `given` implementations.
+
+See 
+
+- [reactiveProgram](https://psbp-library.github.io#reactiveprogram)
+- [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization)
+
+for more details.
 
 ### Running `reactive` `fibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
 
-import psbp.implementation.reactive.given
-
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveMaterialization
+}
 import examples.specification.program.effectful.mainFibonacci
 
 @main def fibonacci(args: String*): Unit =
@@ -2238,13 +2280,26 @@ applying fibonacci to the integer argument 10 yields result 55
 [success] ...
 ```
 
+Again, the only difference with the `active` version is the usage of a different dependency injection by `import`.
+
+`@main def factorial` uses dependency injection by `import` of `reactive` `given` implementations.
+
+See 
+
+- [reactiveProgram](https://psbp-library.github.io#reactiveprogram)
+- [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization)
+
+for more details.
+
 ### Running `reactive` `optimizedFactorial` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.reactive.program.effectful
 
-import psbp.implementation.reactive.given
-
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveMaterialization
+}
 import examples.specification.program.effectful.mainOptimizedFactorial
 
 @main def optimizedFactorial(args: String*): Unit =
@@ -2268,8 +2323,10 @@ applying factorial to the integer argument 10 yields result 3628800
 ```scala
 package examples.implementation.reactive.program.effectful
 
-import psbp.implementation.reactive.given
-
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveMaterialization
+}
 import examples.specification.program.effectful.mainOptimizedFibonacci
 
 @main def optimizedFibonacci(args: String*): Unit =
@@ -2299,7 +2356,10 @@ Even more time for tail recursive optimization!
 ```scala
 package examples.implementation.freeActive.program.effectful
 
-import psbp.implementation.freeActive.given
+import psbp.external.implementation.freeActive.{
+  freeActiveProgram
+  , freeActiveMaterialization
+}
 
 import examples.specification.program.effectful.mainFactorial
 
@@ -2319,19 +2379,28 @@ applying factorial to the integer argument 10 yields result 3628800
 [success] ...
 ```
 
-Again, the only difference with other versions is the usage of a different injection by `import`.
+Again, the only difference with other versions is the usage of a different dependency injection by `import`.
 
-`@main def factorial` uses injection by `import` of `freeActive` `given` implementations.
+`@main def factorial` uses dependency injection by `import` of `freeActive` `given` implementations.
 
-See [freeActiveProgram](https://psbp-library.github.io#freeactiveprogram) and [freeActiveMaterialization](https://psbp-library.github.io#freeactivematerialization) for more details.
+See 
+
+- [freeActiveProgram](https://psbp-library.github.io#freeactiveprogram)
+- [freeActiveMaterialization](https://psbp-library.github.io#freeactivematerialization)
+
+for more details.
+
+Running `reactive` `factorial` can also be done with `10000` instead of `10`.
 
 ### Running tail recursive `freeActive` `optimizedFibonacci` (effectful producer and consumer)
 
 ```scala
 package examples.implementation.freeActive.program.effectful
 
-import psbp.implementation.freeActive.given
-
+import psbp.external.implementation.freeActive.{
+  freeActiveProgram
+  , freeActiveMaterialization
+}
 import examples.specification.program.effectful.mainOptimizedFibonacci
 
 @main def optimizedFibonacci(args: String*): Unit =
@@ -2359,20 +2428,17 @@ Running `freeActive` `optimizedFibonacci` with `10000` does not produce a stack 
 ```scala
 package examples.implementation.active.programWithState.effectful
 
-import psbp.specification.program.state.Initial
+import psbp.external.implementation.stateActive.{
+  stateActiveProgram
+  , stateActiveState
+  , stateActiveMaterialization
+}
 
-import psbp.specification.programWithState.given
+import psbp.external.specification.programWithState.programWithState
 
-import psbp.implementation.stateActive.given
-
-import examples.specification.programWithState.Seed
+import examples.specification.programWithState.initialSeedState
 
 import examples.specification.programWithState.effectful.mainTwoRandoms
-
-given initialSeedState: Initial[Seed] = 
-  new { 
-    override val s = 1L 
-  }
 
 @main def twoRandoms(args: String*): Unit =
   mainTwoRandoms materialized ()
@@ -2388,13 +2454,30 @@ generating two random numbers yields result (384748,1151252339)
 [success] ...
 ```
 
-Again, an important difference with other examples is the usage of a different injection by `import`.
+Again, an important difference with other examples is the usage of different injections by `import`.
 
-`@main def twoRandoms` uses injection by `import` of `stateActive` `given` implementations.
+`@main def twoRandoms` uses dependency injection by `import` of `stateActive` `given` implementations.
 
-See [stateActiveProgram](https://psbp-library.github.io#stateactiveprogram), [stateActiveState](https://psbp-library.github.io#stateactivestate) and [stateActiveMaterialization](https://psbp-library.github.io#stateactivematerialization) for more details.
+See 
+
+- [stateActiveProgram](https://psbp-library.github.io#stateactiveprogram)
+- [stateActiveState](https://psbp-library.github.io#stateactivestate)
+- [stateActiveMaterialization](https://psbp-library.github.io#stateactivematerialization) 
+
+and
+
+- [programWithState](https://psbp-library.github.io#programwithstate)
+
+for more details.
 
 `@main def twoRandoms` also uses a `given` implementation of `Initial` for `Seed`.
+
+See
+
+- [initialSeedState](https://psbp-library.github.io#initialseedstate)
+
+foe more details.
+
 
 When running the materialized main program implementation, the implementation of program `twoRandoms`, somehow, transforms its argument, in this case no argument, to a result, in this case a product result.
 
@@ -2413,9 +2496,13 @@ Instead, state manifests itself, internally, in the function type `Z => (S => [(
 ```scala
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.specification.programWithParallel.given
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveParallel
+  , reactiveMaterialization
+}
 
-import psbp.implementation.reactive.given
+import psbp.external.specification.programWithParallel.programWithParallel
 
 import examples.specification.programWithParallel.effectful.mainParallelFibonacci
 
@@ -2431,40 +2518,95 @@ sbt:PSBP> run
 [info] running examples.implementation.reactive.programWithParallel.effectful.parallelFibonacci 
 Please type an integer
 5
-[2021-03-03 11:36:00,472] - leftActor received LeftAct 
-[2021-03-03 11:36:00,497] - rightActor received RightAct 
-[2021-03-03 11:36:00,530] - leftActor received LeftAct 
-[2021-03-03 11:36:00,571] - leftActor received LeftAct 
-[2021-03-03 11:36:00,576] - rightActor received RightAct 
-[2021-03-03 11:36:00,651] - rightActor received RightAct 
-[2021-03-03 11:36:00,699] - leftActor received LeftAct 
-[2021-03-03 11:36:00,735] - leftActor received LeftAct 
-[2021-03-03 11:36:00,795] - rightActor received RightAct 
-[2021-03-03 11:36:00,796] - rightActor received RightAct 
-[2021-03-03 11:36:00,797] - leftActor received LeftAct 
-[2021-03-03 11:36:00,797] - reactor received both RightReact(0) and LeftReact(1) 
-[2021-03-03 11:36:00,911] - rightActor received RightAct 
-[2021-03-03 11:36:00,911] - reactor received both RightReact(0) and LeftReact(1) 
-[2021-03-03 11:36:00,912] - reactor received both LeftReact(1) and RightReact(1) 
-[2021-03-03 11:36:00,933] - leftActor received LeftAct 
-[2021-03-03 11:36:00,998] - rightActor received RightAct 
-[2021-03-03 11:36:00,999] - reactor received both RightReact(0) and LeftReact(1) 
-[2021-03-03 11:36:01,002] - reactor received both LeftReact(1) and RightReact(1) 
-[2021-03-03 11:36:01,002] - reactor received both LeftReact(2) and RightReact(1) 
-[2021-03-03 11:36:01,002] - reactor received both LeftReact(3) and RightReact(2) 
-[2021-03-03 11:36:01,018] - applying parallel fibonacci to argument 5 yields result 5 
+[2021-04-07 18:43:04,110] - leftActor received LeftAct 
+[2021-04-07 18:43:04,135] - rightActor received RightAct 
+[2021-04-07 18:43:04,161] - leftActor received LeftAct 
+[2021-04-07 18:43:04,198] - leftActor received LeftAct 
+[2021-04-07 18:43:04,201] - rightActor received RightAct 
+[2021-04-07 18:43:04,249] - leftActor received LeftAct 
+[2021-04-07 18:43:04,306] - rightActor received RightAct 
+[2021-04-07 18:43:04,346] - rightActor received RightAct 
+[2021-04-07 18:43:04,363] - leftActor received LeftAct 
+[2021-04-07 18:43:04,400] - leftActor received LeftAct 
+[2021-04-07 18:43:04,420] - leftActor received LeftAct 
+[2021-04-07 18:43:04,421] - rightActor received RightAct 
+[2021-04-07 18:43:04,424] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-04-07 18:43:04,426] - reactor received both LeftReact(1) and RightReact(1) 
+[2021-04-07 18:43:04,444] - rightActor received RightAct 
+[2021-04-07 18:43:04,444] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-04-07 18:43:04,523] - rightActor received RightAct 
+[2021-04-07 18:43:04,523] - reactor received both RightReact(0) and LeftReact(1) 
+[2021-04-07 18:43:04,525] - reactor received both LeftReact(1) and RightReact(1) 
+[2021-04-07 18:43:04,526] - reactor received both LeftReact(2) and RightReact(1) 
+[2021-04-07 18:43:04,528] - reactor received both LeftReact(3) and RightReact(2) 
+[2021-04-07 18:43:04,590] - applying parallel fibonacci to argument 5 yields result 5 
 [success] ...
 ```
 
-Again, an important difference with other examples is the usage of a different injection by `import`.
+Again, an important difference with other examples is the usage of different injections by `import`.
 
-`@main def parallelFibonacci` uses injection by `import` of `reactive` `given` implementations.
+`@main def parallelFibonacci` uses dependency injection by `import` of `reactive` `given` implementations.
 
-See [reactiveProgram](https://psbp-library.github.io#reactiveprogram), [reactiveParallel](https://psbp-library.github.io#reactiveparallel) and [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) for more details.
+See 
+
+- [reactiveProgram](https://psbp-library.github.io#reactiveprogram)
+- [reactiveParallel](https://psbp-library.github.io#reactiveparallel)
+- [reactiveMaterialization](https://psbp-library.github.io#reactivematerialization) 
+
+and
+
+- [programWithParallel](https://psbp-library.github.io#programwithparallel)
+
+for more details.
+
+### Running `active` `areAllPositive` (effectful producer and consumer)
+
+```scala
+package examples.implementation.active.program.rec.recursion.list.structure.effectful
+
+import psbp.external.implementation.active.{
+  activeProgram
+  , activeMaterialization
+}
+
+import psbp.external.implementation.rec.recRecursion
+
+import psbp.external.implementation.list.listRecursiveStructure
+
+import examples.specification.program.recursive.structure.implementation.list.effectful.mainAreAllPositive
+
+@main def areAllPositive(args: String*): Unit =
+  mainAreAllPositive materialized ()
+```
+
+Again, an important difference with other examples is the usage of different injections by `import`.
+
+`@main def areAllPositive` uses dependency injection by `import` of `active` `given` implementations.
+
+See 
+
+- [activeProgram](https://psbp-library.github.io#activeprogram)
+- [activeMaterialization](https://psbp-library.github.io#activematerialization) 
+
+and, for dealing with the polynomial recursive data structure `List`
+
+- [recRecursion](https://psbp-library.github.io#recrecursion)
+- [listRecursiveStructure](https://psbp-library.github.io#listrecursivestructure)
+
+for more details.
 
 # Library development
 
+This section explains the inner workings of the `PSBP` library.
+
+Feel free to add 
+
+- new programming + data structure ingredients as specification `trait`'s,
+- other implementations `given`'s of existing programming + data structure ingredients.
+
 ## Specification `trait`'s
+
+# UNTIL HERE
 
 ### `Functional`
 

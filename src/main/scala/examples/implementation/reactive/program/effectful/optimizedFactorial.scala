@@ -1,7 +1,9 @@
-package examples.implementation.active.program.effectful
+package examples.implementation.reactive.program.effectful
 
-import psbp.implementation.active.given
-
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveMaterialization
+}
 import examples.specification.program.effectful.mainOptimizedFactorial
 
 @main def optimizedFactorial(args: String*): Unit =

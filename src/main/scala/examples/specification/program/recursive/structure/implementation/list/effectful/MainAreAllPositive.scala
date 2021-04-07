@@ -1,19 +1,12 @@
-package examples.specification.program.implementation.rec.list.structure.effectful
-
-import scala.language.postfixOps
-
-import scala.collection.immutable.Seq
+package examples.specification.program.recursive.structure.implementation.list.effectful
 
 import psbp.external.specification.program.Program 
 
 import psbp.external.specification.recursion.Recursion
 
-import psbp.external.implementation.list.List
+import psbp.external.specification.structure.recursive.RecursiveStructure
 
-import psbp.external.specification.structure.recursive.{ 
-  Recursive
-  , RecursiveStructure 
-}
+import psbp.external.implementation.list.List
 
 import examples.specification.program.recursive.structure.implementation.list.areAllPositive
 

@@ -1,6 +1,9 @@
 package examples.implementation.freeActive.program.effectful
 
-import psbp.implementation.freeActive.given
+import psbp.external.implementation.freeActive.{
+  freeActiveProgram
+  , freeActiveMaterialization
+}
 
 import examples.specification.program.effectful.mainFactorial
 

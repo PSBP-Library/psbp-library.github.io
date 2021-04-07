@@ -1,4 +1,4 @@
-package psbp.implementation.active
+package psbp.external.implementation.active
 
 import psbp.external.specification.program.Program
 

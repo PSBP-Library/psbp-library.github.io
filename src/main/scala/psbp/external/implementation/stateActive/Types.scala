@@ -1,8 +1,8 @@
-package psbp.implementation.stateActive
+package psbp.external.implementation.stateActive
 
 import psbp.internal.implementation.computation.transformation.StateTransformed
 
-import psbp.implementation.active.Active
+import psbp.external.implementation.active.Active
 
 type StateActive[S] = [Y] =>> StateTransformed[S, Active][Y] 
 

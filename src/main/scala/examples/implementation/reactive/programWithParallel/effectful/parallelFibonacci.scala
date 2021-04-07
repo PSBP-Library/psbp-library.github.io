@@ -1,8 +1,12 @@
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.external.specification.programWithParallel.given
+import psbp.external.implementation.reactive.{
+  reactiveProgram
+  , reactiveParallel
+  , reactiveMaterialization
+}
 
-import psbp.implementation.reactive.given
+import psbp.external.specification.programWithParallel.programWithParallel
 
 import examples.specification.programWithParallel.effectful.mainParallelFibonacci
 

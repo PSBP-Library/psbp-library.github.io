@@ -13,16 +13,16 @@ import psbp.external.specification.structure.recursive.{
 
 import psbp.external.implementation.list.List
 
-import examples.specification.functional.recursiveFolderType.toSeqFolder
-
-def recursiveListToSeq[
+import examples.specification.functional.recursiveUnfolderType.fromSeqUnfolder
+  
+def seqToRecursiveList[
   Z
   , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
                   : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
-]: Recursive[R][List][Z] >--> Seq[Z] = 
+]: Seq[Z] >--> Recursive[R][List][Z]  = 
     
   val structure: RecursiveStructure[List, R, >-->] = summon[RecursiveStructure[List, R, >-->]]
-  import structure.fold
+  import structure.unfold
 
-  fold(toSeqFolder[Z, >-->]) 
+  unfold(fromSeqUnfolder[Z, >-->])  

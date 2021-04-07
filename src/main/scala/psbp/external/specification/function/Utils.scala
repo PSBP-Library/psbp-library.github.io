@@ -105,9 +105,4 @@ def `(z&&b)=>(z||z)`[Z]: (Z && Boolean) => (Z || Z) =
       case (_, false) => Right(z) 
     }    
 
-// other
-
-def foldSeq[Z, Y]: (Y && ((Z && Y) => Y)) => (Seq[Z] => Y) =
-  (y, `(z&&y)=>y`) =>
-    _.foldRight(y){ (z, y) => `(z&&y)=>y`((z, y)) }
 

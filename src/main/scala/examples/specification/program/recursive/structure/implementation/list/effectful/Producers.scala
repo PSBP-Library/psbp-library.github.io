@@ -1,4 +1,4 @@
-package examples.specification.program.implementation.rec.list.structure.effectful
+package examples.specification.program.recursive.structure.implementation.list.effectful
 
 import scala.language.postfixOps
 
