@@ -7,9 +7,9 @@ private[psbp] trait Aggregatable[
   , >-->[- _, + _]
 ] 
   extends Traversable[A, >-->] 
-  with InitialTraverser[>-->]
   with Foldable[A, >-->] 
   with Unfoldable[A, >-->]
+  with InitialTraverser[>-->]
   with InitialFolder[A] 
   with InitialUnfolder[A]:
 
@@ -19,13 +19,13 @@ private[psbp] trait Aggregatable[
 
   private[psbp] def fuseUnfolder[X, Y, Z]: (Unfolder[X, Y] && Y >--> Z) => Unfolder[X, Z]
 
+  // defined
+
   def aggregate[Z, Y, X]: (Z >--> Y && Folder[Y, X]) => A[Z] >--> X =
     fuseFolder andThen fold
 
   def unaggregate[X, Y, Z]: (Unfolder[X, Y] && Y >--> Z) => X >--> A[Z] =
     fuseUnfolder andThen unfold    
-
-  // defined
 
   override def traverse[Z, Y]: Z >--> Y => A[Z] >--> A[Y] =
     aggregate(_, initialFolder)
