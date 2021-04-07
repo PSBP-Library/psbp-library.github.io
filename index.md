@@ -11,12 +11,6 @@ h5:before { counter-increment: h5counter; content: counter(h2counter) "." counte
 h6:before { counter-increment: h6counter; content: counter(h2counter) "." counter(h3counter) "." counter(h4counter) "." counter(h5counter) "." counter(h6counter) ".\0000a0\0000a0"; } 
 </style>
 
-# WARNING
-
-This development branch is provided for those who want to follow up the development of the library more closely.
-
-Code and documentation may not be in sync, but the code should work.
-
 # Program Specification Based Programming
 
 This document describes `PSBP`, a `Scala 3` library for *Program Specification Based Programming*.
