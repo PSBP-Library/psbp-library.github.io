@@ -9,6 +9,8 @@ import psbp.external.specification.function.foldSum
 
 import psbp.external.specification.function.foldSeq
 
+import psbp.external.implementation.list.List
+
 import psbp.external.implementation.rec.list.{
   RecursiveList
   , emptyRecursiveList
@@ -67,11 +69,23 @@ val isPositive: BigInt => Boolean =
   n =>
    n > 0  
     
-val areAllTrueReducer: (Unit || (Boolean && Boolean)) => Boolean =
+val areAllTrueFolder: (Unit || (Boolean && Boolean)) => Boolean =
   foldSum(constantTrue, and)
 
 def seqToRecursiveList[Z]: Seq[Z] => RecursiveList[Z] = 
   foldSeq(emptyRecursiveList, consRecursiveList) 
+
+import  psbp.external.specification.types.||
+
+import ||.{Left, Right}
+
+import psbp.internal.implementation.aggregatable.recursive.{
+  mkNone
+}
+
+def fromSeqUnfolder[Z]: Seq[Z] => List[Z, Seq[Z]] =
+  case z +: zs => Right((z, zs))
+  case _ => Left(mkNone)
   
 def emptySeq[Z]: Unit => Seq[Z] = 
   _ =>
@@ -81,7 +95,10 @@ def consSeq[Z]: Z && Seq[Z] => Seq[Z] =
   case (z, zs) => 
     z +: zs
 
-def toSeqReducer[Z]: (Unit || (Z && Seq[Z])) => Seq[Z] = 
+// def toSeqFolder[Z]: (Unit || (Z && Seq[Z])) => Seq[Z] = 
+//   foldSum(emptySeq, consSeq) 
+
+def toSeqFolder[Z]: List[Z, Seq[Z]] => Seq[Z] = 
   foldSum(emptySeq, consSeq) 
   
 // introduction 

@@ -20,11 +20,11 @@ import psbp.external.specification.aggregatable.recursive.{
 import examples.specification.program.recursive.aggregatable.implementation.list.recursiveListToSeq
 
 def areAllPositiveConsumer[
-  Z,
-  R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->],
-  >-->[- _, + _]: Program
-                : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, R, >-->]
-  ]: (Recursive[R][List][BigInt] && Boolean) >--> Unit =
+  Z
+  , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, R, >-->]
+]: (Recursive[R][List][BigInt] && Boolean) >--> Unit =
 
   val program: Program[>-->] = 
     summon[Program[>-->]]

@@ -1,0 +1,7 @@
+package psbp.external.specification.aggregatable
+
+private[psbp] trait InitialUnfolder[A[+ _]] extends UnfolderType:
+
+  // declared
+
+  private[psbp] def initialUnfolder[Y]: Unfolder[A[Y], Y]

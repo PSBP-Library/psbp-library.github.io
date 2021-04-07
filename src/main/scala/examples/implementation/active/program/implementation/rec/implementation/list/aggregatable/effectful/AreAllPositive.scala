@@ -6,7 +6,7 @@ import psbp.external.implementation.rec.given
 
 import psbp.external.implementation.list.given 
 
-import examples.specification.program.recursive.aggregatable.implementation.rec.implementation.list.effectful.mainAreAllPositive
+import examples.specification.program.implementation.rec.list.aggregatable.effectful.mainAreAllPositive
 
 @main def areAllPositive(args: String*): Unit =
   mainAreAllPositive materialized ()

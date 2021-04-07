@@ -13,7 +13,7 @@ import psbp.external.specification.aggregatable.recursive.{
 
 import psbp.external.implementation.list.List
 
-import examples.specification.functional.recursiveReducerType.toSeqReducer
+import examples.specification.functional.recursiveFolderType.toSeqFolder
 
 def recursiveListToSeq[
   Z
@@ -23,6 +23,20 @@ def recursiveListToSeq[
 ]: Recursive[R][List][Z] >--> Seq[Z] = 
     
   val aggregatable: RecursivelyAggregatable[List, R, >-->] = summon[RecursivelyAggregatable[List, R, >-->]]
-  import aggregatable.reduce
+  import aggregatable.fold
 
-  reduce(toSeqReducer[Z, >-->])
+  fold(toSeqFolder[Z, >-->])
+
+import examples.specification.functional.recursiveUnfolderType.fromSeqUnfolder
+  
+def seqToRecursiveList[
+  Z
+  , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
+  , >-->[- _, + _]: Program
+                  : [>-->[- _, + _]] =>> RecursivelyAggregatable[List, R, >-->]
+]: Seq[Z] >--> Recursive[R][List][Z]  = 
+    
+  val aggregatable: RecursivelyAggregatable[List, R, >-->] = summon[RecursivelyAggregatable[List, R, >-->]]
+  import aggregatable.unfold
+
+  unfold(fromSeqUnfolder[Z, >-->])  

@@ -13,7 +13,7 @@ import psbp.external.implementation.list.List
 
 import examples.specification.functional.isPositive
 
-import examples.specification.functional.recursiveReducerType.areAllTrueReducer
+import examples.specification.functional.recursiveFolderType.areAllTrueFolder
   
 def areAllPositive[
   R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
@@ -25,4 +25,4 @@ def areAllPositive[
     summon[RecursivelyAggregatable[List, R, >-->]]
   import aggregatable.aggregate
 
-  aggregate(isPositive, areAllTrueReducer[>-->]) 
+  aggregate(isPositive, areAllTrueFolder[>-->]) 
