@@ -18,9 +18,7 @@ def parallelFibonacci[
 
   val programWithParallel: ProgramWithParallel[>-->] =
     summon[ProgramWithParallel[>-->]]
-  import programWithParallel.{
-    If
-  }
+  import programWithParallel.If
 
   If(isZero) {
     zero

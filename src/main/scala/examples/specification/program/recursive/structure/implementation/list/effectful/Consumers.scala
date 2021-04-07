@@ -28,7 +28,7 @@ def areAllPositiveConsumer[
 
   val program: Program[>-->] = 
     summon[Program[>-->]]
-  import program.identity
+  import program.{`z>-->z` => `b>-->b` }
 
   object consumerFunction {
 
@@ -41,5 +41,5 @@ def areAllPositiveConsumer[
   val areAllOfSeqPositiveConsumer: (Seq[BigInt] && Boolean) >--> Unit =
     consumerFunction.areAllOfSeqPositiveConsumer asProgram  
   
-  (recursiveListToSeq &&& identity) >--> areAllOfSeqPositiveConsumer
+  (recursiveListToSeq &&& `b>-->b`) >--> areAllOfSeqPositiveConsumer
 

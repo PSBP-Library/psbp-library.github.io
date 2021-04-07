@@ -1,22 +1,18 @@
 package psbp.external.specification.program
 
-import scala.language.postfixOps
-
 import psbp.external.specification.function.`z=>z`
 
-trait Functional[>-->[- _, + _]] extends Identity[>-->]:
+trait Functional[>-->[- _, + _]] 
+  extends Identity[>-->]:
 
   // declared
 
   private[psbp] def toProgram[Z, Y]: (Z => Y) => Z >--> Y
 
-  private implicit val functional: Functional[>-->] = this
-
   // defined
 
-  override def identity[Z]: Z >--> Z =
-    
-    `z=>z` asProgram  
+  override def `z>-->z`[Z]: Z >--> Z =
+    toProgram(`z=>z`)  
 
   // defined extensions
 

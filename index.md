@@ -695,9 +695,7 @@ def fibonacci
 
   val program: Program[>-->] = 
     summon[Program[>-->]]
-  import program.{
-    If
-  }
+  import program.If
 
   If(isZero) {
     zero
@@ -1214,9 +1212,7 @@ def parallelFibonacci[
 
   val programWithParallel: ProgramWithParallel[>-->] =
     summon[ProgramWithParallel[>-->]]
-  import programWithParallel.{
-    If
-  }
+  import programWithParallel.If
 
   If(isZero) {
     zero
@@ -1376,7 +1372,7 @@ def foldSum[Z, Y, X]: ((Y => Z) && (X => Z)) => (Y || X) => Z =
 is a condition related function utility.
 
 
-`areAllPositive` is a program that makes use of the following programming + recursive data structure ingredient 
+`areAllPositive` is a program that makes use of the following programming ingredient 
 
 - `aggregate` from `RecursiveStructure`
 
@@ -1959,7 +1955,7 @@ def recursiveListToSeq[
   fold(toSeqFolder[Z, >-->])
 ```
 
-are utilities that make use of the following programming + recursive data structure ingredients
+are utilities that make use of the following programming ingredients
 
 
 - `unfold` from `RecursiveStructure`
@@ -2589,29 +2585,93 @@ and, for dealing with the polynomial recursive data structure `List`
 
 for more details.
 
+Let's run it
+
+```scala
+sbt:PSBP> run
+...
+[info] running examples.implementation.active.program.rec.recursion.list.structure.effectful.areAllPositive 
+Please type a sequence of integers separated by a blank
+1 2 3
+applying areAllPositive to the list of integer arguments 1 2 3 yields result true
+[success]
+```
+
 # Library development
 
 This section explains the inner workings of the `PSBP` library.
 
 Feel free to add 
 
-- new programming + data structure ingredients as specification `trait`'s,
-- other implementations `given`'s of existing programming + data structure ingredients.
+- new programming ingredients as specification `trait`'s,
+- other implementations `given`'s of existing programming ingredients.
 
-## Specification `trait`'s
+## Specification `trait`'
 
-# UNTIL HERE
+### `Identity`
+
+```scala
+package psbp.external.specification.program
+
+trait Identity[>-->[- _, + _]]:
+
+  // declared
+
+  def `z>-->z`[Z]: Z >--> Z
+
+  // defined
+
+  def identity[Z]: Z >--> Z =
+    `z>-->z`
+
+  def `y>-->y`[Y]: Y >--> Y =
+    `z>-->z`[Y]
+
+  def `x>-->x`[X]: X >--> X =
+    `z>-->z`[X]      
+  
+  def `w>-->w`[W]: W >--> W =
+    `z>-->z`[W]
+
+  def `v>-->v`[V]: V >--> V =
+    `z>-->z`[V]  
+
+  // ...
+
+  def `u>-->u`: Unit >--> Unit =
+    `z>-->z`[Unit]
+
+  // ...  
+```
+
+`Identity` specifies that *there exists a program transforming its argument to a result that is equal to its argument (and nothing else)*.
+
+Names like `` `z>-->z` `` can be thought of as *typeful generic names for programs*.
+
+After all there is only one meaningful program of type `Z >--> Z` *for all types* `Z`.
+
+So why not giving it the name `` `z>-->z` ``?
+
+`Identity` also defines some useful synonyms of `` `z>-->z` ``.
 
 ### `Functional`
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
-trait Functional[>-->[- _, + _]]:
+import psbp.external.specification.function.`z=>z`
+
+trait Functional[>-->[- _, + _]] 
+  extends Identity[>-->]:
 
   // declared
 
   private[psbp] def toProgram[Z, Y]: (Z => Y) => Z >--> Y
+
+  // defined
+
+  override def `z>-->z`[Z]: Z >--> Z =
+    toProgram(`z=>z`)  
 
   // defined extensions
 
@@ -2619,28 +2679,52 @@ trait Functional[>-->[- _, + _]]:
     toProgram(`z=>y`)
 ```
 
+where
+
+```scala
+package psbp.external.specification.function
+
+// functional
+
+def `z=>z`[Z]: Z => Z = 
+  z =>
+    z 
+
+// ...    
+```
+
+is a function utility
+
 `Functional` specifies that *functions can be used as programs*.
+
+Names like `` `z=>y` `` can be thought of as *typeful generic names for functions*.
+
+After all there is only one meaningful function of type `Z => Z` *for all types* `Z`.
+
+So why not giving it the name `` `z=>z` ``?
 
 The member `asProgram` is an `extension` that can be used as postfix operator.
 
 The full power that comes with the `PSBP` library is not available for functions that are used as programs using `asProgram`, so, which functions to use as programs using `asProgram` is an important choice.
 
-Names like `` `z=>y` `` can be thought of as *typeful generic names* for functions.
-
 ### `Composition`
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
 trait Composition[>-->[- _, + _]]:
 
   // declared
 
-  private[psbp] def andThen[Z, Y, X](`z>-->y`: Z >--> Y, `y>-->x`: => Y >--> X): Z >--> X
+  private[psbp] def andThen[Z, Y, X](
+    `z>-->y`: Z >--> Y
+    , `y>-->x`: => Y >--> X
+  ) : Z >--> X
 
   // defined extensions
   
-  extension [Z, Y, X] (`z>-->y`: Z >--> Y) def >-->(`y>-->x`: => Y >--> X): Z >--> X =
+  extension [Z, Y, X] (`z>-->y`: Z >--> Y) 
+    def >-->(`y>-->x`: => Y >--> X): Z >--> X =
     andThen(`z>-->y`, `y>-->x`)
 ```
 
@@ -2652,31 +2736,61 @@ The member `>-->` is an `extension` that can be used as infix operator.
 
 The type of the second parameter of `andThen` is a *call-by-name* one.
 
-Names like `` `z>-->y` `` can be thought of as typeful generic names for programs.
+Again, names like `` `z>-->y` `` and `` `y>-->x` `` can be thought of as typeful generic names for programs.
+
+Typeful generic names, hopefully, are illustrative when writing code like `` val `z>-->x` = `z>-->y` >--> `y>-->x` ``.
+
+### `Classification`
+
+```scala
+package psbp.external.specification.program
+
+trait Classification[>-->[- _, + _]]
+  extends Identity[>-->]
+  with Composition[>-->]
+```
+
+It is genarally accepted that the minimal programming ingredients, ingredients to classify things as a programs, are captured by the combination of `Identity` and `Composition`.
+
+### `FunctionalClassification`
+
+```scala
+package psbp.external.specification.program
+
+trait FunctionalClassification[>-->[- _, + _]]
+  extends Functional[>-->]
+  with Classification[>-->]
+```
+
+It is genarally accepted that the minimal functional programming ingredients, ingredients to classify things as a functional programs, are captured by the combination of `Functional` and `Classification`.
 
 ### `Construction`
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 trait Construction[>-->[- _, + _]]:
 
   // declared
 
-  private[psbp] def construct[Z, Y, X] (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) 
+  private[psbp] def construct[Z, Y, X] (
+    `z>-->y`: Z >--> Y
+    , `z>-->x`: => Z >--> X
+  ): Z >--> (Y && X) 
 
   // defined extensions
 
-  extension [Z, Y, X] (`z>-->y`: Z >--> Y) def &&(`z>-->x`: => Z >--> X): Z >--> (Y && X) =
+  extension [Z, Y, X] (`z>-->y`: Z >--> Y) 
+    def &&(`z>-->x`: => Z >--> X): Z >--> (Y && X) =
     construct(`z>-->y`, `z>-->x`)
 ```
 
 where
 
 ```scala
-package psbp.specification.types
+package psbp.external.specification.types
 
 // product
 
@@ -2693,29 +2807,37 @@ The type of the second argument of `construct` is a call-by-name one.
 
 `&&` is, somewhat artificially, sequentially biased towards it's first argument.
 
+Again, names like `` `z>-->y` `` and `` `z>-->x` `` can be thought of as typeful generic names for programs.
+
+Typeful generic names, hopefully, are illustrative when writing code like `` val `z>-->(y&&x)` = `z>-->y` && `z>-->x` ``.
+
 ### `Condition`
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
-import psbp.specification.types.||
+import psbp.external.specification.types.||
 
 trait Condition[>-->[- _, + _]]:
 
   // declared
 
-  private[psbp] def conditionally[Z, Y, X] (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z
+  private[psbp] def conditionally[Z, Y, X] (
+    `y>-->z`: => Y >--> Z
+    , `x>-->z`: => X >--> Z
+  ): (Y || X) >--> Z
 
   // defined extensions
   
-  extension [Z, Y, X] (`y>-->z`: => Y >--> Z) def ||(`x>-->z`: => X >--> Z): (Y || X) >--> Z =
+  extension [Z, Y, X] (`y>-->z`: => Y >--> Z) 
+    def ||(`x>-->z`: => X >--> Z): (Y || X) >--> Z =
     conditionally(`y>-->z`, `x>-->z`)
 ```
 
 where
 
 ```scala
-package psbp.specification.types
+package psbp.external.specification.types
 
 // ...
 
@@ -2741,19 +2863,32 @@ The types of the arguments of `conditionally` are call-by-name ones.
 
 `foldSum` hides the `enum` representation of the sum type.
 
+Again, names like `` `y>-->z` `` and `` `x>-->z` `` can be thought of as typeful generic names for programs.
+
+Typeful generic names, hopefully, are illustrative when writing code like `` val `(y||x)>-->z` = `y>-->z` && `x>-->z` ``.
+
 ### `Program`
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
-import psbp.specification.types.{ &&, || }
+import scala.language.postfixOps
 
-import psbp.specification.functional.{ 
-  `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
+import psbp.external.specification.types.{ 
+  &&
+  , || 
+}
+
+import psbp.external.specification.functional.{ 
+  `(z&&y)>-->z`
+  , `(z&&y)>-->y`
+  , `z>-->(z||y)`
+  , `y>-->(z||y)`
+  , `(z&&b)>-->(z||z)` 
+}
 
 trait Program[>-->[- _, + _]]
-  extends Functional[>-->]
-  with Composition[>-->]
+  extends FunctionalClassification[>-->]
   with Construction[>-->]
   with Condition[>-->]:
 
@@ -2761,13 +2896,16 @@ trait Program[>-->[- _, + _]]
 
     // defined extensions
 
-    extension [Z, Y, X, W] (`z>-->x`: Z >--> X) def &&&(`y>-->w`: => Y >--> W): (Z && Y) >--> (X && W) =
+    extension [Z, Y, X, W] (`z>-->x`: Z >--> X) 
+      def &&&(`y>-->w`: => Y >--> W): (Z && Y) >--> (X && W) =
       (`(z&&y)>-->z` >--> `z>-->x`) && (`(z&&y)>-->y` >--> `y>-->w`)  
 
-    extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
+    extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) 
+      def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
       (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
-    extension [Z, Y] (program: Z >--> Y) def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
+    extension [Z, Y] (program: Z >--> Y) 
+      def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
       producer 
         >--> 
           {
@@ -2814,44 +2952,68 @@ trait Program[>-->[- _, + _]]
 where
 
 ```scala
-package psbp.specification.functional
+package psbp.external.specification.functional
 
 import scala.language.postfixOps
 
-import psbp.specification.types.{ &&, || }
+import psbp.external.specification.types.{ 
+  &&
+  , ||
+}
 
-import psbp.specification.program.Functional
+import psbp.external.specification.program.Functional
 
-import psbp.specification.function._
+import psbp.external.specification.function
 
-// functional
-
-def `z>-->z`[>-->[- _, + _]: Functional, Z]: Z >--> Z =
-  `z=>z` asProgram
-
-def identity[>-->[- _, + _]: Functional, Z]: Z >--> Z =
-  `z=>z` asProgram  
+// ...
 
 // construction
 
-def `(z&&y)>-->z`[>-->[- _, + _]: Functional, Z, Y]: (Z && Y) >--> Z =
-  `(z&&y)=>z` asProgram
+// construction
+
+// construction
+
+def `(z&&y)>-->z`[
+  Z, Y
+  , >-->[- _, + _]: Functional
+]: (Z && Y) >--> Z =
+  function.`(z&&y)=>z` asProgram
     
-def `(z&&y)>-->y`[>-->[- _, + _]: Functional, Z, Y]: (Z && Y) >--> Y =
-  `(z&&y)=>y` asProgram
+def `(z&&y)>-->y`[
+  Z, Y
+  , >-->[- _, + _]: Functional
+]: (Z && Y) >--> Y =
+  function.`(z&&y)=>y` asProgram
+
+// ...  
 
 // condition
 
-def `z>-->(z||y)`[>-->[- _, + _]: Functional, Z, Y]: Z >--> (Z || Y) =
-  `z=>(z||y)` asProgram
+def `z>-->(z||y)`[
+  Z, Y
+  , >-->[- _, + _]: Functional
+]: Z >--> (Z || Y) =
+  function.`z=>(z||y)` asProgram
   
-def `y>-->(z||y)`[>-->[- _, + _]: Functional, Z, Y]: Y >--> (Z || Y) =
-  `y=>(z||y)` asProgram 
+def `y>-->(z||y)`[
+  Z, Y
+  , >-->[- _, + _]: Functional
+]: Y >--> (Z || Y) =
+  function.`y=>(z||y)` asProgram 
+
+// ...  
 
 // construction and condition
   
-def `(z&&b)>-->(z||z)`[>-->[- _, + _]: Functional, Z]: (Z && Boolean) >--> (Z || Z) =
-  `(z&&b)=>(z||z)` asProgram 
+// construction and condition
+  
+def `(z&&b)>-->(z||z)`[
+  Z
+  , >-->[- _, + _]: Functional
+]: (Z && Boolean) >--> (Z || Z) =
+  function.`(z&&b)=>(z||z)` asProgram 
+
+// ...  
 ```
 
 are functional utilities,
@@ -2859,13 +3021,9 @@ are functional utilities,
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
-// functional
-
-def `z=>z`[Z]: Z => Z = 
-  z =>
-    z
+// ...
 
 // construction
 
@@ -2876,6 +3034,8 @@ def `(z&&y)=>z`[Z, Y]: (Z && Y) => Z =
 def `(z&&y)=>y`[Z, Y]: (Z && Y) => Y =
   (_, y) => 
     y  
+
+// ...
 
 // condition
 
@@ -2889,6 +3049,8 @@ def `y=>(z||y)`[Z, Y]: Y => (Z || Y) =
   y =>
     Right(y)   
 
+// ...
+
 // construction and condition
 
 def `(z&&b)=>(z||z)`[Z]: (Z && Boolean) => (Z || Z) =
@@ -2896,7 +3058,9 @@ def `(z&&b)=>(z||z)`[Z]: (Z && Boolean) => (Z || Z) =
     (z, b) match {
       case (_, true) => Left(z)
       case (_, false) => Right(z) 
-    }    
+    } 
+ 
+// ... 
 ```
 
 are function utilities.
@@ -2909,9 +3073,9 @@ The `If() {} Else {}` programming ingredient specifies that programs *can perfor
 
 `Let {} In {}` and `If() {} Else {}` are perfect examples of the **sca**lable **la**nguage capability of `Scala`.
 
-The member `toMain` is an `extension` that combines a program with a producer and a consumer to a main program.
+The member `toMainWith` is an `extension` that combines a program with a producer and a consumer to a main program.
 
-Let's explain the pointfree definition of `toMain`, thinking of programs as functions, in a pointful way using an argument `()`.
+Let's explain the pointfree definition of `toMainWith`, thinking of programs as functions, in a pointful way using an argument `()`.
 
 At level `1`, `toMain` looks like
 
@@ -2963,20 +3127,34 @@ So `consumer` can consume both `z`, which equals `producer()` the result value p
 ```scala
 package examples.specification.program
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.functional.{ `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
+import psbp.external.specification.functional.{ 
+  `z>-->(z&&z)`
+  , `(z&&y)>-->z` 
+  , `(z&&y&&x)>-->(y&&x)` }
 
-def `construct using &&&`[>-->[- _, + _]: Program, Z, Y, X] 
-  (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =
+def `construct using &&&`[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `z>-->y`: Z >--> Y
+  , `z>-->x`: => Z >--> X
+): Z >--> (Y && X) =
   `z>-->(z&&z)` >--> (`z>-->y` &&& `z>-->x`)
 
-def constructUsingLet[>-->[- _, + _]: Program, Z, Y, X] 
-  (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =
+def constructUsingLet[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `z>-->y`: Z >--> Y
+  , `z>-->x`: => Z >--> X
+): Z >--> (Y && X) =
  
-  val program: Program[>-->] = summon[Program[>-->]]
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
   import program.Let
 
   Let {
@@ -2993,7 +3171,7 @@ def constructUsingLet[>-->[- _, + _]: Program, Z, Y, X]
 where
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.functional
 
 // ...
 
@@ -3001,11 +3179,19 @@ package psbp.specification.program
 
 // ...
 
-def `z>-->(z&&z)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Z) =
-  `z=>(z&&z)` asProgram  
+def `z>-->(z&&z)`[
+  Z
+  , >-->[- _, + _]: Functional
+]: Z >--> (Z && Z) =
+  function.`z=>(z&&z)` asProgram  
 
-def `(z&&y&&x)>-->(y&&x)`[>-->[- _, + _]: Functional, Z, Y, X]: (Z && Y && X) >--> (Y && X) =
-  `(z&&y&&x)=>(y&&x)` asProgram 
+def `(z&&y&&x)>-->(y&&x)`[
+  Z, Y, X  
+  , >-->[- _, + _]: Functional
+]: (Z && Y && X) >--> (Y && X) =
+  function.`(z&&y&&x)=>(y&&x)` asProgram 
+
+// ...  
 ```
 
 are functional utilities,
@@ -3013,7 +3199,7 @@ are functional utilities,
 where
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
 // ...
 
@@ -3039,20 +3225,36 @@ are function utilities.
 ```scala
 package examples.specification.program
 
-import psbp.specification.types.||
+import psbp.external.specification.types.||
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.functional.{ `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
+import psbp.external.specification.functional.{ 
+  `(z||z)>-->z`
+  , `(y||x)>-->b`
+  , `(y||x)>-->y`
+  , `(y||x)>-->x` 
+}
 
-def `conditionally using |||`[>-->[- _, + _]: Program, Z, Y, X]
-  (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
+def `conditionally using |||`[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `y>-->z`: => Y >--> Z
+  , `x>-->z`: => X >--> Z
+): (Y || X) >--> Z =
   (`y>-->z` ||| `x>-->z`) >--> `(z||z)>-->z`
 
-def conditionallyUsingIf[>-->[- _, + _]: Program, Z, Y, X]
-  (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
+def conditionallyUsingIf[
+  Z, Y, X
+  ,  >-->[- _, + _]: Program
+](
+  `y>-->z`: => Y >--> Z
+  , `x>-->z`: => X >--> Z
+): (Y || X) >--> Z =
 
-  val program: Program[>-->] = summon[Program[>-->]]
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
   import program.If
 
   If(`(y||x)>-->b`) {
@@ -3064,23 +3266,35 @@ def conditionallyUsingIf[>-->[- _, + _]: Program, Z, Y, X]
 where
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
 // ...
 
 // condition
 
-def `(z||z)>-->z`[>-->[- _, + _]: Functional, Z]: (Z || Z) >--> Z =
-  `(z||z)=>z` asProgram  
+def `(z||z)>-->z`[
+  Z
+  , >-->[- _, + _]: Functional
+]: (Z || Z) >--> Z =
+  function.`(z||z)=>z` asProgram  
   
-def `(y||x)>-->b`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Boolean =
-  `(y||x)=>b` asProgram
+def `(y||x)>-->b`[
+  Y, X
+  , >-->[- _, + _]: Functional
+]: (Y || X) >--> Boolean =
+  function.`(y||x)=>b` asProgram
 
-def `(y||x)>-->y`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> Y =
-  `(y||x)=>y` asProgram
+def `(y||x)>-->y`[
+  Y, X
+  , >-->[- _, + _]: Functional
+]: (Y || X) >--> Y =
+  function.`(y||x)=>y` asProgram
 
-def `(y||x)>-->x`[>-->[- _, + _]: Functional, Y, X]: (Y || X) >--> X =
-  `(y||x)=>x` asProgram
+def `(y||x)>-->x`[
+  Y, X
+  , >-->[- _, + _]: Functional
+]: (Y || X) >--> X =
+  function.`(y||x)=>x` asProgram  
 
 // ...
 ```
@@ -3090,7 +3304,7 @@ are functional utilities,
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
 // ...
 
@@ -3098,8 +3312,9 @@ package psbp.specification.function
 
 // ...
 
-def foldSum[Z, Y, X](`y=>z`: => Y => Z, `x=>z`: => X => Z): (Y || X) => Z =
-  _.foldSum(`y=>z`, `x=>z`)
+def foldSum[Z, Y, X]: ((Y => Z) && (X => Z)) => (Y || X) => Z =
+  (`y=>z`, `x=>z`) =>
+    _.foldSum(`y=>z`, `x=>z`)
 
 def `(z||z)=>z`[Z]: (Z || Z) => Z =
   foldSum(z => z, z => z)  
@@ -3111,7 +3326,9 @@ def `(y||x)=>y`[Y, X]: (Y || X) => Y =
   foldSum(y => y, _ => ???) 
 
 def `(y||x)=>x`[Y, X]: (Y || X) => X =
-  foldSum(_ => ???, x => x)
+  foldSum(_ => ???, x => x) 
+
+// ...  
 ```
 
 are function utilities.
@@ -3120,12 +3337,15 @@ are function utilities.
 
 ### Curry-Howard-Lambek correspondence
 
-For those who are inclined: the programs above can be seen as instances of *constructive proofs* in the sense of the *Curry-Howard-Lambek correspondence*.
+For those who are inclined: the programs above can be seen as *constructive proofs* in the sense of the 
+[Curry-Howard-Lambek correspondence](https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence#Curry%E2%80%93Howard%E2%80%93Lambek_correspondence).
+
+# UNTIL HERE
 
 ### `Materialization`
 
 ```scala
-package psbp.specification.materialization
+package psbp.external.specification.materialization
 
 trait Materialization[>-->[- _, + _], -Z, +Y]:
 
@@ -3148,7 +3368,7 @@ The member `materialized` is an `extension` that can be used as postfix operator
 ### `State`
 
 ```scala
-package psbp.specification.program.state
+package psbp.external.specification.program.state
 
 trait State[S, >-->[- _, + _]]:
 
@@ -3172,13 +3392,13 @@ trait Initial[S]:
 ### `ProgramWithState`
 
 ```scala
-package psbp.specification.programWithState
+package psbp.external.specification.programWithState
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.program.state.State
+import psbp.external.specification.program.state.State
 
-import psbp.specification.functional.`z>-->u`
+import psbp.external.specification.functional.`z>-->u`
 
 trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-->]:
 
@@ -3204,7 +3424,7 @@ trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-
 where
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
 // ...
 // functional
@@ -3221,7 +3441,7 @@ is a functional utility
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
 // functional
 
@@ -3243,9 +3463,9 @@ For example, `readStateModifiedWith` is used in [random](https://psbp-library.gi
 ### `Parallel`
 
 ```scala
-package psbp.specification.program.parallel
+package psbp.external.specification.program.parallel
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 trait Parallel[>-->[- _, + _]]:
   
@@ -3275,15 +3495,15 @@ The member `async` is an extension that can be used as postfix operator.
 ### `ProgramWithParallel`
 
 ```scala
-package psbp.specification.programWithParallel
+package psbp.external.specification.programWithParallel
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
-import psbp.specification.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
+import psbp.external.specification.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
 
 trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-->]:
 
@@ -3303,7 +3523,7 @@ trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-
 where
 
 ```scala
-package psbp.specification.program
+package psbp.external.specification.program
 
 import scala.language.postfixOps
 
@@ -3330,7 +3550,7 @@ are program utilities
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
 // functional
 
@@ -3361,7 +3581,7 @@ The member `|&&|` is an extension that can be used as infix operator.
 ### `Traversable`
 
 ```scala
-package psbp.specification.aggregatable
+package psbp.external.specification.aggregatable
 
 trait Traversable[A[+ _], >-->[- _, + _]]:
 
@@ -3389,7 +3609,7 @@ Traversers are also known as *mappers*.
 ### `Reducible`
 
 ```scala
-package psbp.specification.aggregatable
+package psbp.external.specification.aggregatable
 
 private[psbp] trait ReducerType:
 
@@ -3417,9 +3637,9 @@ Also a member `initialReducer` is declared.
 ### `Aggregatable`
 
 ```scala
-package psbp.specification.aggregatable
+package psbp.external.specification.aggregatable
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 trait Aggregatable[A[+ _], >-->[- _, + _]] extends Traversable[A, >-->] with Reducible[A, >-->]: 
 
@@ -3457,11 +3677,11 @@ More precisely, `aggregate` is a function that transforms a *aggregator* argumen
 ### `programWithState`
 
 ```scala
-package psbp.specification.programWithState
+package psbp.external.specification.programWithState
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.program.state.State
+import psbp.external.specification.program.state.State
 
 given programWithState[
   S, 
@@ -3485,11 +3705,11 @@ Using injection by `import` of `programWithState`, a specification level `given`
 ### `programWithParallel`
 
 ```scala
-package psbp.specification.programWithParallel
+package psbp.external.specification.programWithParallel
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
 given programWithParallel[>-->[- _, + _]: Program: Parallel]: ProgramWithParallel[>-->] with
  
@@ -3665,9 +3885,9 @@ private[psbp] trait ValueLifting[C[+ _]]:
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.function.{ `(z=>y)=>((z&&x)=>(y&&x)))` }
+import psbp.external.specification.function.{ `(z=>y)=>((z&&x)=>(y&&x)))` }
 
 private[psbp] trait ProductLifting[C[+ _]]:
 
@@ -3686,7 +3906,7 @@ private[psbp] trait ProductLifting[C[+ _]]:
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
 // ...
 
@@ -3709,7 +3929,7 @@ is a function utility.
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] trait ApplicationLifting[C[+ _]]:
 
@@ -3726,7 +3946,7 @@ private[psbp] trait ApplicationLifting[C[+ _]]:
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] trait FunctionApplicationLifting[C[+ _]] 
   extends ValueLifting[C] 
@@ -3769,7 +3989,7 @@ private[psbp] trait Function1Lifting[C[+ _]]:
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] trait Function2Lifting[C[+ _]]:
 
@@ -3785,7 +4005,7 @@ private[psbp] trait Function2Lifting[C[+ _]]:
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] trait Function3Lifting[C[+ _]]:
 
@@ -3801,9 +4021,9 @@ private[psbp] trait Function3Lifting[C[+ _]]:
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
-import psbp.specification.function.{ `(z&&y)=>(z&&y)`, foldSum, `z=>(z||y)`, `y=>(z||y)`, and, or }
+import psbp.external.specification.function.{ `(z&&y)=>(z&&y)`, foldSum, `z=>(z||y)`, `y=>(z||y)`, and, or }
 
 private[psbp] trait FunctionLifting[C[+ _]] 
   extends Function0Lifting[C] 
@@ -3831,7 +4051,7 @@ private[psbp] trait FunctionLifting[C[+ _]]
 where
 
 ```scala
-package psbp.specification.function
+package psbp.external.specification.function
 
 //
 
@@ -3866,9 +4086,9 @@ def or[Z, Y, X, W]: ((X => Z) && (W => Y)) => (X || W) => (Z || Y) =
 ```scala
 package psbp.internal.specification.aggregatable
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.aggregatable.ReducerType
+import psbp.external.specification.aggregatable.ReducerType
 
 private[psbp] trait FunctionLevelFusing extends ReducerType:
 
@@ -3886,7 +4106,7 @@ private[psbp] trait FunctionLevelFusing extends ReducerType:
 ```scala
 package psbp.internal.specification.aggregatable
 
-import psbp.specification.aggregatable.ReducerType
+import psbp.external.specification.aggregatable.ReducerType
 
 private[psbp] trait ReducerLifting[C[+ _]] extends ReducerType:
     
@@ -3902,7 +4122,7 @@ private[psbp] trait ReducerLifting[C[+ _]] extends ReducerType:
 ```scala
 package psbp.internal.specification.aggregatable
 
-import psbp.specification.aggregatable.Aggregatable
+import psbp.external.specification.aggregatable.Aggregatable
 
 private[psbp] trait FunctionLevelReducible[A[+ _], C[+ _]] 
   extends FunctionLevelFusing
@@ -3984,7 +4204,7 @@ Both `Function1LiftingAtLeft` and `Function1LiftingAtRight` use a binary type co
 ```scala
 package psbp.internal.specification.aggregatable.rec
 
-import psbp.specification.aggregatable.ReducerType
+import psbp.external.specification.aggregatable.ReducerType
 
 private[psbp] trait RecReducerType[A[+ _, + _]] extends ReducerType:
 
@@ -4053,9 +4273,9 @@ private[psbp] given reducerLiftingFromSwapping[A[+ _, + _]: RecReducerType: [A[+
 
 package psbp.internal.specification.aggregatable.rec
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.aggregatable.{ InitialTraverser, InitialReducer, Aggregatable }
+import psbp.external.specification.aggregatable.{ InitialTraverser, InitialReducer, Aggregatable }
 
 import psbp.internal.specification.application.{ Function0Lifting, Function1Lifting, Function1LiftingAtRight , Function1LiftingAtLeft }
 
@@ -4120,11 +4340,11 @@ See [functionApplicationLiftingFromComputation](https://psbp-library.github.io#f
 ```scala
 package psbp.internal.specification.computation
 
-import psbp.specification.types.{ &&, || }
+import psbp.external.specification.types.{ &&, || }
 
-import psbp.specification.function.foldSum
+import psbp.external.specification.function.foldSum
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 
@@ -4173,7 +4393,7 @@ Using injection by `import` of `programFromComputation`, a specification level `
 ```scala
 package psbp.internal.specification.computation
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 import psbp.internal.specification.computation.Computation
 
@@ -4286,7 +4506,7 @@ Using injection by `import` of `functionApplicationLiftingFromValueProductAndApp
 ```scala
 package psbp.internal.specification.application
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
 private[psbp] given functionLiftingFromFunctionApplicationLifting[C[+ _]: FunctionApplicationLifting]: FunctionLifting[C] with
 
@@ -4447,7 +4667,7 @@ package psbp.internal.implementation.computation.transformation
 
 import psbp.internal.specification.computation.Computation
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.CoResulting
 
@@ -4515,7 +4735,7 @@ It is defined as an `enum` that has the following `case`'s
 ```scala
 package psbp.internal.implementation.computation.transformation
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 
@@ -4610,7 +4830,7 @@ Performing specific tail recursive optimization involves using one or more laws.
 ```scala
 package psbp.internal.implementation.materialization
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.Computation
 
@@ -4729,7 +4949,7 @@ private[psbp] given stateTransformedBinding[
 ```scala
 package psbp.internal.implementation.computation.transformation
 
-import psbp.specification.program.state.State
+import psbp.external.specification.program.state.State
 
 import psbp.internal.specification.computation.Computation
 
@@ -4773,9 +4993,9 @@ There is really only one meaningful way to define the `` `f~>t` ``, `bind` `` `u
 ```scala
 package psbp.internal.implementation.materialization
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
-import psbp.specification.program.state.Initial
+import psbp.external.specification.program.state.Initial
 
 import psbp.internal.specification.computation.Computation
 
@@ -4837,9 +5057,9 @@ import org.slf4j.LoggerFactory.getILoggerFactory
 
 import language.implicitConversions
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
 import psbp.internal.specification.computation.Computation
 
@@ -5023,7 +5243,7 @@ Some `logging` has been added to illustrate how `leftActor` and `rightActor` act
 ```scala
 package psbp.implementation.active
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Resulting
 
@@ -5070,7 +5290,7 @@ As a consequence, `` `=>A` `` is an `given` implementation of `Program`.
 ```scala
 package psbp.implementation.active
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 given activeMaterialization: Materialization[`=>A`, Unit, Unit] with
 
@@ -5111,7 +5331,7 @@ Co-resulting of `Active` is completely trivial.
 ```scala
 package psbp.implementation.reactive
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Binding
 
@@ -5155,7 +5375,7 @@ See [programFromComputation](https://psbp-library.github.io#programfromcomputati
 ```scala
 package psbp.implementation.reactive
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 
@@ -5178,7 +5398,7 @@ See [reactiveTransformedMaterialization](https://psbp-library.github.io#reactive
 ```scala
 package psbp.implementation.freeActive
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 
@@ -5216,7 +5436,7 @@ See [programFromComputation](https://psbp-library.github.io#programfromcomputati
 ```scala
 package psbp.implementation.freeActive
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 
@@ -5239,7 +5459,7 @@ See [freeTransformedMaterialization](https://psbp-library.github.io#freetransfor
 ```scala
 package psbp.implementation.stateActive
 
-import psbp.specification.program.Program
+import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Binding
 
@@ -5279,7 +5499,7 @@ type `=>SA`[S] = [Z, Y] =>> Z => StateActive[S][Y]
 ```scala
 package psbp.implementation.stateActive
 
-import psbp.specification.program.state.State
+import psbp.external.specification.program.state.State
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 
@@ -5300,11 +5520,11 @@ See [programFromComputation](https://psbp-library.github.io#programfromcomputati
 ```scala
 package psbp.implementation.stateActive
 
-import psbp.specification.types.&&
+import psbp.external.specification.types.&&
 
-import psbp.specification.program.state.Initial
+import psbp.external.specification.program.state.Initial
 
-import psbp.specification.materialization.Materialization
+import psbp.external.specification.materialization.Materialization
 
 import psbp.internal.implementation.materialization.stateTransformedMaterialization
 
@@ -5325,7 +5545,7 @@ See [stateTransformedMaterialization](https://psbp-library.github.io#stateTransf
 ```scala
 package psbp.implementation.reactive
 
-import psbp.specification.program.parallel.Parallel
+import psbp.external.specification.program.parallel.Parallel
 
 import psbp.internal.specification.computation.computationFromResultingAndBinding
 

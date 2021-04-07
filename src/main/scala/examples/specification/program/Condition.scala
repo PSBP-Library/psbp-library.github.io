@@ -4,16 +4,32 @@ import psbp.external.specification.types.||
 
 import psbp.external.specification.program.Program
 
-import psbp.external.specification.functional.{ `(z||z)>-->z`, `(y||x)>-->b`, `(y||x)>-->y`, `(y||x)>-->x` }
+import psbp.external.specification.functional.{ 
+  `(z||z)>-->z`
+  , `(y||x)>-->b`
+  , `(y||x)>-->y`
+  , `(y||x)>-->x` 
+}
 
-def `conditionally using |||`[>-->[- _, + _]: Program, Z, Y, X]
-  (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
+def `conditionally using |||`[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `y>-->z`: => Y >--> Z
+  , `x>-->z`: => X >--> Z
+): (Y || X) >--> Z =
   (`y>-->z` ||| `x>-->z`) >--> `(z||z)>-->z`
 
-def conditionallyUsingIf[>-->[- _, + _]: Program, Z, Y, X]
-  (`y>-->z`: => Y >--> Z, `x>-->z`: => X >--> Z): (Y || X) >--> Z =
+def conditionallyUsingIf[
+  Z, Y, X
+  ,  >-->[- _, + _]: Program
+](
+  `y>-->z`: => Y >--> Z
+  , `x>-->z`: => X >--> Z
+): (Y || X) >--> Z =
 
-  val program: Program[>-->] = summon[Program[>-->]]
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
   import program.If
 
   If(`(y||x)>-->b`) {

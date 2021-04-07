@@ -18,9 +18,7 @@ def fibonacci
 
   val program: Program[>-->] = 
     summon[Program[>-->]]
-  import program.{
-    If
-  }
+  import program.If
 
   If(isZero) {
     zero

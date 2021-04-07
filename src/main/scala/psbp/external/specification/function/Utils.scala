@@ -16,10 +16,7 @@ def `z=>z`[Z]: Z => Z =
 
 def `z=>u`[Z]: Z => Unit = 
   z =>
-    () 
-    
-def `u=>u`: Unit => Unit = 
-  `z=>z`[Unit]     
+    ()  
 
 // construction
 

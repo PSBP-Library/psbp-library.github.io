@@ -2,7 +2,7 @@ package examples.specification.programWithState
 
 import scala.language.postfixOps
 
-import psbp.external.specification.functional.identity
+// import psbp.external.specification.functional.identity
 
 import psbp.external.specification.programWithState.ProgramWithState
 
@@ -20,7 +20,8 @@ def random[
   val programWithSeedState: ProgramWithState[Seed, >-->] =
     summon[ProgramWithState[Seed, >-->]]
   import programWithSeedState.{
-    If
+    identity
+    , If
     , readStateModifiedWith
     }
 

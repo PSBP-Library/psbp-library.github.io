@@ -2,10 +2,18 @@ package psbp.external.specification.program
 
 import scala.language.postfixOps
 
-import psbp.external.specification.types.{ &&, || }
+import psbp.external.specification.types.{ 
+  &&
+  , || 
+}
 
 import psbp.external.specification.functional.{ 
-  `z>-->z`, `(z&&y)>-->z`, `(z&&y)>-->y`, `z>-->(z||y)`, `y>-->(z||y)`, `(z&&b)>-->(z||z)` }
+  `(z&&y)>-->z`
+  , `(z&&y)>-->y`
+  , `z>-->(z||y)`
+  , `y>-->(z||y)`
+  , `(z&&b)>-->(z||z)` 
+}
 
 trait Program[>-->[- _, + _]]
   extends FunctionalClassification[>-->]
@@ -16,13 +24,16 @@ trait Program[>-->[- _, + _]]
 
     // defined extensions
 
-    extension [Z, Y, X, W] (`z>-->x`: Z >--> X) def &&&(`y>-->w`: => Y >--> W): (Z && Y) >--> (X && W) =
+    extension [Z, Y, X, W] (`z>-->x`: Z >--> X) 
+      def &&&(`y>-->w`: => Y >--> W): (Z && Y) >--> (X && W) =
       (`(z&&y)>-->z` >--> `z>-->x`) && (`(z&&y)>-->y` >--> `y>-->w`)  
 
-    extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
+    extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) 
+      def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
       (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
-    extension [Z, Y] (program: Z >--> Y) def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
+    extension [Z, Y] (program: Z >--> Y) 
+      def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
       producer 
         >--> 
           {

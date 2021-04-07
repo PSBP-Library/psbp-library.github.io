@@ -6,7 +6,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.parallel.Parallel
 
-import psbp.external.specification.functional.{ `u>-->u`, `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
+import psbp.external.specification.functional.{ `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
 
 trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-->]:
 
@@ -15,7 +15,7 @@ trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-
   // defined
   
   override private[psbp] def asynchronous[Z, Y](`z>-->y`: Z >--> Y): Z >--> Y =
-    `z>-->(z&&u)` >--> (`z>-->y` |&&&| `u>-->u`[>-->]) >--> `(y&&u)>-->y`
+    `z>-->(z&&u)` >--> (`z>-->y` |&&&| `u>-->u`) >--> `(y&&u)>-->y`
 
   // defined extensions
 

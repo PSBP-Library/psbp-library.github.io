@@ -4,16 +4,30 @@ import psbp.external.specification.types.&&
 
 import psbp.external.specification.program.Program
 
-import psbp.external.specification.functional.{ `z>-->(z&&z)`, `(z&&y)>-->z` , `(z&&y&&x)>-->(y&&x)` }
+import psbp.external.specification.functional.{ 
+  `z>-->(z&&z)`
+  , `(z&&y)>-->z` 
+  , `(z&&y&&x)>-->(y&&x)` }
 
-def `construct using &&&`[>-->[- _, + _]: Program, Z, Y, X] 
-  (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =
+def `construct using &&&`[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `z>-->y`: Z >--> Y
+  , `z>-->x`: => Z >--> X
+): Z >--> (Y && X) =
   `z>-->(z&&z)` >--> (`z>-->y` &&& `z>-->x`)
 
-def constructUsingLet[>-->[- _, + _]: Program, Z, Y, X] 
-  (`z>-->y`: Z >--> Y, `z>-->x`: => Z >--> X): Z >--> (Y && X) =
+def constructUsingLet[
+  Z, Y, X
+  , >-->[- _, + _]: Program
+](
+  `z>-->y`: Z >--> Y
+  , `z>-->x`: => Z >--> X
+): Z >--> (Y && X) =
  
-  val program: Program[>-->] = summon[Program[>-->]]
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
   import program.Let
 
   Let {

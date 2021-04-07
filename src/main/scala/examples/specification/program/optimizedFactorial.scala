@@ -4,7 +4,6 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.functional.{ 
   `(z&&y)>-->z` => argument
-  , `z>-->z` => accumulator 
 }
 
 import examples.specification.functional.{ 
@@ -19,6 +18,11 @@ import examples.specification.program.optimize
 def optimizedFactorial[
   >-->[- _, + _]: Program
 ]: BigInt >--> BigInt =
+
+  val program: Program[>-->] = 
+    summon[Program[>-->]]
+  import program.{ `z>-->z` => accumulator } 
+
   optimize(
     accumulatorInitializer = one, 
     argumentPredicate = isZero, 

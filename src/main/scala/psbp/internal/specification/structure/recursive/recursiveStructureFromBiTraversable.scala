@@ -27,13 +27,13 @@ private[psbp] given recursiveStructureFromBiTraversable[
   ] : RecursiveStructure[A, R, >-->] with
 
   val classification: Classification[>-->] = summon[Classification[>-->]]
-  import classification.identity
+  import classification.{ `z>-->z` => `y>-->y` }
 
   val recursion: Recursion[R, >-->] = summon[Recursion[R, >-->]]
   import recursion.{ `a[r[a]]>-->r[a]`, `r[a]>-->a[r[a]]` }
 
   override private[psbp] def initialTraverser[Y]: Y >--> Y = 
-    identity
+    `y>-->y`
 
   override private[psbp] def initialFolder[Y]: Folder[Y, R[[X] =>> A[Y, X]]] =
     `a[r[a]]>-->r[a]`
