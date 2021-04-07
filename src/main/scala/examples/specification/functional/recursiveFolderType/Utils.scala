@@ -6,7 +6,7 @@ import scala.collection.immutable.Seq
 
 import psbp.external.specification.program.Functional
 
-import psbp.external.specification.aggregatable.recursive.RecursiveFolderType
+import psbp.external.specification.structure.recursive.RecursiveFolderType
 
 import psbp.external.implementation.list.List
 

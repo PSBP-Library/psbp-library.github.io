@@ -79,7 +79,7 @@ import  psbp.external.specification.types.||
 
 import ||.{Left, Right}
 
-import psbp.internal.implementation.aggregatable.recursive.{
+import psbp.internal.implementation.structure.recursive.{
   mkNone
 }
 

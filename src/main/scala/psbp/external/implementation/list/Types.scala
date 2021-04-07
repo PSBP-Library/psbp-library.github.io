@@ -1,6 +1,6 @@
 package psbp.external.implementation.list
 
-import psbp.internal.implementation.aggregatable.recursive.{ 
+import psbp.internal.implementation.structure.recursive.{ 
   Sum
   , None
   , Product
@@ -14,7 +14,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.recursion.Recursion
 
-import psbp.external.specification.aggregatable.recursive.Recursive
+import psbp.external.specification.structure.recursive.Recursive
 
 def recursiveListToList[
   Z

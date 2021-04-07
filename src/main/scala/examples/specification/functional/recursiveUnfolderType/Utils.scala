@@ -6,7 +6,7 @@ import scala.collection.immutable.Seq
 
 import psbp.external.specification.program.Functional
 
-import psbp.external.specification.aggregatable.recursive.RecursiveUnfolderType
+import psbp.external.specification.structure.recursive.RecursiveUnfolderType
 
 import psbp.external.implementation.list.List
 

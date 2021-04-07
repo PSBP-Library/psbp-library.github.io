@@ -7,7 +7,7 @@ import psbp.external.implementation.rec.{
   , `a[rec[a]]=>rec[a]`
   }
 
-import psbp.external.specification.aggregatable.recursive.Recursive
+import psbp.external.specification.structure.recursive.Recursive
 
 import psbp.external.implementation.list.List
 
