@@ -9,6 +9,7 @@ import psbp.external.specification.function.foldSum
 
 import psbp.external.specification.program.Program
 
+
 import psbp.internal.specification.computation.Computation
 
 private[psbp] given programFromComputation[
@@ -22,6 +23,10 @@ private[psbp] given programFromComputation[
   private type `=>C`[-Z, +Y] = Z => C[Y]
 
   // defined
+
+  override def `z>-->z`[Z]: Z `=>C` Z =
+    z =>
+      result(z)
 
   private[psbp] override def toProgram[Z, Y]: (Z => Y) => Z `=>C` Y = 
     `z=>y` => 

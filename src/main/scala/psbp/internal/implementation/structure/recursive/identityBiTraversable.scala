@@ -6,26 +6,26 @@ import scala.{
   Predef => function 
 }
 
-import psbp.external.specification.program.Functional
+import psbp.external.specification.program
 
 import psbp.external.specification.structure.Traversable 
 
 import psbp.internal.specification.structure.BiTraversable
 
-given identityBiTraversable[>-->[- _, + _]: Functional]: BiTraversable[Identity, >-->] with
+given identityBiTraversable[>-->[- _, + _]: program.Identity]: BiTraversable[Identity, >-->] with
 
-  private val functional: Functional[>-->] = summon[Functional[>-->]]
+  private val identity_ : program.Identity[>-->] = summon[program.Identity[>-->]]
 
   override private[psbp] def leftTraversable[X]: Traversable[[Y] =>> Identity[Y, X], >-->] =
     new {
       override def traverse[Z, Y]: (Z >--> Y) => X >--> X =
         _ =>
-          functional.identity
+          identity_.identity
     }
    
   override private[psbp] def rightTraversable[X]: Traversable[[Y] =>> Identity[X, Y], >-->] =
     new {
       override def traverse[Z, Y]: (Z >--> Y) => Z >--> Y =
-        function.identity
+        function.identity[Z >--> Y]
     }
         

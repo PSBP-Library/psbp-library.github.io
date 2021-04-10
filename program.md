@@ -59,6 +59,8 @@ So why not giving it the name `` `z>-->z` ``?
 
 `Identity` also defines some useful synonyms of `` `z>-->z` ``, especially for dealing with other types, like the name `` `y>-->y` `` for dealing with type `Y`.
 
+# UNTIL HERE
+
 ### `Functional`
 
 ```scala

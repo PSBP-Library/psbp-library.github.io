@@ -2,17 +2,11 @@ package psbp.external.specification.program
 
 import psbp.external.specification.function.`z=>z`
 
-trait Functional[>-->[- _, + _]] 
-  extends Identity[>-->]:
+trait Functional[>-->[- _, + _]]: 
 
   // declared
 
   private[psbp] def toProgram[Z, Y]: (Z => Y) => Z >--> Y
-
-  // defined
-
-  override def `z>-->z`[Z]: Z >--> Z =
-    toProgram(`z=>z`)  
 
   // defined extensions
 
