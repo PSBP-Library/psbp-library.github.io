@@ -11,7 +11,7 @@ import psbp.external.specification.structure.recursive.Recursive
 
 import psbp.external.implementation.list.List
 
-type RecursiveList[+Z] = Recursive[Rec][List][Z]
+type RecursiveList[+Z] = Recursive[Rec, List][Z]
 
 def listToRecursiveList[Z]: List[Z, RecursiveList[Z]] => RecursiveList[Z] = 
   `a[rec[a]]=>rec[a]`

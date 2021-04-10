@@ -21,13 +21,22 @@ import Free._
 
 import psbp.internal.specification.computation.Computation
 
-private[psbp] def foldFree[Z, C[+ _]: Computation](fcz: FreeTransformed[C][Z]): C[Z] =
+private[psbp] def foldFree[
+  Z
+  , C[+ _]: Computation
+](
+  fcz: FreeTransformed[C][Z]
+ ): C[Z] =
 
   type F[+Z] = C[Z]
   type T[+Z] = FreeTransformed[F][Z]
  
-  val computationF: Computation[F] = summon[Computation[F]]
-  import computationF.{ result => resultF, bind => bindF } 
+  val computationF: Computation[F] = 
+    summon[Computation[F]]
+  import computationF.{ 
+    result => resultF
+    , bind => bindF
+  } 
 
   fcz match {
     case Transform(fz) => 

@@ -2,16 +2,17 @@ package psbp.internal.implementation.structure.recursive
 
 import scala.language.postfixOps
 
-import psbp.external.specification.program.Program
+import scala.{ 
+  Predef => function 
+}
+
 import psbp.external.specification.program.Functional
 
-import psbp.external.specification.structure.{ Traversable }
+import psbp.external.specification.structure.Traversable 
 
-import psbp.internal.specification.structure.{ BiTraversable }
+import psbp.internal.specification.structure.BiTraversable
 
-import scala.{ Predef => function }
-
-given identityBiTraversable[>-->[- _, + _]: Program]: BiTraversable[Identity, >-->] with
+given identityBiTraversable[>-->[- _, + _]: Functional]: BiTraversable[Identity, >-->] with
 
   private val functional: Functional[>-->] = summon[Functional[>-->]]
 

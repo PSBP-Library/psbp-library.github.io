@@ -10,7 +10,9 @@ import psbp.internal.specification.computation.transformation.Transformation
 
 import Free._
 
-private[psbp] given freeTransformedComputation[C[+ _]]: Transformation[C, FreeTransformed[C]] with Computation[FreeTransformed[C]] with
+private[psbp] given freeTransformedComputation[
+  C[+ _]]: Transformation[C, FreeTransformed[C]
+] with Computation[FreeTransformed[C]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = FreeTransformed[F][Z] 
@@ -25,5 +27,8 @@ private[psbp] given freeTransformedComputation[C[+ _]]: Transformation[C, FreeTr
     z =>
       Result(z)
 
-  override private[psbp] def bind[Z, Y] (tz: T[Z], `z=>ty` : => Z => T[Y]): T[Y] = 
+  override private[psbp] def bind[Z, Y](
+    tz: T[Z]
+    , `z=>ty` : => Z => T[Y]
+  ): T[Y] = 
     Bind(tz, `z=>ty`) 

@@ -15,4 +15,4 @@ trait Condition[>-->[- _, + _]]:
   
   extension [Z, Y, X] (`y>-->z`: => Y >--> Z) 
     def ||(`x>-->z`: => X >--> Z): (Y || X) >--> Z =
-    conditionally(`y>-->z`, `x>-->z`)
+      conditionally(`y>-->z`, `x>-->z`)

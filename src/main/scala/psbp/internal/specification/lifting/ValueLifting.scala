@@ -1,7 +1,7 @@
-// package psbp.internal.specification.lifting
+package psbp.internal.specification.lifting
 
-// private[psbp] trait ValueLifting[C[+ _]]:
+private[psbp] trait ValueLifting[C[+ _]]:
 
-//   // declared
+  // declared
 
-//   private[psbp] def liftValue[Z]: Z => C[Z]
+  private[psbp] def liftValue[Z]: Z => C[Z]

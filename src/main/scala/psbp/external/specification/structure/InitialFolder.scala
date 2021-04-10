@@ -1,6 +1,7 @@
 package psbp.external.specification.structure
 
-private[psbp] trait InitialFolder[A[+ _]] extends FolderType:
+private[psbp] trait InitialFolder[A[+ _]] 
+  extends FolderType:
 
   // declared
 

@@ -22,7 +22,7 @@ def recursiveIntListProducer[
   , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
                   : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
-]: Unit >--> Recursive[R][List][BigInt] =
+]: Unit >--> Recursive[R, List][BigInt] =
 
   object producerFunction {
 

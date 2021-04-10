@@ -45,10 +45,16 @@ def `(z&&y&&x)>-->(y&&x)`[
 ]: (Z && Y && X) >--> (Y && X) =
   function.`(z&&y&&x)=>(y&&x)` asProgram
     
-def `z>-->(z&&u)`[>-->[- _, + _]: Functional, Z]: Z >--> (Z && Unit) =
+def `z>-->(z&&u)`[
+  Z 
+  , >-->[- _, + _]: Functional
+]: Z >--> (Z && Unit) =
   function.`z=>(z&&u)` asProgram
 
-def `(y&&u)>-->y`[>-->[- _, + _]: Functional, Y]: (Y && Unit) >--> Y =
+def `(y&&u)>-->y`[
+  Y
+  , >-->[- _, + _]: Functional
+]: (Y && Unit) >--> Y =
   function.`(y&&u)=>y` asProgram 
 
 // condition

@@ -1,9 +1,9 @@
-// package psbp.internal.specification.lifting
+package psbp.internal.specification.lifting
 
-// import psbp.external.specification.types.&&
+import psbp.external.specification.types.&&
 
-// private[psbp] trait ApplicationLifting[C[+ _]]:
+private[psbp] trait ApplicationLifting[C[+ _]]:
 
-//   // declared
+  // declared
 
-//   private[psbp] def liftApply[Z, Y]: (C[Z => Y] && C[Z]) => C[Y]
+  private[psbp] def liftApply[Z, Y]: (C[Z => Y] && C[Z]) => C[Y]

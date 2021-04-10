@@ -20,7 +20,7 @@ def recursiveListToSeq[
   , R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
                   : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
-]: Recursive[R][List][Z] >--> Seq[Z] = 
+]: Recursive[R, List][Z] >--> Seq[Z] = 
     
   val structure: RecursiveStructure[List, R, >-->] = summon[RecursiveStructure[List, R, >-->]]
   import structure.fold

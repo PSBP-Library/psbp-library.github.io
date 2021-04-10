@@ -6,9 +6,11 @@ import psbp.external.specification.program.state.State
 
 import psbp.external.specification.functional.`z>-->u`
 
-trait ProgramWithState[S, >-->[- _, + _]] extends Program[>-->] with State[S, >-->]:
+trait ProgramWithState[S, >-->[- _, + _]] 
+  extends Program[>-->] 
+  with State[S, >-->]:
 
-  private implicit val program: Program[>-->] = this
+  private given program: Program[>-->] = this
 
   // defined
 

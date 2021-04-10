@@ -1,6 +1,9 @@
-package psbp.internal.specification.computation
+package psbp.external.implementation.computation
 
-import psbp.external.specification.types.{ &&, || }
+import psbp.external.specification.types.{ 
+  &&
+  , ||
+}
 
 import psbp.external.specification.function.foldSum
 
@@ -8,9 +11,12 @@ import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 
-private[psbp] given programFromComputation[C[+ _]: Computation]: Program[[Z, Y] =>> Z => C[Y]] with
+private[psbp] given programFromComputation[
+  C[+ _]: Computation]: Program[[Z, Y] =>> Z => C[Y]
+] with
   
-  private val computation: Computation[C] = summon[Computation[C]]
+  private val computation: Computation[C] = 
+    summon[Computation[C]]
   import computation.result
 
   private type `=>C`[-Z, +Y] = Z => C[Y]

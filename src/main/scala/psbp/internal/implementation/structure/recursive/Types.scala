@@ -1,6 +1,9 @@
 package psbp.internal.implementation.structure.recursive
 
-import psbp.external.specification.types.{ &&, || }
+import psbp.external.specification.types.{ 
+  &&
+  , ||
+}
 
 private[psbp] type None[+Y, +X] = Unit
 

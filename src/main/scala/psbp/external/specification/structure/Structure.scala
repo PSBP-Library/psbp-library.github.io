@@ -1,31 +1,35 @@
 package psbp.external.specification.structure
 
+import scala.annotation.targetName
+
 import psbp.external.specification.types.&&
 
 private[psbp] trait Structure[
   A[+ _]
   , >-->[- _, + _]
-] 
-  extends Traversable[A, >-->] 
-  with Foldable[A, >-->] 
-  with Unfoldable[A, >-->]
+] extends Traversable[A, >-->] 
   with InitialTraverser[>-->]
+  with Foldable[A, >-->] 
   with InitialFolder[A] 
+  with Unfoldable[A, >-->]
   with InitialUnfolder[A]:
 
   // declared
 
-  private[psbp] def fuseFolder[Z, Y, X]: (Z >--> Y && Folder[Y, X]) => Folder[Z, X]
+  @targetName("fuseFolder")
+  private[psbp] def fuse[Z, Y, X]: (Z >--> Y && Folder[Y, X]) => Folder[Z, X]
 
-  private[psbp] def fuseUnfolder[X, Y, Z]: (Unfolder[X, Y] && Y >--> Z) => Unfolder[X, Z]
+  
+  @targetName("fuseUnfolder")
+  private[psbp] def fuse[X, Y, Z]: (Unfolder[X, Y] && Y >--> Z) => Unfolder[X, Z]
 
   // defined
 
   def aggregate[Z, Y, X]: (Z >--> Y && Folder[Y, X]) => A[Z] >--> X =
-    fuseFolder andThen fold
+    fuse andThen fold
 
   def unaggregate[X, Y, Z]: (Unfolder[X, Y] && Y >--> Z) => X >--> A[Z] =
-    fuseUnfolder andThen unfold    
+    fuse andThen unfold    
 
   override def traverse[Z, Y]: Z >--> Y => A[Z] >--> A[Y] =
     aggregate(_, initialFolder)

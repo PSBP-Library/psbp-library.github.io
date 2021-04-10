@@ -1,18 +1,18 @@
 package psbp.internal.implementation.structure.recursive
 
-import scala.{ Predef => function }
+import scala.{ 
+  Predef => function
+}
 
 import scala.language.postfixOps
 
-import psbp.external.specification.program.Program
-
 import psbp.external.specification.program.Functional
 
-import psbp.external.specification.structure.{ Traversable }
+import psbp.external.specification.structure.Traversable
 
-import psbp.internal.specification.structure.{ BiTraversable }
+import psbp.internal.specification.structure.BiTraversable
 
-given constantBiTraversable[>-->[- _, + _]: Program]: BiTraversable[Constant, >-->] with
+given constantBiTraversable[>-->[- _, + _]: Functional]: BiTraversable[Constant, >-->] with
 
   override private[psbp] def leftTraversable[X]: Traversable[[Y] =>> Constant[Y, X], >-->] =
     new {

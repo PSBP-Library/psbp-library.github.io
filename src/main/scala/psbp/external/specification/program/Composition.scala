@@ -13,4 +13,4 @@ trait Composition[>-->[- _, + _]]:
   
   extension [Z, Y, X] (`z>-->y`: Z >--> Y) 
     def >-->(`y>-->x`: => Y >--> X): Z >--> X =
-    andThen(`z>-->y`, `y>-->x`)
+      andThen(`z>-->y`, `y>-->x`)

@@ -1,7 +1,14 @@
 package psbp.external.specification.structure
 
-private[psbp] trait InitialTraverser[>-->[- _, + _]]:
+import psbp.external.specification.program.Classification
 
-  // declared
+private[psbp] trait InitialTraverser[>-->[- _, + _]: Classification]:
 
-  private[psbp] def initialTraverser[Y]: Y >--> Y
+  private val classification: Classification[>-->] =
+    summon[Classification[>-->]]
+  import classification.`y>-->y`  
+
+  // defined
+
+  private[psbp] def initialTraverser[Y]: Y >--> Y =
+    `y>-->y`

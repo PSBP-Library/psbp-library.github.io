@@ -6,11 +6,17 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.parallel.Parallel
 
-import psbp.external.specification.functional.{ `z>-->(z&&u)`, `(y&&u)>-->y`, `z>-->(z&&z)` }
+import psbp.external.specification.functional.{ 
+  `z>-->(z&&u)`
+  , `(y&&u)>-->y`
+  , `z>-->(z&&z)`
+}
 
-trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-->]:
+trait ProgramWithParallel[>-->[- _, + _]] 
+  extends Program[>-->] 
+  with Parallel[>-->]:
 
-  private implicit val program: Program[>-->] = this
+  private given program: Program[>-->] = this
 
   // defined
   
@@ -19,5 +25,6 @@ trait ProgramWithParallel[>-->[- _, + _]] extends Program[>-->] with Parallel[>-
 
   // defined extensions
 
-  extension [Z, Y, X] (`z>-->y`: Z >--> Y) def |&&|(`z>-->x`: Z >--> X): Z >--> (Y && X) =
-    `z>-->(z&&z)` >--> (`z>-->y` |&&&| `z>-->x`)
+  extension [Z, Y, X] (`z>-->y`: Z >--> Y) 
+    def |&&|(`z>-->x`: Z >--> X): Z >--> (Y && X) =
+      `z>-->(z&&z)` >--> (`z>-->y` |&&&| `z>-->x`)

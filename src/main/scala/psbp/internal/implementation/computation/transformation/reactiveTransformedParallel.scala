@@ -1,14 +1,30 @@
 package psbp.internal.implementation.computation.transformation
 
-import akka.actor.typed.{ ActorSystem, ActorRef, Behavior }
+import akka.actor.typed.{ 
+  ActorSystem
+  , ActorRef
+  , Behavior 
+}
 
-import akka.actor.typed.scaladsl.{ ActorContext, Behaviors }
+import akka.actor.typed.scaladsl.{ 
+  ActorContext
+  , Behaviors
+}
 
-import Behaviors.{ receive, stopped }
+import Behaviors.{ 
+  receive
+  , stopped 
+}
 
-import ch.qos.logback.classic.{ Logger, LoggerContext, Level }
+import ch.qos.logback.classic.{ 
+  Logger
+  , LoggerContext, Level
+}
 
-import Level.{ INFO, ERROR}
+import Level.{ 
+  INFO
+  , ERROR
+}
 
 import org.slf4j.LoggerFactory.getILoggerFactory
 
@@ -24,7 +40,7 @@ import psbp.internal.implementation.computation.transformation.ReactiveTransform
 
 val packageName = "psbp.internal.implementation.computation.transformation"
 
-def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
+def logInfo[Z](actorContext: ActorContext[Z])(message: String): Unit = {
   val logger: Logger = getILoggerFactory().asInstanceOf[LoggerContext].getLogger(packageName);
   logger.setLevel(INFO);
   actorContext.log.info(message)
@@ -32,15 +48,24 @@ def log[Z](actorContext: ActorContext[Z])(message: String): Unit = {
 }
 
 private[psbp] given reactiveTransformedParallel[
-  C[+ _]: Computation]: Parallel[[Z, Y] =>> Z => ReactiveTransformed[C][Y]] with
+  C[+ _]: Computation]
+        : Parallel[[Z, Y] =>> Z => ReactiveTransformed[C][Y]
+] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = ReactiveTransformed[C][Z]
   
-  private val computation: Computation[F] = summon[Computation[F]]
-  import computation.{ result => resultF, bind => bindF }
+  private val computation: Computation[F] = 
+    summon[Computation[F]]
+  import computation.{ 
+    result => resultF
+    , bind => bindF 
+  }
   
-  override private[psbp] def parallel[Z, Y, X, W](`z=>tx`: Z => T[X], `y=>tw`: Y => T[W]): (Z && Y) => T[X && W] =
+  override private[psbp] def parallel[Z, Y, X, W](
+    `z=>tx`: Z => T[X]
+    , `y=>tw`: Y => T[W]
+  ): (Z && Y) => T[X && W] =
     (z, y) => 
       `f(x,w)=>u` =>
         val `(x,w)=>f(x,w)` = resultF[(X && W)]
@@ -62,8 +87,8 @@ private[psbp] given reactiveTransformedParallel[
   
           def apply(reactor: ActorRef[React[X, W]]): Behavior[LeftAct.type] =
             receive { (context, message) =>
-              val logging = log(context)
-              logging(s"leftActor received LeftAct")
+              val info = logInfo(context)
+              info(s"leftActor received LeftAct")
               val tx: T[X] = `z=>tx`(z)
               tx { 
                 fx =>
@@ -81,8 +106,8 @@ private[psbp] given reactiveTransformedParallel[
   
           def apply(reactor: ActorRef[React[X, W]]): Behavior[RightAct.type] =
             receive { (context, message) =>
-              val logging = log(context)
-              logging(s"rightActor received RightAct")
+              val info = logInfo(context)
+              info(s"rightActor received RightAct")
               val tw: T[W] = `y=>tw`(y)
               tw { 
                 fw =>
@@ -106,8 +131,8 @@ private[psbp] given reactiveTransformedParallel[
                 case LeftReact(x) => 
                   `option[w]` match {
                     case Some(w) =>
-                      val logging = log(context)
-                      logging(s"reactor received both LeftReact($x) and RightReact($w)")
+                      val info = logInfo(context)
+                      info(s"reactor received both LeftReact($x) and RightReact($w)")
                       `(x,w)=>u`(x,w)
                       stopped
                     case None => 
@@ -116,8 +141,8 @@ private[psbp] given reactiveTransformedParallel[
                 case RightReact(w) => 
                   `option[x]` match {
                     case Some(x) => 
-                      val logging = log(context)
-                      logging(s"reactor received both RightReact($w) and LeftReact($x)")
+                      val info = logInfo(context)
+                      info(s"reactor received both RightReact($w) and LeftReact($x)")
                       `(x,w)=>u`(x,w)
                       stopped
                     case None => 
@@ -169,8 +194,8 @@ private[psbp] given reactiveTransformedParallel[
             receive { (context, message) =>
               message match {
                 case React(y) => 
-                  val logging = log(context)
-                  logging(s"reactor received React($y)")
+                  val info = logInfo(context)
+                  info(s"reactor received React($y)")
                   `y=>u`(y)
                   stopped
               }            

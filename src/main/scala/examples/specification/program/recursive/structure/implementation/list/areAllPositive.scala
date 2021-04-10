@@ -19,7 +19,7 @@ def areAllPositive[
   R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
                   : [>-->[- _, + _]] =>> RecursiveStructure[List, R, >-->]
-]: Recursive[R][List][BigInt] >--> Boolean = 
+]: Recursive[R, List][BigInt] >--> Boolean = 
 
   val structure: RecursiveStructure[List, R, >-->] = 
     summon[RecursiveStructure[List, R, >-->]]

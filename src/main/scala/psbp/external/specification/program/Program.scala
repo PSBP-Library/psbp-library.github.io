@@ -20,21 +20,24 @@ trait Program[>-->[- _, + _]]
   with Construction[>-->]
   with Condition[>-->]:
 
-    private implicit val program: Program[>-->] = this
+    private given program: Program[>-->] = this
 
     // defined extensions
 
     extension [Z, Y, X, W] (`z>-->x`: Z >--> X) 
       def &&&(`y>-->w`: => Y >--> W): (Z && Y) >--> (X && W) =
-      (`(z&&y)>-->z` >--> `z>-->x`) && (`(z&&y)>-->y` >--> `y>-->w`)  
+        (`(z&&y)>-->z` >--> `z>-->x`) && (`(z&&y)>-->y` >--> `y>-->w`)  
 
     extension [Z, Y, X, W] (`x>-->z`: => X >--> Z) 
       def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
-      (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
+        (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
     extension [Z, Y] (program: Z >--> Y) 
-      def toMainWith(producer: Unit >--> Z, consumer: (Z && Y) >--> Unit) =
-      producer 
+      def toMainWith(
+        producer: Unit >--> Z
+        , consumer: (Z && Y) >--> Unit
+      ) =
+        producer 
         >--> 
           {
             Let { 
