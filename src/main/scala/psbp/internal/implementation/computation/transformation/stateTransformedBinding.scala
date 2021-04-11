@@ -29,16 +29,16 @@ private[psbp] given stateTransformedBinding[
   override private[psbp] val `f~>t`: F ~> T = new {
     def apply[Z]: F[Z] => T[Z] =
       fz =>
-        s =>
-          bindF(fz, z => resultF((s, z)))
+        val gs: S = summon[S]
+        bindF(fz, z => resultF((gs, z)))
   }
 
   override private[psbp] def bind[Z, Y](
     tz: T[Z]
     , `z=>ty`: => Z => T[Y]
   ): T[Y] =
-    s =>
-      bindF(tz(s), (s, z) => `z=>ty`(z)(s))    
+    val gs = summon[S]
+    bindF(tz, (s, z) => { given gs:S = s; `z=>ty`(z) })    
 
 
       

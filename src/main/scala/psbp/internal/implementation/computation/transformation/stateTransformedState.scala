@@ -25,12 +25,12 @@ private[psbp] given stateTransformedState[
 
   override private[psbp] def `u>-->s`: Unit `=>T` S =
     _ => 
-      s =>
-        resultF((s, s))
+      val s = summon[S]
+      resultF((s, s))
 
   override private[psbp] def `s>-->u`: S `=>T` Unit =
-    s => 
-      _ =>
-        resultF((s, ()))
+    s =>
+      given gs: S = s
+        resultF((gs, ()))
 
       

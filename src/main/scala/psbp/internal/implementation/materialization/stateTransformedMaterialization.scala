@@ -43,7 +43,8 @@ private[psbp] given stateTransformedMaterialization[
   override val materialize: (Unit `=>T` Unit) => Z => C[Y] =
     `u=>tu` =>
       z =>
+        given gs: S = initialS
         bindF(
-          `u=>tu`(())(initialS)
+          `u=>tu`(())
           , (s, _) => resultF(materializeF(resultF)(z))
         )

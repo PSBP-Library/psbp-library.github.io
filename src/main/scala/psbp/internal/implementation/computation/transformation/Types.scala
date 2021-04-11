@@ -63,4 +63,4 @@ private[psbp] def foldFree[
 
 // StateTransformed
 
-private[psbp] type StateTransformed[S, C[+ _]] = [Y] =>> S => C[(S, Y)]  
+private[psbp] type StateTransformed[S, C[+ _]] = [Y] =>> S ?=> C[(S, Y)]  
