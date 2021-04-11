@@ -11,5 +11,9 @@ import psbp.external.implementation.active.{
 
 import examples.specification.program.effectful.mainOptimizedFactorial
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit
+
 @main def optimizedFactorial(args: String*): Unit =
-  mainOptimizedFactorial materialized ()
+  mainOptimizedFactorial materialized // ()

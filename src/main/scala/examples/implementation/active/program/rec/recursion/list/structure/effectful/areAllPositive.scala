@@ -17,6 +17,10 @@ import psbp.external.implementation.list.listRecursiveStructure
 
 import examples.specification.program.recursive.structure.implementation.list.effectful.mainAreAllPositive
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit
+
 @main def areAllPositive(args: String*): Unit =
-  mainAreAllPositive materialized ()
+  mainAreAllPositive materialized // ()
 

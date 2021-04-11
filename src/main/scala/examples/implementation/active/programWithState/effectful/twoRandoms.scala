@@ -27,5 +27,9 @@ given initialSeedState: Initial[Seed] =
     override val s = 1L 
   }
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit  
+
 @main def twoRandoms(args: String*): Unit =
-  mainTwoRandoms materialized ()
+  mainTwoRandoms materialized // ()

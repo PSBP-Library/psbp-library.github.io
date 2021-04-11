@@ -11,6 +11,10 @@ import psbp.external.implementation.active.{
 
 import examples.specification.program.effectful.mainOptimizedFibonacci
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit
+
 @main def optimizedFibonacci(args: String*): Unit =
-  mainOptimizedFibonacci materialized ()
+  mainOptimizedFibonacci materialized // ()
 

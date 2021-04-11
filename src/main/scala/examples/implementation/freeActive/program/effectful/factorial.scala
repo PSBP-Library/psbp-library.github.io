@@ -11,6 +11,10 @@ import psbp.external.implementation.freeActive.{
 
 import examples.specification.program.effectful.mainFactorial
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit 
+
 @main def factorial(args: String*): Unit =
-  mainFactorial materialized ()
+  mainFactorial materialized // ()
 

@@ -11,5 +11,9 @@ import psbp.external.implementation.active.{
 
 import examples.specification.program.effectful.mainFibonacci
 
+import scala.language.postfixOps
+
+import examples.implementation.givenUnit
+
 @main def fibonacci(args: String*): Unit =
-  mainFibonacci materialized ()
+  mainFibonacci materialized // ()
