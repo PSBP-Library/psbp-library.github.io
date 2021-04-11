@@ -1,7 +1,5 @@
 package psbp.external.specification.program
 
-import psbp.external.specification.function.`z=>z`
-
 trait Functional[>-->[- _, + _]]: 
 
   // declared

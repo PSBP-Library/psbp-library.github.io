@@ -16,7 +16,8 @@ import psbp.external.specification.functional.{
 }
 
 trait Program[>-->[- _, + _]]
-  extends FunctionalClassification[>-->]
+  extends Functional[>-->]
+  with Classification[>-->]
   with Construction[>-->]
   with Condition[>-->]:
 

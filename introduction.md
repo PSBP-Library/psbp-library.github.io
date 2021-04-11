@@ -245,6 +245,12 @@ By abuse of notation, definitions, `def`'s or `val`'s, that are defined in terms
 
 Note that they should be referred to as a *program specifications* instead.
 
+Correspondingly, by abuse of notation, *program specification implementations* are referred to as *program implementations*. 
+
+Note that they should be referred to as a *programs* instead.
+
+This abuse of notation greatly simplifies the content of the course.
+
 By the way, sorry for overloading the word "program".
 
 The course uses the word "code" for an artifact that is produced by a programmer.
@@ -454,7 +460,7 @@ A program of type `Z >--> Y` is, somehow, combined with a *producer* of type `Un
 
 Main programs of type `Unit >--> Unit` are *materialized* to functions of type `Z => Y`.
 
-Eventually, materialized main programs are used in `@main` `Scala` code where, using dependency injection of implementation `given`'s by `import`, it is decided 
+Eventually, materialized implemented main programs are used in `@main` `Scala` code where dependency injection of implementation `given`'s by `import` chooses
 
 - how programs transform their argument to a result and how they perform side effects,
 - how main programs are materialized.

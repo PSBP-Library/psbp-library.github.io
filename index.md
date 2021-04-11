@@ -98,9 +98,9 @@ The design `PSBP` library is, somewhat shamelessly, strongly based upon the desi
 
 But, compared to the `FP` language, the `PSBP` library also has some benefits.
 
-The main benefit of the `PSBP` library is that specified programs make use of specified side-effects, referred to as effects.
+The main benefit of the `PSBP` library is that specified programs can make use of specified side-effects, referred to as effects.
 
-Side effects are inevitable anyway, but, instead of happening in the middle of code, they can be pushed to the border of materialized implemented `@main` `Scala` code.
+Side effects are inevitable anyway, but, instead of happening in the middle of code, they can be pushed to the border of `@main` `Scala` code that makes use of a materialized implemented main program.
 
 Apart from this main benefit, it has the following extra benefits
 

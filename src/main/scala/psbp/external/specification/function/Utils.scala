@@ -10,10 +10,6 @@ import psbp.external.specification.types.{
 
 // functional
 
-def `z=>z`[Z]: Z => Z = 
-  z =>
-    z 
-
 def `z=>u`[Z]: Z => Unit = 
   z =>
     ()  
