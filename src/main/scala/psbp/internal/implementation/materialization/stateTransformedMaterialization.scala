@@ -40,11 +40,11 @@ private[psbp] given stateTransformedMaterialization[
     s => initialS 
   }
 
-  override val materialize: (Unit `=>T` Unit) => Z => C[Y] =
+  override val materialize: (Unit `=>T` Unit) => Z ?=> C[Y] =
     `u=>tu` =>
-      z =>
-        given gs: S = initialS
-        bindF(
-          `u=>tu`(())
-          , (s, _) => resultF(materializeF(resultF)(z))
-        )
+      val z: Z = summon[Z]
+      given gs: S = initialS
+      bindF(
+        `u=>tu`(())
+        , (s, _) => resultF(materializeF(resultF))
+      )

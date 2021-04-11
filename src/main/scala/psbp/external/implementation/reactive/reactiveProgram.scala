@@ -5,20 +5,20 @@ import psbp.external.specification.program.Program
 import psbp.external.implementation.active.Active
 
 import psbp.external.implementation.active.{ 
-  activeResulting
-  , activeBinding 
+  givenActiveResulting
+  , givenActiveBinding 
 }
 
 import psbp.internal.specification.computation.Binding
 
-import psbp.external.implementation.computation.programFromComputation
+import psbp.external.implementation.computation.givenProgramFromComputation
 
-import psbp.internal.specification.computation.computationFromResultingAndBinding
+import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
 
-import psbp.internal.specification.computation.transformation.resultingFromTransformation
+import psbp.internal.specification.computation.transformation.givenResultingFromTransformation
 
 import psbp.internal.implementation.computation.transformation.reactiveTransformedBinding
 
-given reactiveBinding: Binding[Reactive] = reactiveTransformedBinding[Active]
+given givenReactiveBinding: Binding[Reactive] = reactiveTransformedBinding[Active]
 
-given reactiveProgram: Program[`=>R`] = programFromComputation[Reactive]
+given givenReactiveProgram: Program[`=>R`] = givenProgramFromComputation[Reactive]

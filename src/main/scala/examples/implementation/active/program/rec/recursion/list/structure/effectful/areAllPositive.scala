@@ -1,26 +1,18 @@
 package examples.implementation.active.program.rec.recursion.list.structure.effectful
 
-import psbp.external.specification.program.Program
-
-import psbp.external.specification.materialization.Materialization
-
-import psbp.external.implementation.active.{
-  given Program
-  , given Materialization
+import psbp.external.implementation.active.{ 
+  givenActiveProgram
+  , givenActiveMaterialization
 }
+import psbp.external.implementation.rec.givenRecRecursion
 
-// given
-import psbp.external.implementation.rec.recRecursion
+import psbp.external.implementation.list.givenListRecursiveStructure
 
-// given
-import psbp.external.implementation.list.listRecursiveStructure
-
-import examples.specification.program.recursive.structure.implementation.list.effectful.mainAreAllPositive
-
-import scala.language.postfixOps
+import examples.specification.program.recursive.structure.implementation.list.effectful.materializedMainAreAllPositive
 
 import examples.implementation.givenUnit
 
 @main def areAllPositive(args: String*): Unit =
-  mainAreAllPositive materialized // ()
+  materializedMainAreAllPositive
+
 

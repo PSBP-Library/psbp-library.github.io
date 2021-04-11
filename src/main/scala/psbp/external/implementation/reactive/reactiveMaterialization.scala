@@ -2,18 +2,18 @@ package psbp.external.implementation.reactive
 
 import psbp.external.specification.materialization.Materialization
 
-import psbp.internal.specification.computation.computationFromResultingAndBinding
-
-import psbp.internal.implementation.computation.transformation.reactiveTransformedMaterialization
-
 import psbp.external.implementation.active.Active
 
 import psbp.external.implementation.active.{ 
-  activeResulting
-  , activeBinding
-  , activeMaterialization
+  givenActiveResulting
+  , givenActiveBinding
+  , givenActiveMaterialization
   , activeCoResulting
 }
 
-given reactiveMaterialization: Materialization[`=>R`, Unit, Unit] =
+import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
+
+import psbp.internal.implementation.materialization.reactiveTransformedMaterialization
+
+given givenReactiveMaterialization: Materialization[`=>R`, Unit, Unit] =
   reactiveTransformedMaterialization[Active, Unit, Unit]

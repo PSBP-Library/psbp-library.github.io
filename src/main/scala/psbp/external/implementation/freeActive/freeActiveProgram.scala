@@ -4,12 +4,10 @@ import psbp.external.specification.program.Program
 
 import psbp.external.implementation.active.Active
 
-import psbp.external.implementation.computation.programFromComputation
+import psbp.external.implementation.computation.givenProgramFromComputation
 
 import psbp.internal.specification.computation.Computation
 
 import psbp.internal.implementation.computation.transformation.freeTransformedComputation
 
-given freeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
-
-given freeActiveProgram: Program[`=>FA`] = programFromComputation[FreeActive]
+given givenFreeActiveProgram: Program[`=>FA`] = givenProgramFromComputation[FreeActive]

@@ -4,7 +4,7 @@ import psbp.internal.specification.computation.Resulting
 
 import psbp.internal.specification.naturalTransformation.~>
   
-private[psbp] given resultingFromTransformation[
+private[psbp] given givenResultingFromTransformation[
   F[+ _]: Resulting
   , T[+ _]: [T[+ _]] =>> Transformation[F, T]
 ]: Resulting[T] with   

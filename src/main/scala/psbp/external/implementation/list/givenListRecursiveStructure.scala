@@ -8,7 +8,7 @@ import psbp.internal.specification.structure.recursive.recursiveStructureFromBiT
 
 import psbp.external.specification.recursion.Recursion
 
-given listRecursiveStructure[
+given givenListRecursiveStructure[
   R[+_[+ _]]: [R[+_[+ _]]] =>> Recursion[R, >-->]
   , >-->[- _, + _]: Program
   ]: RecursiveStructure[List, R, >-->] = 

@@ -1,24 +1,14 @@
 package examples.implementation.active.programWithState.effectful
 
-import psbp.external.specification.program.Program
-
-import psbp.external.specification.program.state.State
-
 import psbp.external.specification.program.state.Initial
 
-import psbp.external.specification.materialization.Materialization
+import psbp.external.specification.programWithState.givenProgramWithState
 
-import psbp.external.implementation.stateActive.{
-  given Program
-  , given State
-  , given Materialization
+import psbp.external.implementation.stateActive.{ 
+  givenStateActiveProgram
+  , givenStateActiveState
+  , givenStateActiveMaterialization
 }
-
-// given
-import psbp.external.specification.programWithState.programWithState
-
-import examples.specification.programWithState.effectful.mainTwoRandoms
-
 
 import examples.specification.programWithState.Seed
   
@@ -27,9 +17,9 @@ given initialSeedState: Initial[Seed] =
     override val s = 1L 
   }
 
-import scala.language.postfixOps
-
-import examples.implementation.givenUnit  
+import examples.specification.programWithState.effectful.materializedMainTwoRandoms
+  
+import examples.implementation.givenUnit
 
 @main def twoRandoms(args: String*): Unit =
-  mainTwoRandoms materialized // ()
+  materializedMainTwoRandoms

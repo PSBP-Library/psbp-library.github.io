@@ -2,7 +2,7 @@ package psbp.external.implementation.active
 
 import psbp.internal.specification.computation.Binding
 
-given activeBinding: Binding[Active] with
+given givenActiveBinding: Binding[Active] with
 
   private[psbp] def bind[Z, Y](
     cz: Active[Z]

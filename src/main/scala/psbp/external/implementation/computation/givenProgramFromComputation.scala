@@ -12,7 +12,7 @@ import psbp.external.specification.program.Program
 
 import psbp.internal.specification.computation.Computation
 
-private[psbp] given programFromComputation[
+private[psbp] given givenProgramFromComputation[
   C[+ _]: Computation]: Program[[Z, Y] =>> Z => C[Y]
 ] with
   

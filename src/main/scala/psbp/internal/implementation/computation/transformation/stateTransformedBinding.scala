@@ -37,8 +37,8 @@ private[psbp] given stateTransformedBinding[
     tz: T[Z]
     , `z=>ty`: => Z => T[Y]
   ): T[Y] =
-    val gs = summon[S]
-    bindF(tz, (s, z) => { given gs:S = s; `z=>ty`(z) })    
+    // val gs = summon[S]
+    bindF(tz, (s, z) => { given gs: S = s; `z=>ty`(z) })    
 
 
       

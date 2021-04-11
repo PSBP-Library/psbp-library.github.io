@@ -1,15 +1,13 @@
 package examples.implementation.reactive.program.effectful
 
-import psbp.external.specification.program.Program
-
-import psbp.external.specification.materialization.Materialization
-
 import psbp.external.implementation.reactive.{ 
-  given Program
-  , given Materialization
+  givenReactiveProgram
+  , givenReactiveMaterialization
 }
 
-import examples.specification.program.effectful.mainFactorial
+import examples.specification.program.effectful.materializedMainFactorial
+
+import examples.implementation.givenUnit
 
 @main def factorial(args: String*): Unit =
-  mainFactorial materialized ()
+  materializedMainFactorial

@@ -4,7 +4,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.parallel.Parallel
 
-given programWithParallel[
+given givenProgramWithParallel[
   >-->[- _, + _]: Program
                 : Parallel
 ]: ProgramWithParallel[>-->] with

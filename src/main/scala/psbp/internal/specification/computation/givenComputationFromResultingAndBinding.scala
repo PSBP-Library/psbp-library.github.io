@@ -1,6 +1,6 @@
 package psbp.internal.specification.computation
 
-private[psbp] given computationFromResultingAndBinding[
+private[psbp] given givenComputationFromResultingAndBinding[
   C[+ _]: Resulting
         : Binding
 ]: Computation[C] with

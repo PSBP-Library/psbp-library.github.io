@@ -1,21 +1,17 @@
 package examples.implementation.reactive.programWithParallel.effectful
 
-import psbp.external.specification.program.Program
+import psbp.external.specification.programWithParallel.givenProgramWithParallel
 
-import psbp.external.specification.program.parallel.Parallel
-
-import psbp.external.specification.materialization.Materialization
-
-import psbp.external.implementation.reactive.{
-  given Program
-  , given Parallel
-  , given Materialization
+import psbp.external.implementation.reactive.{ 
+  givenReactiveProgram
+  , givenReactiveParallel
+  , givenReactiveMaterialization
 }
 
-// given
-import psbp.external.specification.programWithParallel.programWithParallel
+import examples.implementation.givenUnit
 
-import examples.specification.programWithParallel.effectful.mainParallelFibonacci
+import examples.specification.programWithParallel.effectful.materializedMainParallelFibonacci
 
 @main def parallelFibonacci(args: String*): Unit =
-  mainParallelFibonacci materialized ()
+  materializedMainParallelFibonacci
+

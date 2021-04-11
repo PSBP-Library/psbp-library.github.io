@@ -4,7 +4,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.state.State
 
-given programWithState[
+given givenProgramWithState[
   S, 
   >-->[- _, + _]: Program
                 : [>-->[- _, + _]] =>> State[S, >-->]

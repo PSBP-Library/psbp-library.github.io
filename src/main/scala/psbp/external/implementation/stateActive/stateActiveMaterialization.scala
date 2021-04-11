@@ -9,15 +9,15 @@ import psbp.external.specification.materialization.Materialization
 import psbp.external.implementation.active.Active
 
 import psbp.external.implementation.active.{ 
-  activeResulting
-  , activeBinding
-  , activeMaterialization 
+  givenActiveResulting
+  , givenActiveBinding
+  , givenActiveMaterialization 
 }
 
-import psbp.internal.specification.computation.computationFromResultingAndBinding
+import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
 
 import psbp.internal.implementation.materialization.stateTransformedMaterialization
 
-given stateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, Unit] =
+given givenStateActiveMaterialization[S: Initial]: Materialization[`=>SA`[S], Unit, Unit] =
   stateTransformedMaterialization[S, Active, Unit, Unit]
 

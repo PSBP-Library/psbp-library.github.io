@@ -1,6 +1,8 @@
 // todo change package
 
-package psbp.internal.implementation.computation.transformation
+package psbp.internal.implementation.materialization
+
+// package psbp.internal.implementation.computation.transformation
 
 import psbp.internal.specification.computation.Computation
 
@@ -13,7 +15,7 @@ import psbp.internal.implementation.computation.transformation.ReactiveTransform
 private[psbp] given reactiveTransformedMaterialization[
   C[+ _]: Computation
         : CoResulting
-        : [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y]
+        // : [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y]
   , Z, Y
 ]: Materialization[[Z, Y] =>> Z => ReactiveTransformed[C][Y], Unit, Unit] with
 
@@ -27,7 +29,7 @@ private[psbp] given reactiveTransformedMaterialization[
     summon[CoResulting[F]]
   import coResultingF.coResult
 
-  val materialize: (Unit `=>T` Unit) => Unit => Unit =
+  val materialize: (Unit `=>T` Unit) => Unit ?=> Unit =
     `u>-->u` =>
-      u =>
-        `u>-->u`(u)(coResult)
+      val u: Unit = summon[Unit]
+      `u>-->u`(u)(coResult)

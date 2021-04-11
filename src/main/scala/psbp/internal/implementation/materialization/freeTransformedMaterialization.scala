@@ -30,6 +30,6 @@ private[psbp] given freeTransformedMaterialization[
   private def `tu=>fu`: T[Unit] => F[Unit] =
     foldFree
 
-  override val materialize: (Unit `=>T` Unit) => Z => Y =
+  override val materialize: (Unit `=>T` Unit) => Z ?=> Y =
     `u=>tu` =>
       materializeF(`u=>tu` andThen `tu=>fu`)
