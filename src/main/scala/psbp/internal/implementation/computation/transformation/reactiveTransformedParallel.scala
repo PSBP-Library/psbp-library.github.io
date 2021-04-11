@@ -52,8 +52,8 @@ private[psbp] given reactiveTransformedParallel[
         : Parallel[[Z, Y] =>> Z => ReactiveTransformed[C][Y]
 ] with
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = ReactiveTransformed[C][Z]
+  private type F[+Y] = C[Y]
+  private type T[+Y] = ReactiveTransformed[C][Y]
   
   private val computation: Computation[F] = 
     summon[Computation[F]]

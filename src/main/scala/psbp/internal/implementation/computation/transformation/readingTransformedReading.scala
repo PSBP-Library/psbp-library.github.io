@@ -12,8 +12,8 @@ private[psbp] given readingTransformedReading[
   , [Z, Y] =>> Z => ReadingTransformed[R, C][Y]
 ] with
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = ReadingTransformed[R, C][Z]
+  private type F[+Y] = C[Y]
+  private type T[+Y] = ReadingTransformed[R, C][Y]
 
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 

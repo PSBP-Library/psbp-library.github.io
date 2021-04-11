@@ -6,7 +6,8 @@ import psbp.external.specification.program.writing.{
   Writable
   , Writing
 }
-given programWithWriting[
+
+given givenProgramWithWriting[
   W: Writable, 
   >-->[- _, + _]: Program
                 : [>-->[- _, + _]] =>> Writing[W, >-->]

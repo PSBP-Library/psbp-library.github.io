@@ -10,8 +10,8 @@ private[psbp] given freeTransformedCoResulting[
         : CoResulting
 ]: CoResulting[FreeTransformed[C]] with
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = FreeTransformed[F][Z] 
+  private type F[+Y] = C[Y]
+  private type T[+Y] = FreeTransformed[F][Y] 
   
   private val coResultingF : CoResulting[F] = 
     summon[CoResulting[F]]

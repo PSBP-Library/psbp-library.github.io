@@ -12,8 +12,8 @@ private[psbp] given stateTransformedState[
   , [Z, Y] =>> Z => StateTransformed[S, C][Y]
 ] with 
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = StateTransformed[S, C][Z]
+  private type F[+Y] = C[Y]
+  private type T[+Y] = StateTransformed[S, C][Y]
 
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 

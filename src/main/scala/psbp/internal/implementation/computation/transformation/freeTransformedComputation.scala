@@ -14,8 +14,8 @@ private[psbp] given freeTransformedComputation[
   C[+ _]]: Transformation[C, FreeTransformed[C]
 ] with Computation[FreeTransformed[C]] with
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = FreeTransformed[F][Z] 
+  private type F[+Y] = C[Y]
+  private type T[+Y] = FreeTransformed[F][Y] 
     
   override private[psbp] val `f~>t`: F ~> T = new {
     def apply[Z]: F[Z] => T[Z] =

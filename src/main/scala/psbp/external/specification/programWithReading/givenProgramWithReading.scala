@@ -4,7 +4,7 @@ import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.reading.Reading
 
-given programWithReading[
+given givenProgramWithReading[
   R, 
   >-->[- _, + _]: Program
                 : [>-->[- _, + _]] =>> Reading[R, >-->]

@@ -8,7 +8,7 @@ import psbp.external.implementation.active.{
   givenActiveResulting
   , givenActiveBinding
   , givenActiveMaterialization
-  , activeCoResulting
+  , givenActiveCoResulting
 }
 
 import psbp.internal.specification.computation.givenComputationFromResultingAndBinding

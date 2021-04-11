@@ -15,8 +15,8 @@ private[psbp] given writingTransformedWriting[
   , [Z, Y] =>> Z => WritingTransformed[W, C][Y]
 ] with
 
-  private type F[+Z] = C[Z]
-  private type T[+Z] = WritingTransformed[W, C][Z]
+  private type F[+Y] = C[Y]
+  private type T[+Y] = WritingTransformed[W, C][Y]
 
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 
