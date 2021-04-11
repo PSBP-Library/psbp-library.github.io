@@ -37,7 +37,7 @@ trait Program[>-->[- _, + _]]
       def toMainWith(
         producer: Unit >--> Z
         , consumer: (Z && Y) >--> Unit
-      ) =
+      ): Unit >--> Unit =
         producer 
         >--> 
           {

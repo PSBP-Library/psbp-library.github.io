@@ -1,35 +1,43 @@
 package psbp.internal.implementation.computation.transformation
 
+// ReadingTransformed
+
+private[psbp] type ReadingTransformed[R, C[+ _]] = [Y] =>> R ?=> C[Y]   
+
+// WritingTransformed
+
+private[psbp] type WritingTransformed[W, C[+ _]] = [Y] =>> C[(W, Y)] 
+
 // ReactiveTransformed
 
-private[psbp] type ReactiveTransformed[C[+ _]] = [Z] =>> (C[Z] => Unit) => Unit
+private[psbp] type ReactiveTransformed[C[+ _]] = [Y] =>> (C[Y] => Unit) => Unit
 
 // FreeTransformed
 
-private[psbp] enum Free[C[+ _], +Z]:
+private[psbp] enum Free[C[+ _], +Y]:
 
-  private[psbp] case Transform[C[+ _], +Z](cz: C[Z]) extends Free[C, Z]
+  private[psbp] case Transform[C[+ _], +Y](cy: C[Y]) extends Free[C, Y]
 
-  private[psbp] case Result[C[+ _], +Z](z: Z) extends Free[C, Z]
+  private[psbp] case Result[C[+ _], +Y](y: Y) extends Free[C, Y]
   
   private[psbp] case Bind[C[+ _], -Z, ZZ <: Z, +Y]
     (fczz: Free[C, ZZ], `z=>fcy`: Z => FreeTransformed[C][Y]) extends Free[C, Y]
 
-private[psbp] type FreeTransformed[C[+ _]] = [Z] =>> Free[C, Z]
+private[psbp] type FreeTransformed[C[+ _]] = [Y] =>> Free[C, Y]
 
 import Free._
 
 import psbp.internal.specification.computation.Computation
 
 private[psbp] def foldFree[
-  Z
+  Y
   , C[+ _]: Computation
 ](
-  fcz: FreeTransformed[C][Z]
- ): C[Z] =
+  fcz: FreeTransformed[C][Y]
+ ): C[Y] =
 
-  type F[+Z] = C[Z]
-  type T[+Z] = FreeTransformed[F][Z]
+  type F[+Y] = C[Y]
+  type T[+Y] = FreeTransformed[F][Y]
  
   val computationF: Computation[F] = 
     summon[Computation[F]]
@@ -55,4 +63,4 @@ private[psbp] def foldFree[
 
 // StateTransformed
 
-private[psbp] type StateTransformed[S, C[+ _]] = [Z] =>> S => C[(S, Z)]  
+private[psbp] type StateTransformed[S, C[+ _]] = [Y] =>> S => C[(S, Y)]  

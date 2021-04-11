@@ -21,7 +21,6 @@ private[psbp] given stateTransformedState[
     summon[Computation[F]]
   import computationF.{ 
     result => resultF
-    , bind => bindF 
   }
 
   override private[psbp] def `u>-->s`: Unit `=>T` S =
