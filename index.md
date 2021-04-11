@@ -1,4 +1,5 @@
-<style type="text/css"> body { margin: auto; max-width: 44em; font-family: Calibri, sans-serif; font-size: 18pt; } /* automatic heading numbering */ h1 { counter-reset: h2counter; } 
+<style type="text/css"> body { margin: auto; max-width: 44em; font-family: Calibri, sans-serif; font-size: 18pt; } /* automatic heading numbering */ 
+h1 { counter-reset: h2counter; } 
 h2 { counter-reset: h3counter; } 
 h3 { counter-reset: h4counter; } 
 h4 { counter-reset: h5counter; } 
