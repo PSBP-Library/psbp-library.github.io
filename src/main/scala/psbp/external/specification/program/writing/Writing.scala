@@ -1,14 +1,16 @@
 package psbp.external.specification.program.writing
 
+import scala.language.postfixOps
+
 import psbp.external.specification.types.&&
 
 trait Writable[W]:
 
   // declared
 
-  val nothing: W
+  def nothing: W
 
-  val append: (W && W) => W
+  def append: (W && W) => W
 
   // defined extensions
   
@@ -16,14 +18,11 @@ trait Writable[W]:
     def +(w2: => W): W =
       append(w1, w2)
 
+trait ToWritable[Y, W: Writable, >-->[- _, + _]]:
+
+  def converter: Y >--> W
+
+
 trait Writing[W: Writable, >-->[- _, + _]]:
 
-  // declared
-
-  private[psbp] def `w>-->u`: W >--> Unit
-  
-  // defined
-
-  def write: W >--> Unit =
-    `w>-->u`
-
+  def write: W >--> Unit

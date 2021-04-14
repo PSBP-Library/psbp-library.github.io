@@ -26,6 +26,7 @@ private[psbp] given writingTransformedWriting[
     result => resultF
   }
 
-  override private[psbp] def `w>-->u`: W `=>T` Unit =
+  override def write: W `=>T` Unit =
     w =>
+      // println(">>> writing $w in writingTransformedWriting")
       resultF((w, ()))

@@ -1,14 +1,14 @@
-package psbp.internal.specification.computation
+// package psbp.internal.specification.computation
 
-private[psbp] given givenComputationFromResultingAndBinding[
-  C[+ _]: Resulting
-        : Binding
-]: Computation[C] with
+// private[psbp] given givenComputationFromResultingAndBinding[
+//   C[+ _]: Resulting
+//         : Binding
+// ]: Computation[C] with
 
-  private val resulting: Resulting[C] = summon[Resulting[C]]
+//   private val resulting: Resulting[C] = summon[Resulting[C]]
 
-  export resulting.result
+//   export resulting.result
 
-  private val binding: Binding[C] = summon[Binding[C]]
+//   private val binding: Binding[C] = summon[Binding[C]]
 
-  export binding.bind
+//   export binding.bind

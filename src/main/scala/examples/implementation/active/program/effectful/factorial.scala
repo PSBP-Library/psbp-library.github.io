@@ -5,9 +5,9 @@ import psbp.external.implementation.active.{
   , givenActiveMaterialization
 }
 
-import examples.specification.program.effectful.materializedMainFactorial
-
 import examples.implementation.givenUnit
+
+import examples.specification.program.effectful.materializedMainFactorial
 
 @main def factorial(args: String*): Unit =
   materializedMainFactorial

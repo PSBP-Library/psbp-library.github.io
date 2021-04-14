@@ -22,4 +22,4 @@ given givenProgramWithReading[
   private val reading: Reading[R, >-->] = 
     summon[Reading[R, >-->]]
 
-  export reading.`u>-->r`
+  export reading.read

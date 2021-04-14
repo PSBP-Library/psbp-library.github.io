@@ -11,7 +11,7 @@ def `z==>z`[Z]: Z => Z =
 
 def `z=s=>z`[Z]: Z => Z =
   z =>
-    println("side effect")
+    println(">>> side effect")
     z
 
 // @main def main(args: String*): Unit =

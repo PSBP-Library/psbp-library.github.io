@@ -33,22 +33,20 @@ trait Program[>-->[- _, + _]]
       def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
         (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
+    // todo maybe outside of trail later just like with reading and writing    
     extension [Z, Y] (program: Z >--> Y) 
       def toMainWith(
         producer: Unit >--> Z
         , consumer: (Z && Y) >--> Unit
       ): Unit >--> Unit =
-        producer 
-        >--> 
-          {
+        producer
+          >--> {
             Let { 
               program
             } In { 
               consumer 
             }
           }
-    
-    // defined
     
     def Let[Z, Y, X](`z>-->y`: Z >--> Y): In[Z, Y, X] =
       new {
@@ -79,3 +77,24 @@ trait Program[>-->[- _, + _]]
 
     private[psbp] trait Else[Z, Y]:
       def Else(`z>-f->y`: => Z >--> Y): Z >--> Y
+
+def toMain[
+  Z, Y
+  , >-->[- _, + _]: Program
+](producer: Unit >--> Z
+  , program: => Z >--> Y
+  , consumer: => (Z && Y) >--> Unit
+): Unit >--> Unit =
+
+  val program_ : Program[>-->] = 
+    summon[Program[>-->]]
+  import program_.Let  
+
+  producer
+    >--> {
+      Let { 
+        program
+      } In { 
+        consumer 
+      }
+    }

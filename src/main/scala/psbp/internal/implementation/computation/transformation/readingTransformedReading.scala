@@ -23,7 +23,10 @@ private[psbp] given readingTransformedReading[
     result => resultF
   }
 
-  override private[psbp] def `u>-->r`: Unit `=>T` R =
+  override def read: Unit `=>T` R =
     _ =>
+      println(">>> read in readingTransformedReading")
+      Thread.sleep(3000)
       val r: R = summon[R]
+      println(s">>> read $r in readingTransformedReading")
       resultF(r)

@@ -25,4 +25,4 @@ given givenProgramWithWriting[
   private val writing: Writing[W, >-->] = 
     summon[Writing[W, >-->]]
 
-  export writing.`w>-->u`
+  export writing.write

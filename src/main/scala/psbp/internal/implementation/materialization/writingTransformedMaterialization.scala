@@ -36,9 +36,14 @@ private[psbp] given writingTransformedMaterialization[
     , bind => bindF 
   }  
 
-  override val materialize: (Unit `=>T` Unit) => Z ?=> C[W && Y] =
+  override val materialize: (Unit `=>T` Unit) => Z ?=> C[(W, Y)] =
     `u=>tu` =>
-      bindF(
-        `u=>tu`(())
-        , (w, _) => resultF((w, materializeF(resultF)))
+      bindF({
+        val cwu: C[(W, Unit)] = `u=>tu`(())
+        cwu
+        }
+        , (w, u) => 
+          // println(s">>> $w in materialize of writingTransformedMaterialization")
+          lazy val y: Y = materializeF(resultF)
+          resultF((w, y))
       )

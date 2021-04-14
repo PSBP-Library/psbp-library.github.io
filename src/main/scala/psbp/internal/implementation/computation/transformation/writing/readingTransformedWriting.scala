@@ -25,11 +25,13 @@ private[psbp] given readingTransformedWriting[
   private type `=>F` = [Z, Y] =>> Z => F[Y]
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 
-  private val writing: Writing[W, `=>F`] = summon[Writing[W, `=>F`]]
+  private val writing: Writing[W, `=>F`] = 
+    summon[Writing[W, `=>F`]]
   import writing. {
-    `w>-->u` => `w>-f->u`
+    write => writeF
   }
 
-  private[psbp] def `w>-->u`: W `=>T` Unit =
+  override def write: W `=>T` Unit =
     w =>
-      `w>-f->u`(w)
+      // println(">>> writing $w in readingTransformedWriting")
+      writeF(w)

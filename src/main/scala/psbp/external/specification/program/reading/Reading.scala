@@ -1,13 +1,9 @@
 package psbp.external.specification.program.reading
 
+trait FromReadable[R, Z, >-->[- _, + _]]:
+
+  def converter: R >--> Z
+
 trait Reading[R, >-->[- _, + _]]:
 
-  // declared
-
-  private[psbp] def `u>-->r`: Unit >--> R
-
-  // defined
-
-  def read: Unit >--> R =
-    `u>-->r`
-
+  def read: Unit >--> R

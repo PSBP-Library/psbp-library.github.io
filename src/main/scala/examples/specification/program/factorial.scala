@@ -20,6 +20,8 @@ def factorial[
     , If
   }
 
+  // println(">>> in factorial")
+
   If(isZero) {
     one
   } Else {

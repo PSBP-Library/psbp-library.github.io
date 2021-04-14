@@ -2,6 +2,8 @@ package psbp.internal.implementation.computation.transformation
 
 import psbp.external.specification.program.Program
 
+import psbp.internal.specification.computation.Resulting
+
 import psbp.internal.specification.computation.Computation
 
 import psbp.internal.specification.naturalTransformation.~>
@@ -11,7 +13,7 @@ import psbp.internal.specification.computation.transformation.Transformation
 import Free._
 
 private[psbp] given freeTransformedComputation[
-  C[+ _]]: Transformation[C, FreeTransformed[C]
+  C[+ _]: Resulting]: Transformation[C, FreeTransformed[C]
 ] with Computation[FreeTransformed[C]] with
 
   private type F[+Y] = C[Y]
