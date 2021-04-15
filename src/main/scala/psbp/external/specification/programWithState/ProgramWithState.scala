@@ -1,10 +1,10 @@
 package psbp.external.specification.programWithState
 
+import psbp.external.specification.functional.`z>-->u`
+
 import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.state.State
-
-import psbp.external.specification.functional.`z>-->u`
 
 trait ProgramWithState[S, >-->[- _, + _]] 
   extends Program[>-->] 
@@ -14,17 +14,20 @@ trait ProgramWithState[S, >-->[- _, + _]]
 
   // defined
 
+  def `z>-->s`[Z]: Z >--> S =
+    `z>-->u` >--> `u>-->s`    
+
   def readState[Z]: Z >--> S =
-    `z>-->u` >--> `u>-->s`  
+    `z>-->s`
 
   def writeState: S >--> Unit =
     `s>-->u` 
     
   def modifyStateWith[Z]: (S >--> S) => (Z >--> Unit) =
     `s>-->s` =>
-      readState >--> `s>-->s` >--> writeState
+      `z>-->s` >--> `s>-->s` >--> `s>-->u`
   
   def readStateModifiedWith[Z]: (S >--> S) => (Z >--> S) =
     `s>-->s` =>
-      modifyStateWith(`s>-->s`) >--> readState
+      modifyStateWith(`s>-->s`) >--> `z>-->s`
 

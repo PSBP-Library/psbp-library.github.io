@@ -1,8 +1,9 @@
 package psbp.internal.implementation.computation.transformation.writing
 
-import psbp.external.specification.program.reading.Reading
-
-import psbp.internal.implementation.computation.transformation.ReadingTransformed
+import psbp.external.specification.program.reading.{
+  Readable
+  , Reading
+}
 
 import psbp.external.specification.program.writing.{
   Writable
@@ -11,8 +12,11 @@ import psbp.external.specification.program.writing.{
 
 import psbp.internal.specification.computation.Computation
 
+import psbp.internal.implementation.computation.transformation.ReadingTransformed
+
 private[psbp] given readingTransformedWriting[
-  R, W: Writable
+  R: Readable
+  , W: Writable
   , C[+ _]: [C[+ _]] =>> Writing[W, [Z, Y] =>> Z => C[Y]]
 ]: Writing[
   W
@@ -27,11 +31,10 @@ private[psbp] given readingTransformedWriting[
 
   private val writing: Writing[W, `=>F`] = 
     summon[Writing[W, `=>F`]]
-  import writing. {
+  import writing.{
     write => writeF
   }
 
-  override def write: W `=>T` Unit =
+  override def writeW: W `=>T` Unit =
     w =>
-      // println(">>> writing $w in readingTransformedWriting")
       writeF(w)

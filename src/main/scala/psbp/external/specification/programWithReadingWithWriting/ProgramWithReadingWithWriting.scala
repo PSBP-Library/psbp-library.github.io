@@ -2,15 +2,11 @@ package psbp.external.specification.programWithReadingWithWriting
 
 import psbp.external.specification.types.&&
 
-import psbp.external.specification.program.{
-  Program
-  , toMain => programToMain
-}
-
-import psbp.external.specification.programWithReading.ProgramWithReading
+import psbp.external.specification.program.Program
 
 import psbp.external.specification.program.reading.{
-  FromReadable
+  Readable
+  , FromReadable
   , Reading
 }
 
@@ -21,7 +17,7 @@ import psbp.external.specification.program.writing.{
 }
 
 trait ProgramWithReadingWithWriting[
-  R
+  R: Readable
   , W: Writable
   , >-->[- _, + _]
 ] 
@@ -31,52 +27,38 @@ trait ProgramWithReadingWithWriting[
 
 def toMain[
   Z, Y
-  , R
+  , R: Readable
   , W: Writable
   , >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithReadingWithWriting[R, W, >-->]
                   : [>-->[- _, + _]] =>> FromReadable[R, Z, >-->]
                   : [>-->[- _, + _]] =>> ToWritable[Z && Y, W, >-->]
-](program: => Z >--> Y): Unit >--> Unit =
+](`z>-->y`: Z >--> Y): Unit >--> Unit =
 
   val programWithReadingWithWriting: ProgramWithReadingWithWriting[R, W, >-->] =
     summon[ProgramWithReadingWithWriting[R, W, >-->]]
   import programWithReadingWithWriting.{
     Let
-    , read
-    , write
+    , `u>-->r`
+    , `w>-->u`
   }  
 
   val fromReadable: FromReadable[R, Z, >-->] =
     summon[FromReadable[R, Z, >-->]]
-  import fromReadable.{
-    converter => convertFromReadable
-  }
+  import fromReadable.`r>-->z`
 
   val toWritable: ToWritable[Z && Y, W, >-->] =
     summon[ToWritable[Z && Y, W, >-->]]
-  import toWritable.{ 
-    converter => convertToWritable
+  import toWritable.{
+    `y>-->w` => `(z&&y)=>w`
   }
-   
-  {
-    
-  // println(">>> in toMain")
 
-    read >--> convertFromReadable
+  `u>-->r` >--> `r>-->z`
     >--> {
       Let { 
-        program
+        `z>-->y`
       } In { 
-        convertToWritable >--> write 
+        `(z&&y)=>w` >--> `w>-->u` 
       }
     }
 
-  }
-
-
-  // programToMain(
-  //   producer = read >--> convertFromReadable
-  //   , program = program
-  //   , consumer = convertToWritable >--> write
-  // )
 

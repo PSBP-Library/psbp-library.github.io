@@ -2,7 +2,10 @@ package psbp.external.specification.programWithReadingWithWriting
 
 import psbp.external.specification.program.Program
 
-import psbp.external.specification.program.reading.Reading
+import psbp.external.specification.program.reading.{
+  Readable
+  , Reading
+}
 
 import psbp.external.specification.program.writing.{
   Writable
@@ -10,7 +13,8 @@ import psbp.external.specification.program.writing.{
 }
 
 given givenProgramWithReadingWithWriting[
-  R, W: Writable
+  R: Readable
+  , W: Writable
   , >-->[- _, + _]: Program
                   : [>-->[- _, + _]] =>> Reading[R, >-->]
                   : [>-->[- _, + _]] =>> Writing[W, >-->]
@@ -19,7 +23,7 @@ given givenProgramWithReadingWithWriting[
   private val program: Program[>-->] = 
     summon[Program[>-->]]
 
-  export program.`z>-->z`
+  export program.identity
   export program.toProgram
   export program.andThen
   export program.construct
@@ -27,10 +31,8 @@ given givenProgramWithReadingWithWriting[
     
   private val reading: Reading[R, >-->] = 
     summon[Reading[R, >-->]]
-
-  export reading.read
+  export reading.readR
 
   private val writing: Writing[W, >-->] = 
     summon[Writing[W, >-->]]  
-
-  export writing.write 
+  export writing.writeW

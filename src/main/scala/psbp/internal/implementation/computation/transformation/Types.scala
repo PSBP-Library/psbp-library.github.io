@@ -1,6 +1,6 @@
 package psbp.internal.implementation.computation.transformation
 
-// import psbp.external.specification.types.&&
+import psbp.external.specification.types.&&
 
 // ReadingTransformed
 
@@ -8,7 +8,7 @@ private[psbp] type ReadingTransformed[R, C[+ _]] = [Y] =>> R ?=> C[Y]
 
 // WritingTransformed
 
-private[psbp] type WritingTransformed[W, C[+ _]] = [Y] =>> C[(W, Y)] 
+private[psbp] type WritingTransformed[W, C[+ _]] = [Y] =>> C[W && Y] 
 
 // ReactiveTransformed
 

@@ -8,21 +8,43 @@ trait Writable[W]:
 
   // declared
 
-  def nothing: W
+  private[psbp] def emptyW: W
 
-  def append: (W && W) => W
+  private[psbp] def appendW: (W && W) => W
 
-  // defined extensions
+  // defined
+
+  def empty: W =
+    emptyW
   
+  // defined extensions
+
   extension [Z, Y, X] (w1: W) 
-    def +(w2: => W): W =
-      append(w1, w2)
+    def +(w2: W): W =
+      appendW(w1, w2)
 
 trait ToWritable[Y, W: Writable, >-->[- _, + _]]:
 
-  def converter: Y >--> W
+  // declare
+  
+  private[psbp] def `y>-->w`: Y >--> W
+
+  // define
+
+  private[psbp] def converter: Y >--> W =
+    `y>-->w`
 
 
 trait Writing[W: Writable, >-->[- _, + _]]:
 
-  def write: W >--> Unit
+  // declare
+  
+  private[psbp] def writeW: W >--> Unit
+
+  // define
+
+  def `w>-->u`: W >--> Unit =
+    writeW
+
+  def write: W >--> Unit =
+    `w>-->u`

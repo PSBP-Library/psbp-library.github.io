@@ -13,7 +13,7 @@ given givenProgramWithState[
   private val program: Program[>-->] = 
     summon[Program[>-->]]
 
-  export program.`z>-->z`
+  export program.identity
   export program.toProgram
   export program.andThen
   export program.construct
@@ -22,5 +22,5 @@ given givenProgramWithState[
   private val state: State[S, >-->] = 
     summon[State[S, >-->]]
 
-  export state.`u>-->s`
-  export state.`s>-->u`
+  export state.readS
+  export state.writeS

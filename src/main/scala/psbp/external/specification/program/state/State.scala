@@ -4,9 +4,17 @@ trait State[S, >-->[- _, + _]]:
 
   // declared
 
-  private[psbp] def `u>-->s`: Unit >--> S
+  private[psbp] def readS: Unit >--> S
 
-  private[psbp] def `s>-->u`: S >--> Unit
+  private[psbp] def writeS: S >--> Unit  
+
+  // defined
+
+  def `u>-->s`: Unit >--> S =
+    readS
+
+  def `s>-->u`: S >--> Unit =
+    writeS    
 
 trait Initial[S]:
  

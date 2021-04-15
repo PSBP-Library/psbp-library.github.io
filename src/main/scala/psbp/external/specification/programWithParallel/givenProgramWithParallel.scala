@@ -11,7 +11,7 @@ given givenProgramWithParallel[
  
   private val program: Program[>-->] = summon[Program[>-->]]
 
-  export program.`z>-->z`
+  export program.identity
   export program.toProgram
   export program.andThen
   export program.construct

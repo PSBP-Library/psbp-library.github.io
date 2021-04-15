@@ -1,6 +1,6 @@
 package psbp.external.implementation.rec
 
-case class Rec[+A[+ _]](`a[rec[a]]`: A[Rec[A]])
+private[psbp] case class Rec[+A[+ _]](`a[rec[a]]`: A[Rec[A]])
 
 private[psbp] def `rec[a]=>a[rec[a]]`[A[+ _]]: Rec[A] => A[Rec[A]] = _.`a[rec[a]]`
 

@@ -5,13 +5,18 @@ import psbp.external.specification.program.writing.{
   , Writing
 }
 
-import psbp.external.implementation.writingActive.WritingActive
+import psbp.external.specification.program.reading.Readable
 
-import psbp.external.implementation.writingActive.givenWritingActiveWriting
+import psbp.external.implementation.writingActive.WritingActive
 
 import psbp.internal.implementation.computation.transformation.writing.readingTransformedWriting
 
-given givenReadingWithWritingActiveWriting[R, W: Writable]: Writing[W, `=>RWA`[R, W]] = 
+import psbp.external.implementation.writingActive.givenWritingActiveWriting
+
+given givenReadingWithWritingActiveWriting[
+  R: Readable
+  , W: Writable
+]: Writing[W, `=>RWA`[R, W]] = 
   readingTransformedWriting[R, W, WritingActive[W]]
 
 

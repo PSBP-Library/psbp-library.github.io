@@ -1,9 +1,32 @@
 package psbp.external.specification.program.reading
 
-trait FromReadable[R, Z, >-->[- _, + _]]:
+trait Readable[R]:
 
-  def converter: R >--> Z
+  // declared
 
-trait Reading[R, >-->[- _, + _]]:
+  private[psbp] def dummy: Unit
 
-  def read: Unit >--> R
+trait FromReadable[R: Readable, Z, >-->[- _, + _]]:
+
+  // declared
+
+  private[psbp] def `r>-->z`: R >--> Z
+
+  // defined
+
+  private[psbp] def converter: R >--> Z =
+    `r>-->z`
+
+trait Reading[R: Readable, >-->[- _, + _]]:
+
+  // declared
+
+  private[psbp] def readR: Unit >--> R
+
+  // defined
+
+  def `u>-->r`: Unit >--> R =
+    readR
+
+  def read: Unit >--> R =
+    `u>-->r`

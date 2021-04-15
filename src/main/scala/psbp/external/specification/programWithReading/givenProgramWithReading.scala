@@ -2,10 +2,13 @@ package psbp.external.specification.programWithReading
 
 import psbp.external.specification.program.Program
 
-import psbp.external.specification.program.reading.Reading
+import psbp.external.specification.program.reading.{
+  Readable
+  , Reading
+}
 
 given givenProgramWithReading[
-  R, 
+  R: Readable, 
   >-->[- _, + _]: Program
                 : [>-->[- _, + _]] =>> Reading[R, >-->]
 ]: ProgramWithReading[R, >-->] with
@@ -13,7 +16,7 @@ given givenProgramWithReading[
   private val program: Program[>-->] = 
     summon[Program[>-->]]
 
-  export program.`z>-->z`
+  export program.identity
   export program.toProgram
   export program.andThen
   export program.construct
@@ -22,4 +25,4 @@ given givenProgramWithReading[
   private val reading: Reading[R, >-->] = 
     summon[Reading[R, >-->]]
 
-  export reading.read
+  export reading.readR

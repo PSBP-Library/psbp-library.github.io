@@ -4,12 +4,12 @@ trait Identity[>-->[- _, + _]]:
 
   // declared
 
-  def `z>-->z`[Z]: Z >--> Z
+  private[psbp] def identity[Z]: Z >--> Z
 
   // defined
 
-  def identity[Z]: Z >--> Z =
-    `z>-->z`
+  def `z>-->z`[Z]: Z >--> Z =
+    identity
 
   def `y>-->y`[Y]: Y >--> Y =
     `z>-->z`[Y]

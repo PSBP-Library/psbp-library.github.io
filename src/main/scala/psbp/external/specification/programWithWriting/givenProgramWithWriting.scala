@@ -16,7 +16,7 @@ given givenProgramWithWriting[
   private val program: Program[>-->] = 
     summon[Program[>-->]]
 
-  export program.`z>-->z`
+  export program.identity
   export program.toProgram
   export program.andThen
   export program.construct
@@ -25,4 +25,4 @@ given givenProgramWithWriting[
   private val writing: Writing[W, >-->] = 
     summon[Writing[W, >-->]]
 
-  export writing.write
+  export writing.writeW

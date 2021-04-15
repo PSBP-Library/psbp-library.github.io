@@ -15,7 +15,7 @@ private[psbp] given writingTransformedMaterialization[
   , C[+ _]: Computation
           : [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y]
   , Z, Y
-]: Materialization[[Z, Y] =>> Z => WritingTransformed[W, C][Y], Z, C[W && Y]] with
+]: Materialization[[Z, Y] =>> Z => WritingTransformed[W, C][Y], Z, C[(W, Y)]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = WritingTransformed[W, C][Z]
@@ -38,12 +38,8 @@ private[psbp] given writingTransformedMaterialization[
 
   override val materialize: (Unit `=>T` Unit) => Z ?=> C[(W, Y)] =
     `u=>tu` =>
-      bindF({
-        val cwu: C[(W, Unit)] = `u=>tu`(())
-        cwu
-        }
-        , (w, u) => 
-          // println(s">>> $w in materialize of writingTransformedMaterialization")
-          lazy val y: Y = materializeF(resultF)
-          resultF((w, y))
+      bindF(
+        `u=>tu`(())
+        , (w, u) =>
+            resultF((w, materializeF(resultF)))
       )

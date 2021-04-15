@@ -8,7 +8,7 @@ import psbp.external.implementation.rec.givenRecRecursion
 
 import psbp.external.implementation.list.givenListRecursiveStructure
 
-import examples.specification.program.recursive.structure.implementation.list.effectful.materializedMainAreAllPositive
+import examples.specification.program.list.recursive.structure.effectful.materializedMainAreAllPositive
 
 import examples.implementation.givenUnit
 

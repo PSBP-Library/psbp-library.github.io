@@ -33,7 +33,7 @@ trait Program[>-->[- _, + _]]
       def |||(`w>-->y`: => W >--> Y): (X || W) >--> (Z || Y) =
         (`x>-->z` >--> `z>-->(z||y)`) || (`w>-->y` >--> `y>-->(z||y)`)  
 
-    // todo maybe outside of trail later just like with reading and writing    
+    // todo maybe outside of trait later just like with reading and writing    
     extension [Z, Y] (program: Z >--> Y) 
       def toMainWith(
         producer: Unit >--> Z
@@ -47,7 +47,9 @@ trait Program[>-->[- _, + _]]
               consumer 
             }
           }
-    
+
+    // extra
+
     def Let[Z, Y, X](`z>-->y`: Z >--> Y): In[Z, Y, X] =
       new {
         def In(`(z&&y)>-->x`: => (Z && Y) >--> X): Z >--> X =

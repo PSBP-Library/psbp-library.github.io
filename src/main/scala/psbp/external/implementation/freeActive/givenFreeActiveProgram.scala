@@ -12,6 +12,6 @@ import psbp.internal.specification.computation.Computation
 
 import psbp.internal.implementation.computation.transformation.freeTransformedComputation
 
-given givenFreeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
+private[psbp] given givenFreeActiveComputation: Computation[FreeActive] = freeTransformedComputation[Active]
 
 given givenFreeActiveProgram: Program[`=>FA`] = givenProgramFromComputation[FreeActive]

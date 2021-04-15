@@ -20,13 +20,12 @@ private[psbp] given writingTransformedWriting[
 
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 
-  private val computationF: Computation[F] = 
+  private val computation: Computation[F] = 
     summon[Computation[F]]
-  import computationF.{ 
+  import computation.{ 
     result => resultF
   }
 
-  override def write: W `=>T` Unit =
+  override private[psbp] def writeW: W `=>T` Unit =
     w =>
-      // println(">>> writing $w in writingTransformedWriting")
       resultF((w, ()))

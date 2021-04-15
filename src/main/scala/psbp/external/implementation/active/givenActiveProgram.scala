@@ -6,9 +6,7 @@ import psbp.internal.specification.computation.Computation
 
 import psbp.external.implementation.computation.givenProgramFromComputation
 
-// import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
-
-given givenActiveComputation: Computation[Active] with
+private[psbp] given givenActiveComputation: Computation[Active] with
 
   private[psbp] def result[Z]: Z => Active[Z] =
     z =>

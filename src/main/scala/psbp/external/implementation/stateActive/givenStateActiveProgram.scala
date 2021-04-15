@@ -12,6 +12,8 @@ import psbp.external.implementation.computation.givenProgramFromComputation
 
 import psbp.internal.implementation.computation.transformation.stateTransformedComputation
 
-given givenStateActiveComputation[S]: Computation[StateActive[S]] = stateTransformedComputation[S, Active]
+private[psbp] given givenStateActiveComputation[S]: Computation[StateActive[S]] = 
+  stateTransformedComputation[S, Active]
 
-given givenStateActiveProgram[S]: Program[`=>SA`[S]] = givenProgramFromComputation[StateActive[S]]
+given givenStateActiveProgram[S]: Program[`=>SA`[S]] = 
+  givenProgramFromComputation[StateActive[S]]

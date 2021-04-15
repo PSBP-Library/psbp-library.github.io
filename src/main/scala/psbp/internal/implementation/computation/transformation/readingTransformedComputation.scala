@@ -1,19 +1,19 @@
 package psbp.internal.implementation.computation.transformation
 
+
+
+import psbp.external.specification.program.reading.Readable
+
 import psbp.internal.specification.computation.Computation
 
 import psbp.internal.specification.computation.Binding
 
 import psbp.internal.specification.naturalTransformation.~>
 
-// import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
-
 import psbp.internal.specification.computation.transformation.Transformation
 
-// import psbp.internal.specification.computation.transformation.givenResultingFromTransformation
-
 private[psbp] given readingTransformedTransformationWithBinding[
-  R
+  R: Readable
   , C[+ _]: Computation
 ]:  
   Transformation[C, ReadingTransformed[R, C]] 
@@ -34,6 +34,7 @@ private[psbp] given readingTransformedTransformationWithBinding[
   override private[psbp] val `f~>t`: F ~> T = new {
     def apply[Z]: F[Z] => T[Z] =
       fz =>
+        // todo: simplify 
         // fz
         bindF(fz, z => resultF(z))
   }  
@@ -41,5 +42,8 @@ private[psbp] given readingTransformedTransformationWithBinding[
   override private[psbp] def bind[Z, Y](tz: T[Z], `z>=ty`: => Z => T[Y]): T[Y] =
     bindF(tz, z => `z>=ty`(z) )
        
-private[psbp] given readingTransformedComputation[R, C[+ _]: Computation]: Computation[ReadingTransformed[R, C]] = 
+private[psbp] given readingTransformedComputation[
+  R: Readable
+  , C[+ _]: Computation
+]: Computation[ReadingTransformed[R, C]] = 
   readingTransformedTransformationWithBinding[R, C]

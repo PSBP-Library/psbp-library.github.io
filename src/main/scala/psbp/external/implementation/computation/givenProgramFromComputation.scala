@@ -24,7 +24,7 @@ private[psbp] given givenProgramFromComputation[
 
   // defined
 
-  override def `z>-->z`[Z]: Z `=>C` Z =
+  override def identity[Z]: Z `=>C` Z =
     z =>
       result(z)
 

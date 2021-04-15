@@ -6,11 +6,7 @@ import psbp.internal.specification.computation.Computation
 
 import psbp.internal.specification.naturalTransformation.~>
 
-// import psbp.internal.specification.computation.givenComputationFromResultingAndBinding
-
 import psbp.internal.specification.computation.transformation.Transformation
-
-// import psbp.internal.specification.computation.transformation.givenResultingFromTransformation
 
 private[psbp] given reactiveTransformedTransformationWithBinding[
   C[+ _]: Computation]: // Computation[ReactiveTransformed[C]] with

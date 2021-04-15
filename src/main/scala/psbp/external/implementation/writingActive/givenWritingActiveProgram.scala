@@ -16,6 +16,8 @@ import psbp.external.implementation.computation.givenProgramFromComputation
 
 import psbp.internal.implementation.computation.transformation.writingTransformedComputation
 
-given givenWritingActiveComputation[W: Writable]: Computation[WritingActive[W]] = writingTransformedComputation[W, Active]
+given givenWritingActiveComputation[W: Writable]: Computation[WritingActive[W]] = 
+  writingTransformedComputation[W, Active]
 
-given givenWritingActiveProgram[W: Writable]: Program[`=>WA`[W]] = givenProgramFromComputation[WritingActive[W]]
+given givenWritingActiveProgram[W: Writable]: Program[`=>WA`[W]] = 
+  givenProgramFromComputation[WritingActive[W]]

@@ -8,13 +8,9 @@ given givenStdOutWritable: Writable[StdOut] with
 
   // defined
 
-  def nothing: StdOut = 
-    // StdOut(effect = { println(">>> nothing") ; Predef.identity })
-    // println(">>> nothing")
+  def emptyW: StdOut = 
     StdOut(effect = Predef.identity)
 
-  def append: (StdOut && StdOut) => StdOut =
+  def appendW: (StdOut && StdOut) => StdOut =
     case (StdOut(firstEffect), StdOut(secondEffect)) =>
-      // StdOut({ println(">>> firstEffect") ; firstEffect } andThen { println(">>> secodEffect") ; secondEffect })
-      // println(">>> append")
       StdOut(firstEffect andThen secondEffect)

@@ -1,11 +1,14 @@
 package psbp.internal.implementation.computation.transformation
 
-import psbp.external.specification.program.reading.Reading
+import psbp.external.specification.program.reading.{
+  Readable
+  , Reading
+}
 
 import psbp.internal.specification.computation.Computation
 
 private[psbp] given readingTransformedReading[
-  R
+  R: Readable
   , C[+ _]: Computation
 ]: Reading[
   R
@@ -17,16 +20,13 @@ private[psbp] given readingTransformedReading[
 
   private type `=>T` = [Z, Y] =>> Z => T[Y]
 
-  private val computationF: Computation[F] = 
+  private val computation: Computation[F] = 
     summon[Computation[F]]
-  import computationF.{ 
+  import computation.{ 
     result => resultF
   }
 
-  override def read: Unit `=>T` R =
+  override private[psbp] def readR: Unit `=>T` R =
     _ =>
-      println(">>> read in readingTransformedReading")
-      Thread.sleep(3000)
       val r: R = summon[R]
-      println(s">>> read $r in readingTransformedReading")
       resultF(r)
