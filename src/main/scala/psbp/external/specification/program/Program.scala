@@ -80,23 +80,46 @@ trait Program[>-->[- _, + _]]
     private[psbp] trait Else[Z, Y]:
       def Else(`z>-f->y`: => Z >--> Y): Z >--> Y
 
-def toMain[
+def toMainProgram[
   Z, Y
   , >-->[- _, + _]: Program
-](producer: Unit >--> Z
-  , program: => Z >--> Y
-  , consumer: => (Z && Y) >--> Unit
+](produce: Unit >--> Z
+  , program: Z >--> Y
+  , consume: (Z && Y) >--> Unit
 ): Unit >--> Unit =
 
   val program_ : Program[>-->] = 
     summon[Program[>-->]]
   import program_.Let  
 
-  producer
+  produce
     >--> {
       Let { 
         program
       } In { 
-        consumer 
+        consume
       }
     }
+
+import psbp.external.specification.programWithReading.Producer
+
+import psbp.external.specification.programWithWriting.Consumer
+
+def toMain[
+  Z, Y
+  , >-->[- _, + _]: [>-->[- _, + _]] =>> Producer[Z, >-->]
+                  : Program
+                  : [>-->[- _, + _]] =>> Consumer[Z && Y, >-->]
+](program: Z >--> Y) =
+
+  val producer: Producer[Z, >-->] = summon[Producer[Z, >-->]]
+  import producer.`u>-->z`
+
+  val consumer: Consumer[Z && Y, >-->] = summon[Consumer[Z && Y, >-->]]
+  import consumer.`y>-->u`
+
+  toMainProgram(
+    produce = `u>-->z`
+    , program = program
+    , consume = `y>-->u`
+  )

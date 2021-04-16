@@ -40,8 +40,6 @@ private[psbp] given stateTransformedMaterialization[
     s => initialS 
   }
 
-
-  // todo: maybe more verbose choice `Z ?=> S?=> C[(S, Y)]`
   override val materialize: (Unit `=>T` Unit) => Z ?=> C[Y] =
     `u=>tu` =>
       given gs: S = initialS

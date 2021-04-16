@@ -25,7 +25,8 @@ given givenReadingWithWritingActiveMaterialization[
 ]: Materialization[
   `=>RWA`[R, W]
   , Unit
-  , R ?=> (W, (W, Unit))
+  // , R ?=> (W, (W, Unit))
+  , (W, (W, Unit))
 ] = readingTransformedMaterialization[R, WritingActive[W], Unit, (W, Unit)]
 
 

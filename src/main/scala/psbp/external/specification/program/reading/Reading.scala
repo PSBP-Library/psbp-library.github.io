@@ -4,7 +4,7 @@ trait Readable[R]:
 
   // declared
 
-  private[psbp] def dummy: Unit
+  val r: R
 
 trait FromReadable[R: Readable, Z, >-->[- _, + _]]:
 

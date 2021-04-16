@@ -15,6 +15,7 @@ import psbp.external.implementation.active.{
 
 import psbp.internal.implementation.materialization.readingTransformedMaterialization
 
-given givenReadingActiveMaterialization[R: Readable]: Materialization[`=>RA`[R], Unit, R ?=> Unit] =
-  readingTransformedMaterialization[R, Active, Unit, Unit]
+// given givenReadingActiveMaterialization[R: Readable]: Materialization[`=>RA`[R], Unit, R ?=> Unit] =
+given givenReadingActiveMaterialization[R: Readable]: Materialization[`=>RA`[R], Unit, Unit] =
+    readingTransformedMaterialization[R, Active, Unit, Unit]
 

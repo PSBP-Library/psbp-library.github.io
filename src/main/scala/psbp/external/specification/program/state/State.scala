@@ -1,5 +1,11 @@
 package psbp.external.specification.program.state
 
+trait Initial[S]:
+ 
+  // declared
+
+  val s: S
+  
 trait State[S, >-->[- _, + _]]:
 
   // declared
@@ -16,8 +22,3 @@ trait State[S, >-->[- _, + _]]:
   def `s>-->u`: S >--> Unit =
     writeS    
 
-trait Initial[S]:
- 
-  // declared
-
-  val s: S

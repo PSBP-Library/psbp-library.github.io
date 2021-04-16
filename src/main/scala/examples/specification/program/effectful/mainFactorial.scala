@@ -2,7 +2,7 @@ package examples.specification.program.effectful
 
 import psbp.external.specification.program.{
   Program
-  , toMain
+  , toMainProgram
 }
 
 import examples.specification.program.factorial
@@ -10,10 +10,10 @@ import examples.specification.program.factorial
 def mainFactorial[
   >-->[- _, + _]: Program
 ]: Unit >--> Unit =
-  toMain(
-    producer = intProducer
+  toMainProgram(
+    produce = intProducer
     , program = factorial
-    , consumer = factorialConsumer
+    , consume = factorialConsumer
   )
 
 // package examples.specification.program.effectful

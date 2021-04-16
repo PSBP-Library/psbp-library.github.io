@@ -2,7 +2,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "PSBP",
-    version := "1.0.0-RC1",
+    version := "1.0.0",
 
     scalaVersion := "3.0.0-RC2",
     

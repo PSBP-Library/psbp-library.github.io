@@ -48,3 +48,21 @@ trait Writing[W: Writable, >-->[- _, + _]]:
 
   def write: W >--> Unit =
     `w>-->u`
+
+// import psbp.external.specification.programWithWriting.ProgramWithWriting
+
+// def write[
+//   Y: [Y] =>> ToWritable[Y, W, >-->]
+//   , W: Writable
+//   , >-->[- _, + _]: [>-->[- _, + _]] =>> ProgramWithWriting[W, >-->]
+// ]: Y >--> Unit =
+
+//   val toWritable: ToWritable[Y, W, >-->] = 
+//     summon[ToWritable[Y, W, >-->]]
+//   import toWritable.`y>-->w`
+
+//   val writing: Writing[W, >-->] = 
+//     summon[Writing[W, >-->]]
+//   import writing.`w>-->u`
+
+//   `y>-->w` >--> `w>-->u`

@@ -15,7 +15,8 @@ private[psbp] given readingTransformedMaterialization[
   , C[+ _]: Computation
           : [C[+ _]] =>> Materialization[[Z, Y] =>> Z => C[Y], Z, Y]
   , Z, Y
-]: Materialization[[Z, Y] =>> Z => ReadingTransformed[R, C][Y], Z, R ?=> C[Y]] with
+// ]: Materialization[[Z, Y] =>> Z => ReadingTransformed[R, C][Y], Z, R ?=> C[Y]] with
+]: Materialization[[Z, Y] =>> Z => ReadingTransformed[R, C][Y], Z, C[Y]] with
 
   private type F[+Z] = C[Z]
   private type T[+Z] = ReadingTransformed[R, C][Z]
@@ -36,8 +37,23 @@ private[psbp] given readingTransformedMaterialization[
     , bind => bindF 
   }
 
-  override val materialize: (Unit `=>T` Unit) => Z ?=> (R ?=> C[Y]) =
+  // override val materialize: (Unit `=>T` Unit) => Z ?=> (R ?=> C[Y]) =
+  //   `u=>tu` =>
+  //     bindF(
+  //       `u=>tu`(())
+  //       , _ => 
+  //         resultF(materializeF(resultF))
+  //     )
+
+  private val readable: Readable[R] = 
+    summon[Readable[R]]
+  import readable.{ 
+    r => readableR 
+  }
+
+  override val materialize: (Unit `=>T` Unit) => Z ?=> C[Y] =
     `u=>tu` =>
+      given gr: R = readableR
       bindF(
         `u=>tu`(())
         , _ => 

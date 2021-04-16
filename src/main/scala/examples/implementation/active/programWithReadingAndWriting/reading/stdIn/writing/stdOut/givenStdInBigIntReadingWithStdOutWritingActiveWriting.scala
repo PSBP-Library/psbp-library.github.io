@@ -11,8 +11,6 @@ import psbp.external.implementation.stdIn.StdIn
 
 import psbp.external.implementation.stdOut.StdOut
 
-import psbp.external.implementation.stdIn.givenStdInReadable
-
 import psbp.external.implementation.stdOut.givenStdOutWritable
 
 given givenStdInBigIntReadingWithStdOutWritingActiveWriting: Writing[StdOut, `=>RWA`[StdIn[BigInt], StdOut]] = 
